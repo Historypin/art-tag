@@ -1,3 +1,9 @@
-/**
- * Created by mva on 3/14/16.
- */
+define([
+  'jquery',
+  'underscore',
+  'backbone'
+], function($, _, Backbone){
+  var event = _.extend({}, Backbone.Events);
+
+  return event;
+});

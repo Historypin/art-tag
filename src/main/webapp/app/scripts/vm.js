@@ -1,3 +1,5 @@
+'use strict';
+
 define([
   'jquery',
   'underscore',
@@ -22,7 +24,7 @@ define([
     }
     Events.trigger('viewCreated');
     return view;
-  }
+  };
   return {
     create: create
   };

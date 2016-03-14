@@ -15,7 +15,6 @@ define([
     initialize: function () {},
 
     render: function () {
-      var that = this;
       $(this.el).html(this.template);
       // This is the entry point to your app, therefore
       // when the user refreshes the page we should
@@ -23,7 +22,7 @@ define([
       // A call back when we know what the auth status is
       Session.getAuth(function () {
         Backbone.history.start();
-      })
+      });
     }
   });
   return AppView;

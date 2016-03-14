@@ -34,7 +34,7 @@ require([
   };
 
   // All AJAX requests will be sent to this back-server
-  $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+  $.ajaxPrefilter(function (options) {
     options.url = 'http://localhost:8080' + options.url;
   });
 

@@ -35,8 +35,7 @@ define([
       var that = this;
       this.destroy({
         success: function (model, resp) {
-
-          model.clear()
+          model.clear();
           // Set auth to false to trigger a change:auth event
           // The server also returns a new csrf token so that
           // the user can relogin without refreshing the page

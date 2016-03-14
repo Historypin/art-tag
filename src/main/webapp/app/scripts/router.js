@@ -18,7 +18,7 @@ define([
     var appView = options.appView;
     var appRouter = new AppRouter(options);
 
-    appRouter.on('route:defaultAction', function (actions) {
+    appRouter.on('route:defaultAction', function () {
       require(['views/main_menu'], function (MainMenuView) {
         var mainMenuView = Vm.create(appView, 'MainMenuView', MainMenuView);
         mainMenuView.render();

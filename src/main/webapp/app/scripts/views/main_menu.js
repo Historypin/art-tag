@@ -25,7 +25,7 @@ define([
       var that = this;
       // Bind to the Session auth attribute so we
       // make our view act recordingly when auth changes
-      Session.on('change:auth', function (session) {
+      Session.on('change:auth', function () {
         that.render();
       });
     },

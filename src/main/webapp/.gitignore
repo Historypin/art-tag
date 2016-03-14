@@ -1,7 +1,14 @@
-node_modules
-dist
-test/temp
-.sass-cache
-app/bower_components
-.tmp
-test/bower_components/
+# build and dependecies
+/node_modules/
+/dist/
+/app/bower_components/
+/test/bower_components/
+
+# temp files
+/.sass-cache/
+/.tmp/
+/test/temp/
+
+# IDEA files
+/.idea/
+*.iml

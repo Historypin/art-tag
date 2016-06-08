@@ -1,0 +1,5 @@
+create user arttag with password 'gN9MvT8knXA9xJ1NMwod4ztRnkrVKwUw';
+
+create database arttag OWNER arttag;
+
+grant all privileges on database arttag to arttag;

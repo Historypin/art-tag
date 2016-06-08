@@ -42,27 +42,4 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         viewResolver.setExposeContextBeansAsAttributes(true);
         return viewResolver;
     }
-
-    @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
-        PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer = new PropertySourcesPlaceholderConfigurer();
-        // get active profile
-        String activeProfile = System.getProperty("spring.profiles.active");
-
-        // choose different property files for different active profile
-        Resource profileResource;
-        if ("dev".equalsIgnoreCase(activeProfile)) {
-            profileResource = new ClassPathResource("dev.properties");
-        } else if ("test".equalsIgnoreCase(activeProfile)) {
-            profileResource = new ClassPathResource("test.properties");
-        } else {
-            profileResource = new ClassPathResource("prod.properties");
-        }
-
-        Resource defaultResource = new ClassPathResource("default.properties");
-        // load the property files
-        propertySourcesPlaceholderConfigurer.setLocations(defaultResource, profileResource);
-
-        return propertySourcesPlaceholderConfigurer;
-    }
 }

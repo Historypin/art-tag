@@ -7,3 +7,4 @@ yo/test
 
 # IDEA files
 *.iml
+/target/

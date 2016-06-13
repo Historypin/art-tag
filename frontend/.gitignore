@@ -1,6 +1,9 @@
 # build
-/.tmp
-/node_modules
+yo/.tmp
+yo/bower_components
+yo/dist
+yo/node_modules
+yo/test
 
 # IDEA files
 *.iml

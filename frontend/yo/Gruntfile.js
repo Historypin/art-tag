@@ -1,17 +1,6 @@
 'use strict';
 var LIVERELOAD_PORT = 35729;
-var SERVER_PORT = 9000;
-var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
-var mountFolder = function (connect, dir) {
-  return connect.static(require('path').resolve(dir));
-};
-
-// # Globbing
-// for performance reasons we're only matching one level down:
-// 'test/spec/{,*/}*.js'
-// use this if you want to match all subfolders:
-// 'test/spec/**/*.js'
-// templateFramework: 'lodash'
+var SERVER_PORT = 8080;
 
 module.exports = function (grunt) {
 
@@ -60,52 +49,12 @@ module.exports = function (grunt) {
         tasks: ['test:true']
       }
     },
-    connect: {
-      options: {
-        port: grunt.option('port') || SERVER_PORT,
-        // change this to '0.0.0.0' to access the server from outside
-        hostname: 'localhost'
-      },
-      livereload: {
-        options: {
-          middleware: function (connect) {
-            return [
-              lrSnippet,
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, yeomanConfig.app)
-            ];
-          }
-        }
-      },
-      test: {
-        options: {
-          port: 9001,
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, 'test'),
-              lrSnippet,
-              mountFolder(connect, '.tmp'),
-              mountFolder(connect, yeomanConfig.app)
-            ];
-          }
-        }
-      },
-      dist: {
-        options: {
-          middleware: function (connect) {
-            return [
-              mountFolder(connect, yeomanConfig.dist)
-            ];
-          }
-        }
-      }
-    },
     open: {
       server: {
-        path: 'http://localhost:<%= connect.options.port %>'
+        path: `http://localhost:${SERVER_PORT}`
       },
       test: {
-        path: 'http://localhost:<%= connect.test.options.port %>'
+        path: `http://localhost:${SERVER_PORT}`
       }
     },
     clean: {
@@ -124,19 +73,17 @@ module.exports = function (grunt) {
         'test/spec/{,*/}*.js'
       ]
     },
-    mocha: {
-      all: {
-        options: {
-          run: true,
-          urls: ['http://localhost:<%= connect.test.options.port %>/index.html']
-        }
-      }
-    },
     requirejs: {
       dist: {
         // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
         options: {
           almond: true,
+
+          paths: {
+            'jquery': '../../bower_components/jquery/dist/jquery',
+            'backbone': '../../bower_components/backbone/backbone',
+            'underscore': '../../bower_components/lodash/dist/lodash'
+          },
 
           replaceRequireScript: [{
             files: ['<%= yeoman.dist %>/index.html'],
@@ -278,26 +225,10 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('serve', function (target) {
-    if (target === 'dist') {
-      return grunt.task.run(['build', 'open:server', 'connect:dist:keepalive']);
-    }
-
-    if (target === 'test') {
-      return grunt.task.run([
-        'clean:server',
-        'createDefaultTemplate',
-        'jst',
-        'connect:test',
-        'open:test',
-        'watch'
-      ]);
-    }
-
     grunt.task.run([
       'clean:server',
       'createDefaultTemplate',
       'jst',
-      'connect:livereload',
       'open:server',
       'watch'
     ]);

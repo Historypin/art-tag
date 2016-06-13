@@ -3,8 +3,11 @@ package sk.eea.arttag.model;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 /**
@@ -16,6 +19,8 @@ import javax.persistence.Table;
 public class CulturalObject {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence")
 	private long id;
 	private String author;	
 	private String externalId;

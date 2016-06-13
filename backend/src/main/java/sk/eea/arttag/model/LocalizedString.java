@@ -1,13 +1,18 @@
 package sk.eea.arttag.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="LOCALIZED_STRING")
 public class LocalizedString {
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+	@SequenceGenerator(name= "hibernate_sequence")
 	private Long id;
 	private String language;
 	private String value;

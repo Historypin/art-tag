@@ -9,7 +9,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="USER")
+@Table(name="SYSTEM_USER")
 public class User {
 
 	@Id

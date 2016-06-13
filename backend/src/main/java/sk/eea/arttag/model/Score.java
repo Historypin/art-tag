@@ -1,10 +1,13 @@
 package sk.eea.arttag.model;
 
+import javax.persistence.Embeddable;
+
 /**
  * Contains score of a single player
  * @author Maros Strmensky
  *
  */
+@Embeddable
 public class Score {
 	
 	private Long gamesPlayed;

@@ -27,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable() // TODO: add CSRF protection!!!
                 .authorizeRequests()
-                    .antMatchers("/login**", "/scripts/**", "/styles/**").permitAll()
+                    //.antMatchers("/login**", "/scripts/**", "/styles/**").permitAll()
                     .antMatchers("/**").permitAll();
 //                .and()
 //                .formLogin()

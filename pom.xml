@@ -30,6 +30,6 @@
 
     <modules>
         <module>backend</module>
-        <module>frontend</module>
+        <!--<module>frontend</module>-->
     </modules>
 </project>

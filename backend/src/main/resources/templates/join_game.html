@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Blank page</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+
+    <link href="../static/css/console.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
+</head>
+<body>
+<fieldset>
+    <legend>Game</legend>
+    <div>Name<input id="GameName" type="text" value=""/></div>
+    <div>Created<input id="GameCreated" type="text" value=""/></div>
+    <div>Round Remaining Time<input id="GameRemaining" type="text" value=""/></div>
+</fieldset>
+<fieldset>
+    <legend>Players</legend>
+    <ul id="Players"></ul>
+</fieldset>
+<fieldset>
+    <legend>Hand</legend>
+    <ul id="Hand"></ul>
+</fieldset>
+<div>
+    <input id="inputmessage" type="text"/>
+</div>
+<div>
+    <input type="submit" value="Broadcast message" onclick="send()"/>
+</div>
+<div id="messages"></div>
+
+<script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+<script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
+<script type="text/javascript">
+    /* <![CDATA[ */
+    var webSocket =
+            new WebSocket('ws://localhost:8080/ws/game');
+
+    webSocket.onerror = function (event) {
+        onError(event)
+    };
+
+    webSocket.onopen = function (event) {
+        onOpen(event)
+    };
+
+    webSocket.onmessage = function (event) {
+        onMessage(event)
+    };
+
+    function onMessage(event) {
+        var msg = JSON.parse(event.data);
+        console.log(msg);
+        document.getElementById('messages').innerHTML
+                += '<br />Received message: ' + event.data;
+        document.getElementById('GameRemaining').value = msg.Game.RemainingTime;
+        document.getElementById('GameCreated').value = msg.Game.Created;
+        document.getElementById('GameName').value = msg.Game.Name;
+
+        var handDiv = '';
+        msg.Hand.forEach(function (card) {
+            handDiv += '<li>' + card.Token + '</li>';
+        });
+        document.getElementById('Hand').innerHTML = handDiv;
+
+        var playersDiv = '';
+        msg.Game.Players.forEach(function (player) {
+            playersDiv += '<li>' + player.Name + '</li>';
+        });
+        document.getElementById('Players').innerHTML = playersDiv;
+    }
+
+    function onOpen(event) {
+        document.getElementById('messages').innerHTML
+                = 'Connection established';
+    }
+
+    function onError(event) {
+        alert(event.data);
+    }
+
+    function send() {
+        var txt = document.getElementById('inputmessage').value;
+        webSocket.send(txt);
+        return false;
+    }
+    /* ]]> */
+</script>
+</body>
+</html>

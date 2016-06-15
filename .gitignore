@@ -1,5 +1,8 @@
 # build
-/target/
+target/
+.classpath
+.project
+.settings
 
 # IDEA files
 /.idea/

@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -25,27 +26,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // TODO: add CSRF protection!!!
                 .authorizeRequests()
-                    //.antMatchers("/login**", "/scripts/**", "/styles/**").permitAll()
-                    .antMatchers("/**").permitAll();
-//                .and()
-//                .formLogin()
-//                    .loginPage("/login")
-//                    .loginProcessingUrl("/login.do")
-//                    .defaultSuccessUrl("/")
-//                    .failureUrl("/login?error")
-//                    .usernameParameter("username")
-//                    .passwordParameter("password")
-//                .and()
-//                .logout()
-//                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                    .logoutSuccessUrl("/login?logout")
-//                    .deleteCookies("JSESSIONID")
-//                    .invalidateHttpSession(true)
-//                .and()
-//                .sessionManagement()
-//                    .invalidSessionUrl("/login?timeout")
-//                    .maximumSessions(1);
+                    .antMatchers("/login**", "/register**", "/js/**", "/css/**", "/webjars/**").permitAll()
+                    .antMatchers("/**").authenticated()
+                .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login.do")
+                    .defaultSuccessUrl("/")
+                    .failureUrl("/login?error")
+                    .usernameParameter("username")
+                    .passwordParameter("password")
+                .and()
+                .logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl("/login")
+                    .deleteCookies("JSESSIONID")
+                    .invalidateHttpSession(true)
+                .and()
+                .sessionManagement()
+                    .invalidSessionUrl("/login")
+                    .maximumSessions(1);
     }
 }

@@ -1,9 +1,5 @@
 package sk.eea.arttag.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -25,12 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameController extends TextWebSocketHandler {
+public class WebSocketGameController extends TextWebSocketHandler {
 
     private static final String TOKEN = "token";
     private static Map<String, WebSocketSession> clients = Collections.synchronizedMap(new HashMap<String, WebSocketSession>());
 
-    private static final Logger LOG = LoggerFactory.getLogger(GameController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketGameController.class);
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -62,7 +58,6 @@ public class GameController extends TextWebSocketHandler {
     public static Runnable JOB = new Runnable() {
         @Override
         public void run() {
-            LOG.debug("Timer fired");
             List<GamePlayerView> games = GameService.getInstance().getGameViews();
             try {
                 sendMessages(games);

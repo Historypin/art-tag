@@ -8,7 +8,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import sk.eea.arttag.controller.GameController;
+import sk.eea.arttag.controller.WebSocketGameController;
 
 @Configuration
 @EnableWebSocket
@@ -17,17 +17,17 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(gameController(), "/game");
+        registry.addHandler(gameController(), "/ws/game");
     }
 
     @Bean
     public WebSocketHandler gameController() {
-        return new GameController();
+        return new WebSocketGameController();
     }
 
     @Scheduled(fixedRate=1000)
     public void trigger() {
-        GameController.JOB.run();
+        WebSocketGameController.JOB.run();
     }
 
 }

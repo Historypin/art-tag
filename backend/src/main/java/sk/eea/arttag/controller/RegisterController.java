@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import sk.eea.arttag.game.service.GameService;
 import sk.eea.arttag.model.User;
+import sk.eea.arttag.model.UserRole;
 import sk.eea.arttag.model.form.RegisterForm;
 import sk.eea.arttag.repository.UserRepository;
 
@@ -53,6 +54,8 @@ public class RegisterController {
         user.setLogin(registerForm.getEmail());
         user.setNickName(registerForm.getNickname());
         user.setPassword(passwordEncoder.encode(registerForm.getPassword()));
+        user.setEnabled(true);
+        user.getUserRole().add(new UserRole(user, "ROLE_USER"));
         userRepository.save(user);
 
         return "login";

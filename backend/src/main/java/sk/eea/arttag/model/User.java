@@ -1,12 +1,10 @@
 package sk.eea.arttag.model;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="SYSTEM_USER")
@@ -17,10 +15,15 @@ public class User {
 	private String nickName;
 	private String password;
 	private Score personalScore;
-	
+
 	@ManyToMany
 	@JoinTable(name="USER_FAVOURITE")
 	private List<CulturalObject> favouriteObjects;
+
+    private Boolean enabled;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<UserRole> userRole = new HashSet<UserRole>(0);
 
 	public String getLogin() {
 		return login;
@@ -61,4 +64,20 @@ public class User {
 	public void setFavouriteObjects(List<CulturalObject> favouriteObjects) {
 		this.favouriteObjects = favouriteObjects;
 	}
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Set<UserRole> getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(Set<UserRole> userRole) {
+        this.userRole = userRole;
+    }
 }

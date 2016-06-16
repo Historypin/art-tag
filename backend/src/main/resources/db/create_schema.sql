@@ -88,6 +88,7 @@ CREATE TABLE system_user (
 ALTER TABLE system_user OWNER TO arttag;
 
 create table authorities (
+    id bigint PRIMARY KEY NOT NULL,
     login character varying(255) NOT NULL,
     authority character varying(255) NOT NULL,
     constraint fk_authorities_users foreign key(login) references system_user(login)

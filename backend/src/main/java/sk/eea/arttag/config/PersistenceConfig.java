@@ -18,21 +18,21 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages="sk.eea.arttag.model")
+@EnableJpaRepositories(basePackages="sk.eea.arttag.repository")
 public class PersistenceConfig {
-	
+
 	@Value("${spring.datasource.driver-class-name}")
     private String jdbcDriver;
-	
+
 	@Value("${spring.datasource.url}")
 	private String jdbcUrl;
-	
+
 	@Value("${spring.datasource.username}")
 	private String jdbcUsername;
-	
+
 	@Value("${spring.datasource.password}")
 	private String jdbcPassword;
-	
+
     @Value("${hibernate.dialect}")
     private String hibernateDialect;
 
@@ -81,5 +81,5 @@ public class PersistenceConfig {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         return transactionManager;
-    }	
+    }
 }

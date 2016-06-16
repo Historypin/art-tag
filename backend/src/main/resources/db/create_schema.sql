@@ -1,20 +1,22 @@
-DROP SEQUENCE hibernate_sequence;
-DROP CREATE TABLE cultural_object;
-DROP CREATE TABLE cultural_object_description;
-DROP TABLE cultural_object_tags;
-DROP TABLE localized_string;
-DROP TABLE system_user;
-DROP TABLE tag;
-DROP TABLE user_favourite;
+DROP SEQUENCE IF EXISTS hibernate_sequence CASCADE;
+DROP TABLE IF EXISTS cultural_object CASCADE;
+DROP TABLE IF EXISTS cultural_object_description CASCADE;
+DROP TABLE IF EXISTS cultural_object_tags CASCADE;
+DROP TABLE IF EXISTS localized_string CASCADE;
+DROP TABLE IF EXISTS system_user CASCADE;
+DROP TABLE IF EXISTS tag CASCADE;
+DROP TABLE IF EXISTS user_favourite CASCADE;
+DROP TABLE IF EXISTS authorities CASCADE;
+DROP INDEX IF EXISTS ix_auth_login CASCADE;
 
 CREATE SEQUENCE hibernate_sequence
-  INCREMENT 1
-  MINVALUE 1
-  MAXVALUE 9223372036854775807
-  START 1
-  CACHE 1;
+INCREMENT 1
+MINVALUE 1
+MAXVALUE 9223372036854775807
+START 1
+CACHE 1;
 ALTER TABLE hibernate_sequence
-  OWNER TO arttag;
+    OWNER TO arttag;
 
 CREATE TABLE cultural_object (
     id bigint NOT NULL,
@@ -29,7 +31,7 @@ ALTER TABLE cultural_object OWNER TO arttag;
 
 --
 -- TOC entry 174 (class 1259 OID 182428)
--- Name: cultural_object_description; Type: TABLE; Schema: public; Owner: arttag; Tablespace: 
+-- Name: cultural_object_description; Type: TABLE; Schema: public; Owner: arttag; Tablespace:
 --
 
 CREATE TABLE cultural_object_description (
@@ -42,7 +44,7 @@ ALTER TABLE cultural_object_description OWNER TO arttag;
 
 --
 -- TOC entry 175 (class 1259 OID 182431)
--- Name: cultural_object_tags; Type: TABLE; Schema: public; Owner: arttag; Tablespace: 
+-- Name: cultural_object_tags; Type: TABLE; Schema: public; Owner: arttag; Tablespace:
 --
 
 CREATE TABLE cultural_object_tags (
@@ -55,7 +57,7 @@ ALTER TABLE cultural_object_tags OWNER TO arttag;
 
 --
 -- TOC entry 176 (class 1259 OID 182434)
--- Name: localized_string; Type: TABLE; Schema: public; Owner: arttag; Tablespace: 
+-- Name: localized_string; Type: TABLE; Schema: public; Owner: arttag; Tablespace:
 --
 
 CREATE TABLE localized_string (
@@ -69,24 +71,35 @@ ALTER TABLE localized_string OWNER TO arttag;
 
 --
 -- TOC entry 177 (class 1259 OID 182442)
--- Name: system_user; Type: TABLE; Schema: public; Owner: arttag; Tablespace: 
+-- Name: system_user; Type: TABLE; Schema: public; Owner: arttag; Tablespace:
 --
 
 CREATE TABLE system_user (
-    login character varying(255) NOT NULL,
+    login character varying(255) PRIMARY KEY NOT NULL,
     nick_name character varying(255),
     password character varying(255),
     games_played bigint,
     games_won bigint,
-    total_score bigint
+    total_score bigint,
+    enabled boolean NOT NULL
 );
 
 
 ALTER TABLE system_user OWNER TO arttag;
 
+create table authorities (
+    login character varying(255) NOT NULL,
+    authority character varying(255) NOT NULL,
+    constraint fk_authorities_users foreign key(login) references system_user(login)
+);
+
+ALTER TABLE authorities OWNER TO arttag;
+
+create unique index ix_auth_login on authorities (login,authority);
+
 --
 -- TOC entry 178 (class 1259 OID 182450)
--- Name: tag; Type: TABLE; Schema: public; Owner: arttag; Tablespace: 
+-- Name: tag; Type: TABLE; Schema: public; Owner: arttag; Tablespace:
 --
 
 CREATE TABLE tag (
@@ -100,7 +113,7 @@ ALTER TABLE tag OWNER TO arttag;
 
 --
 -- TOC entry 179 (class 1259 OID 182458)
--- Name: user_favourite; Type: TABLE; Schema: public; Owner: arttag; Tablespace: 
+-- Name: user_favourite; Type: TABLE; Schema: public; Owner: arttag; Tablespace:
 --
 
 CREATE TABLE user_favourite (
@@ -113,7 +126,7 @@ ALTER TABLE user_favourite OWNER TO arttag;
 
 --
 -- TOC entry 1946 (class 2606 OID 182427)
--- Name: cultural_object_pkey; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace: 
+-- Name: cultural_object_pkey; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace:
 --
 
 ALTER TABLE ONLY cultural_object
@@ -122,7 +135,7 @@ ALTER TABLE ONLY cultural_object
 
 --
 -- TOC entry 1952 (class 2606 OID 182441)
--- Name: localized_string_pkey; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace: 
+-- Name: localized_string_pkey; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace:
 --
 
 ALTER TABLE ONLY localized_string
@@ -131,16 +144,13 @@ ALTER TABLE ONLY localized_string
 
 --
 -- TOC entry 1954 (class 2606 OID 182449)
--- Name: system_user_pkey; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace: 
+-- Name: system_user_pkey; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace:
 --
-
-ALTER TABLE ONLY system_user
-    ADD CONSTRAINT system_user_pkey PRIMARY KEY (login);
 
 
 --
 -- TOC entry 1956 (class 2606 OID 182457)
--- Name: tag_pkey; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace: 
+-- Name: tag_pkey; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace:
 --
 
 ALTER TABLE ONLY tag
@@ -149,7 +159,7 @@ ALTER TABLE ONLY tag
 
 --
 -- TOC entry 1948 (class 2606 OID 182462)
--- Name: uk_h2i90e72pisp2vuj5utfldjlu; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace: 
+-- Name: uk_h2i90e72pisp2vuj5utfldjlu; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace:
 --
 
 ALTER TABLE ONLY cultural_object_description
@@ -158,7 +168,7 @@ ALTER TABLE ONLY cultural_object_description
 
 --
 -- TOC entry 1950 (class 2606 OID 182464)
--- Name: uk_reigdowq3dre8tbtqg7filwvm; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace: 
+-- Name: uk_reigdowq3dre8tbtqg7filwvm; Type: CONSTRAINT; Schema: public; Owner: arttag; Tablespace:
 --
 
 ALTER TABLE ONLY cultural_object_tags

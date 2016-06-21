@@ -7,9 +7,12 @@ public class Card {
 	private String token;
 
 	public Card() {
-		Random r = new Random();
+/*		Random r = new Random();
 		char c = (char) (r.nextInt(26) + 'A');
-		this.token = String.valueOf(c);
+		this.token = String.valueOf(c);*/
+	}
+	public Card(String token) {
+		this.token = token;
 	}
 
 	public String getToken() {

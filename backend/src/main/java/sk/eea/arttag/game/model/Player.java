@@ -8,8 +8,9 @@ public class Player {
 	private String token;
 	private String name;
 	private List<Card> hand = new ArrayList<>();
-	private Card ownBid;
-	private Card matchingCardSelected;
+	private Card ownCardSelection;
+	private Card tableCardSelection;
+	private boolean readyForNextRound;
 	private boolean dealer;
 
 	public Player() {
@@ -24,18 +25,6 @@ public class Player {
 	}
 	public void setHand(List<Card> hand) {
 		this.hand = hand;
-	}
-	public Card getOwnBid() {
-		return ownBid;
-	}
-	public void setOwnBid(Card ownBid) {
-		this.ownBid = ownBid;
-	}
-	public Card getMatchingCardSelected() {
-		return matchingCardSelected;
-	}
-	public void setMatchingCardSelected(Card matchingCardSelected) {
-		this.matchingCardSelected = matchingCardSelected;
 	}
 	public boolean isDealer() {
 		return dealer;
@@ -56,11 +45,35 @@ public class Player {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public Card getOwnCardSelection() {
+		return ownCardSelection;
+	}
+	public void setOwnCardSelection(Card ownCardSelection) {
+		this.ownCardSelection = ownCardSelection;
+	}
+	public Card getTableCardSelection() {
+		return tableCardSelection;
+	}
+	public void setTableCardSelection(Card tableCardSelection) {
+		this.tableCardSelection = tableCardSelection;
+	}
+	public boolean isReadyForNextRound() {
+		return readyForNextRound;
+	}
+	public void setReadyForNextRound(boolean readyForNextRound) {
+		this.readyForNextRound = readyForNextRound;
+	}
 
 	@Override
 	public String toString() {
-		return "Player [token=" + token + ", name=" + name + ", hand=" + hand + ", ownBid=" + ownBid
-				+ ", matchingCardSelected=" + matchingCardSelected + ", dealer=" + dealer + "]";
+		return "Player [token=" + token + ", name=" + name + ", hand=" + hand + ", ownBid=" + ownCardSelection
+				+ ", matchingCardSelected=" + tableCardSelection + ", dealer=" + dealer + "]";
 	}
 
+	public void roundReset() {
+		this.ownCardSelection = null;
+		this.tableCardSelection = null;
+		this.readyForNextRound = false;
+		this.dealer = false;
+	}
 }

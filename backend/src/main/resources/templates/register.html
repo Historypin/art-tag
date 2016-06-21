@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Register</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+
+    <link href="../static/css/console.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Registration</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" th:action="@{/register}"  th:object="${registerForm}"  method="post" accept-charset="UTF-8">
+                        <fieldset>
+                            <p>Welcome to Tagapp, please register.</p>
+
+                            <div class="form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error'">
+                                <label class="col-md-4 control-label" for="email">Email</label>
+                                <div class="col-md-4">
+                                    <input id="email" name="email" th:field="*{email}" placeholder="email used in registration" class="form-control input-md" type="email"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email error</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" th:classappend="${#fields.hasErrors('nickname')}? 'has-error'">
+                                <label class="col-md-4 control-label" for="nickname" >Nickname</label>
+                                <div class="col-md-4">
+                                    <input id="nickname" name="nickname" th:field="*{nickname}" placeholder="name displayed in game" class="form-control input-md" type="text"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">nickname error</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error'">
+                                <label class="col-md-4 control-label" for="password">Password</label>
+                                <div class="col-md-4">
+                                    <input id="password" name="password" th:field="*{password}" placeholder="password" class="form-control input-md" type="password"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password error</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" th:classappend="${#fields.hasErrors('global')}? 'has-error'">
+                                <label class="col-md-4 control-label" for="repeatPassword">Repeat password</label>
+                                <div class="col-md-4">
+                                    <input id="repeatPassword" name="repeatPassword" th:field="*{repeatPassword}" placeholder="repeat your password" class="form-control input-md" type="password"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('global')}" th:errors="*{global}">Incorrect repeat password</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group" th:classappend="${#fields.hasErrors('conditionsAccepted')}? 'has-error'">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" th:field="*{conditionsAccepted}" /> I agree with terms &amp; conditions of the game.
+                                        </label>
+                                        <span class="help-block" th:if="${#fields.hasErrors('conditionsAccepted')}" th:errors="*{conditionsAccepted}">repeatPassword error</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input class="btn btn-lg btn-default" type="submit" value="Register"/>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+<script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
+</body>
+</html>

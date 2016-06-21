@@ -105,6 +105,12 @@
             <version>3.3.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>knockout</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

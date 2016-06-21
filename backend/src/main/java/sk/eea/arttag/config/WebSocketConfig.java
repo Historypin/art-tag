@@ -1,5 +1,6 @@
 package sk.eea.arttag.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -25,6 +26,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
         return new WebSocketGameController();
     }
 
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
     @Scheduled(fixedRate=1000)
     public void trigger() {
         WebSocketGameController.JOB.run();

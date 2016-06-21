@@ -21,13 +21,20 @@
 <body>
 <fieldset>
     <legend>Game</legend>
+    <div>Id<input id="GameId" type="text" value=""/></div>
     <div>Name<input id="GameName" type="text" value=""/></div>
     <div>Created<input id="GameCreated" type="text" value=""/></div>
     <div>Round Remaining Time<input id="GameRemaining" type="text" value=""/></div>
+    <div>Status<input id="GameStatus" type="text" value=""/></div>
+    <div>Tags<input id="GameTags" type="text" value=""/></div>
 </fieldset>
 <fieldset>
     <legend>Players</legend>
     <ul id="Players"></ul>
+</fieldset>
+<fieldset>
+    <legend>Table</legend>
+    <ul id="Table"></ul>
 </fieldset>
 <fieldset>
     <legend>Hand</legend>
@@ -35,9 +42,14 @@
 </fieldset>
 <div>
     <input id="inputmessage" type="text"/>
+    <input type="submit" value="Broadcast message" onclick="send()"/>
 </div>
 <div>
-    <input type="submit" value="Broadcast message" onclick="send()"/>
+    <input id="Tags" type="text"/>
+    <input type="submit" value="Send Tags" onclick="sendTags()"/>
+</div>
+<div>
+    <input type="submit" value="Ready for next round" onclick="playerReady()"/>
 </div>
 <div id="messages"></div>
 
@@ -70,16 +82,25 @@
         document.getElementById('GameRemaining').value = msg.Game.RemainingTime;
         document.getElementById('GameCreated').value = msg.Game.Created;
         document.getElementById('GameName').value = msg.Game.Name;
+        document.getElementById('GameId').value = msg.Game.Id;
+        document.getElementById('GameStatus').value = msg.Game.Status;
+        document.getElementById('GameTags').value = msg.Game.Tags;
 
         var handDiv = '';
         msg.Hand.forEach(function (card) {
-            handDiv += '<li>' + card.Token + '</li>';
+            handDiv += '<li>' + card.Token + '<input type="submit" value="select" onclick="selectCard(\''+ card.Token + '\')"/>' + '</li>';
         });
         document.getElementById('Hand').innerHTML = handDiv;
 
+        var tableDiv = '';
+        msg.Game.Table.forEach(function (card) {
+            tableDiv += '<li>' + card.Token + '<input type="submit" value="select" onclick="selectTableCard(\''+ card.Token + '\')"/>' + '</li>';
+        });
+        document.getElementById('Table').innerHTML = tableDiv;
+
         var playersDiv = '';
         msg.Game.Players.forEach(function (player) {
-            playersDiv += '<li>' + player.Name + '</li>';
+            playersDiv += '<li>' + player.Name + (player.Dealer ? ' (D) ' : '') + (player.ReadyForNextRound ? ' :) ' : '') +'</li>';
         });
         document.getElementById('Players').innerHTML = playersDiv;
     }
@@ -98,6 +119,44 @@
         webSocket.send(txt);
         return false;
     }
+
+	function selectCard(card) {
+        var id = document.getElementById('GameId').value;
+		var o = {value: card, type: 'OWN_CARD_SELECTED', gameId: id};
+		var m = JSON.stringify(o);
+		console.log(m);
+		webSocket.send(m);
+		return false;
+	}
+
+	function selectTableCard(card) {
+        var id = document.getElementById('GameId').value;
+		var o = {value: card, type: 'TABLE_CARD_SELECTED', gameId: id};
+		var m = JSON.stringify(o);
+		console.log(m);
+		webSocket.send(m);
+		return false;
+	}
+
+	function playerReady() {
+        var id = document.getElementById('GameId').value;
+		var o = {value: 'OK', type: 'PLAYER_READY_FOR_NEXT_ROUND', gameId: id};
+		var m = JSON.stringify(o);
+		console.log(m);
+		webSocket.send(m);
+		return false;
+	}
+
+	function sendTags() {
+        var id = document.getElementById('GameId').value;
+        var t = document.getElementById('Tags').value;
+		var o = {value: t, type: 'TAGS_SELECTED', gameId: id};
+		var m = JSON.stringify(o);
+		console.log(m);
+		webSocket.send(m);
+		return false;
+	}
+
     /* ]]> */
 </script>
 </body>

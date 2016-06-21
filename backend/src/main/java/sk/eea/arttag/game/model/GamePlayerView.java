@@ -6,6 +6,7 @@ import java.util.List;
 public class GamePlayerView {
 
 	private String userToken;
+	private boolean dealer;
 	private List<Card> hand = new ArrayList<>();
 	private GameView gameView;
 
@@ -17,6 +18,12 @@ public class GamePlayerView {
 	}
 	public void setUserToken(String userToken) {
 		this.userToken = userToken;
+	}
+	public boolean isDealer() {
+		return dealer;
+	}
+	public void setDealer(boolean dealer) {
+		this.dealer = dealer;
 	}
 	public List<Card> getHand() {
 		return hand;
@@ -33,6 +40,7 @@ public class GamePlayerView {
 
 	@Override
 	public String toString() {
-		return "GamePlayerView [userToken=" + userToken + ", hand=" + hand + ", gameView=" + gameView + "]";
+		return "GamePlayerView [userToken=" + userToken + ", dealer=" + dealer + ", hand=" + hand + ", gameView="
+				+ gameView + "]";
 	}
 }

@@ -1,27 +1,33 @@
 package sk.eea.arttag.game.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Game {
 
-	private Long id;
+	private String id;
 	private String name;
 	private Date created;
 	private GameStatus status;
-	private List<Player> players = new ArrayList<>();
+//	private Map<String, Player> players = new HashMap<>();
+	private Map<String, Player> players = Collections.synchronizedMap(new LinkedHashMap<>());
 	private Date endOfRound;
 	private String tags;
+	private List<Card> deck = new ArrayList<>();
+	private List<Card> table = new ArrayList<>();
 
 	public Game() {
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -49,18 +55,19 @@ public class Game {
 		this.status = status;
 	}
 
-	public List<Player> getPlayers() {
+	public Map<String, Player> getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(List<Player> players) {
+	public void setPlayers(Map<String, Player> players) {
 		this.players = players;
 	}
+
 	public void addPlayer(Player player) {
-		this.players.add(player);
+		this.players.put(player.getToken(), player);
 	}
 	public void removePlayer(Player player) {
-		this.players.remove(player);
+		this.players.remove(player.getToken());
 	}
 
 	public Date getEndOfRound() {
@@ -72,7 +79,7 @@ public class Game {
 	}	
 
 	public int getRemainingTime() {
-		return (int)(System.currentTimeMillis() - created.getTime()) / 1000;
+		return (int)(endOfRound.getTime() - System.currentTimeMillis()) / 1000;
 	}
 
 	public String getTags() {
@@ -83,6 +90,26 @@ public class Game {
 		this.tags = tags;
 	}
 
+	public List<Card> getDeck() {
+		return deck;
+	}
+
+	public void setDeck(List<Card> deck) {
+		this.deck = deck;
+	}
+
+	public List<Card> getTable() {
+		return table;
+	}
+
+	public void setTable(List<Card> table) {
+		this.table = table;
+	}
+
+	public void resetRound() {
+		table = new ArrayList<>();
+		tags = null;
+	}
 
 	@Override
 	public String toString() {
@@ -95,7 +122,7 @@ public class Game {
 
 		GameView view = new GameView();
 		view.setRemainingTime(getRemainingTime());
-		view.setTable(null);//TODO
+		view.setTable(getTable());
 		view.setTags(getTags());
 		view.setCreated(getCreated());
 		view.setEndOfRound(getEndOfRound());
@@ -105,10 +132,11 @@ public class Game {
 		view.setStatus(getStatus());
 
 		List<GamePlayerView> gamePlayerViews = new ArrayList<>();
-		for (Player player : players) {
+		for (Player player : players.values()) {
 			GamePlayerView gamePlayerView = new GamePlayerView();
 			gamePlayerView.setGameView(view);
 			gamePlayerView.setUserToken(player.getToken());
+			gamePlayerView.setDealer(player.isDealer());
 			gamePlayerView.setHand(player.getHand());
 			gamePlayerViews.add(gamePlayerView);
 		}

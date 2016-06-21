@@ -1,5 +1,6 @@
 package sk.eea.arttag.controller;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
@@ -9,6 +10,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.GamePlayerView;
 import sk.eea.arttag.game.model.Player;
+import sk.eea.arttag.game.model.UserInput;
+import sk.eea.arttag.game.model.UserInputType;
 import sk.eea.arttag.game.service.GameService;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -42,7 +45,13 @@ public class WebSocketGameController extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        synchronized(clients){
+
+    	String payload = message.getPayload();
+    	LOG.debug(payload);
+    	UserInput ui = unmarshall(payload);
+    	GameService.getInstance().userInput(session.getId(), ui);
+
+/*        synchronized(clients){
             // Iterate over the connected sessions
             // and broadcast the received message
             for(WebSocketSession client : clients.values()){
@@ -52,7 +61,7 @@ public class WebSocketGameController extends TextWebSocketHandler {
                     client.sendMessage(new TextMessage(fmt));
                 }
             }
-        }
+        }*/
     }
 
     public static Runnable JOB = new Runnable() {
@@ -83,8 +92,16 @@ public class WebSocketGameController extends TextWebSocketHandler {
         }
     }
 
-    private static GamePlayerView unmarshall(String message) {
-        throw new NotImplementedException();
+    private static UserInput unmarshall(String message) {
+    	JSONObject obj = new JSONObject(message);
+    	String value = obj.getString("value");
+    	String type = obj.getString("type");
+    	String gameId = obj.getString("gameId");
+    	UserInput ui = new UserInput();
+    	ui.setGameId(gameId);
+    	ui.setValue(value);
+    	ui.setType(UserInputType.valueOf(type));
+    	return ui;
     }
 
     private static String marshall(GamePlayerView view) {
@@ -94,20 +111,31 @@ public class WebSocketGameController extends TextWebSocketHandler {
                     .add("Token", card.getToken()));
         }
 
+        JsonArrayBuilder tableBuilder = Json.createArrayBuilder();
+        for(Card card : view.getGameView().getTable()) {
+            tableBuilder.add(Json.createObjectBuilder()
+                    .add("Token", card.getToken()));
+        }
+
         JsonArrayBuilder playersBuilder = Json.createArrayBuilder();
-        for(Player player : view.getGameView().getPlayers()) {
+        for(Player player : view.getGameView().getPlayers().values()) {
             playersBuilder.add(Json.createObjectBuilder()
-                    .add("Name", player.getName()));
+                    .add("Name", player.getName())
+                    .add("Dealer", player.isDealer())
+                    .add("ReadyForNextRound", player.isReadyForNextRound()));
         }
 
         String res = Json.createObjectBuilder()
                 .add("UserToken", view.getUserToken())
                 .add("Game", Json.createObjectBuilder()
+                        .add("Id", view.getGameView().getId())
                         .add("Name", view.getGameView().getName())
                         .add("RemainingTime", view.getGameView().getRemainingTime())
                         .add("Tags", view.getGameView().getTags() != null ? view.getGameView().getTags() : "")
                         .add("Created", view.getGameView().getCreated().toString())
                         .add("Players", playersBuilder)
+                        .add("Table", tableBuilder)
+                        .add("Status", view.getGameView().getStatus().name())
                 )
                 //.add("hand", view.getHand())
                 .add("Hand", handBuilder)

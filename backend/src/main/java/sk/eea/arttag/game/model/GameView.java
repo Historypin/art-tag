@@ -2,28 +2,30 @@ package sk.eea.arttag.game.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GameView {
 
-	private Long id;
+	private String id;
 	private String name;
 	private Date created;
 	private GameStatus status;
 	private Date endOfRound;
 	private String tags;
 	private int remainingTime;
-	private List<Player> players;
+	private Map<String, Player> players = new HashMap<>();;
 	private List<Card> table = new ArrayList<>();
 
 	public GameView() {
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -75,11 +77,11 @@ public class GameView {
 		this.remainingTime = remainingTime;
 	}
 
-	public List<Player> getPlayers() {
+	public Map<String, Player> getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(List<Player> players) {
+	public void setPlayers(Map<String, Player> players) {
 		this.players = players;
 	}
 

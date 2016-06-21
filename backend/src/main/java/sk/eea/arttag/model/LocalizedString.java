@@ -10,6 +10,17 @@ import javax.persistence.Table;
 @Entity
 @Table(name="LOCALIZED_STRING")
 public class LocalizedString {
+	
+	public LocalizedString() {
+		super();
+	}
+	
+	public LocalizedString(String language, String value) {
+		super();
+		this.language = language;
+		this.value = value;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@SequenceGenerator(name= "hibernate_sequence")

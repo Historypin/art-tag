@@ -81,5 +81,5 @@ public class PersistenceConfig {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory);
         return transactionManager;
-    }	
+    }
 }

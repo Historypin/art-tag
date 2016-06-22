@@ -19,8 +19,21 @@ public class Game {
 	private String tags;
 	private List<Card> deck = new ArrayList<>();
 	private List<Card> table = new ArrayList<>();
+	private int minPlayers;
+	private int maxPlayers;
+	private boolean privateGame = false;
 
 	public Game() {
+	}
+
+	public Game(String id, String name, int minPlayers, int maxPlayers, boolean privateGame) {
+		this.id = id;
+		this.name = name;
+		this.minPlayers = minPlayers;
+		this.maxPlayers = maxPlayers;
+		this.created = new Date();
+		this.status = GameStatus.NEW;
+		this.privateGame = privateGame;
 	}
 
 	public String getId() {
@@ -104,6 +117,18 @@ public class Game {
 
 	public void setTable(List<Card> table) {
 		this.table = table;
+	}
+
+	public int getMinPlayers() {
+		return minPlayers;
+	}
+
+	public int getMaxPlayers() {
+		return maxPlayers;
+	}
+
+	public boolean isPrivateGame() {
+		return privateGame;
 	}
 
 	public void resetRound() {

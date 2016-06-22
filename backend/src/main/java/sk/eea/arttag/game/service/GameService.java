@@ -1,7 +1,6 @@
 package sk.eea.arttag.game.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
 import sk.eea.arttag.game.model.GamePlayerView;
-import sk.eea.arttag.game.model.GameStatus;
 import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.game.model.UserInput;
 import sk.eea.arttag.game.model.UserInputType;
@@ -27,6 +25,8 @@ public class GameService {
 	private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
 	public static final int ROUND_LENGTH_IN_SECONDS = 60;
 	public static final int HAND_SIZE = 5;
+	public static final int GAME_MIN_PLAYERS = 4;
+	public static final int GAME_MAX_PLAYERS = 8;
 
 	protected GameService() {
 	}
@@ -37,9 +37,9 @@ public class GameService {
 			instance.stateMachine = new StateMachine(instance);
 			//TODO
 			String uuid = UUID.randomUUID().toString();
-			instance.create(uuid, uuid);
+			instance.create("1", uuid);
 			uuid = UUID.randomUUID().toString();
-			instance.create(uuid, uuid);
+			instance.create("2", uuid);
 		}
 		return instance;
 	}
@@ -69,19 +69,16 @@ public class GameService {
 	//TODO:
 	public void create(String id, String name) {
 		LOG.debug("CREATE");
-		Game game = new Game();
-		game.setId(id);
-		game.setCreated(new Date());
-		game.setName(name);
-		game.setStatus(GameStatus.NEW);
+		Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false);
 		stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null);
 	}
 
 	//TODO:
-	public void addPlayer(String userToken) {
+	public void addPlayer(String userToken, String userId, String gameId) {
 		LOG.debug("ADD_PLAYER");
-		Player player = new Player(userToken, UUID.randomUUID().toString());
-		Game game = getGames().values().stream().findFirst().get();
+		Player player = new Player(userToken, userId, userId);
+		Game game = getGames().get(gameId);
+		//TODO: evaluate game not null, game status, number of active players, private/public, join/rejoin
 		game.addPlayer(player);
 		stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken);
 	}

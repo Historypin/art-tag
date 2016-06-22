@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -84,7 +85,7 @@ public class RestServiceIT {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Exception thrown");
+            fail("Exception was thrown");
         } finally {
             coRepository.delete(co);
         }
@@ -119,7 +120,7 @@ public class RestServiceIT {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Exception thrown");
+            fail("Exception was thrown");
         }
     }
 
@@ -129,11 +130,11 @@ public class RestServiceIT {
         co.setActive(Boolean.TRUE);
         coRepository.save(co);
         try {
-            WebTarget target = client.target("http://localhost:8080").path("/api/cultural/removeBatch/")
+            WebTarget target = client.target("http://localhost:8080").path("/api/batch/remove/")
                     .path(co.getBatchId());
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                     .buildDelete().invoke();
-            if (response.getStatus() != 200) {
+            if (response.getStatus() != HttpStatus.OK.value()) {
                 fail("Invalid request " + response.getStatusInfo().getReasonPhrase());
             }
             ResultMessageDTO result = objectMapper.readValue(response.readEntity(String.class), ResultMessageDTO.class);
@@ -144,7 +145,7 @@ public class RestServiceIT {
             assertEquals(Boolean.FALSE, co.isActive());
         } catch (Exception e) {
             e.printStackTrace();
-            fail("Exception was thrown.");
+            fail("Exception was thrown");
         } finally {
             coRepository.delete(co);
         }
@@ -164,7 +165,7 @@ public class RestServiceIT {
                     .queryParam("from", fromDate)
                     .queryParam("untilDate", untilDate);
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get();
-            if (response.getStatus() != 200) {
+            if (response.getStatus() != HttpStatus.OK.value()) {
                 fail("Invalid request " + response.getStatusInfo().getReasonPhrase());
             }
             PageableTagsDTO tags = objectMapper.readValue(response.readEntity(String.class), PageableTagsDTO.class);
@@ -177,7 +178,7 @@ public class RestServiceIT {
             assertEquals(Integer.valueOf(50),Integer.valueOf(tags.getTags().size()));
         }catch(Exception e){
             e.printStackTrace();
-            fail("Exception was thrown.");            
+            fail("Exception was thrown");            
         }finally{
             coRepository.delete(co);
         }
@@ -197,7 +198,7 @@ public class RestServiceIT {
                     .queryParam("from", fromDate)
                     .queryParam("untilDate", untilDate);
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get();
-            if (response.getStatus() != 200) {
+            if (response.getStatus() != HttpStatus.OK.value()) {
                 fail("Invalid request " + response.getStatusInfo().getReasonPhrase());
             }
             PageableTagsDTO tags = objectMapper.readValue(response.readEntity(String.class), PageableTagsDTO.class);
@@ -205,7 +206,7 @@ public class RestServiceIT {
             target = client.target("http://localhost:8080").path("/api/tag/listNext")
                     .queryParam("resumptionToken", tags.getResumptionToken());
             response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get();
-            if (response.getStatus() != 200) {
+            if (response.getStatus() != HttpStatus.OK.value()) {
                 fail("Invalid request " + response.getStatusInfo().getReasonPhrase());
             }
             tags = objectMapper.readValue(response.readEntity(String.class), PageableTagsDTO.class);
@@ -218,12 +219,35 @@ public class RestServiceIT {
             assertEquals(Integer.valueOf(1),Integer.valueOf(tags.getTags().size()));
         }catch(Exception e){
             e.printStackTrace();
-            fail("Exception was thrown.");            
+            fail("Exception was thrown");            
         }finally{
             coRepository.delete(co);
         }
     }
 
+    @Test
+    public void testStartEnrichment(){
+        CulturalObject co = CulturalObjectDTO.toCulturalObject(generateCO());
+        co = coRepository.save(co);
+        try{
+            WebTarget target = client.target("http://localhost:8080").path("/api/batch/publish").queryParam("batchId",co.getBatchId());
+            Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get();
+            if(response.getStatus() != HttpStatus.OK.value()){
+                fail("Response is: " + response.getStatus());
+            }
+            ResultMessageDTO result = objectMapper.readValue(response.readEntity(String.class), ResultMessageDTO.class);
+            if(result.getStatus().equals(Status.SUCCESS)){
+                co = coRepository.findOne(co.getId());
+                assertEquals(Boolean.TRUE, co.isActive());
+            }else{
+                fail("Not processed correctly: " + result.getMessage());
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            fail("Exception was thrown");
+        }
+    }
+    
     public CulturalObjectDTO generateCO() {
         CulturalObjectDTO culturalObject = new CulturalObjectDTO();
         culturalObject.setAuthor("Author");
@@ -233,7 +257,7 @@ public class RestServiceIT {
         culturalObject.setDescription(descriptions);
         culturalObject.setExternalId("externalId");
         culturalObject.setExternalUrl("http://localhost:8080/");
-        culturalObject.setImagePath("http://localhost:8080/test.jpg");
+        culturalObject.setImagePath("http://localhost:8080/test_image.jpeg");
         return culturalObject;
     }
     

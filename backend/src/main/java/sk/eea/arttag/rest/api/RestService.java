@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -85,7 +86,7 @@ public class RestService {
 	}	
 
 	@ApiOperation(httpMethod = "DELETE", value = "Used to remove batch from enrichment process.")
-	@RequestMapping(value = "/api/cultural/removeBatch/{batchId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/api/batch/remove/{batchId}", method = RequestMethod.DELETE)
 	public ResponseEntity<String> removeBatch(@PathVariable("batchId") String batchId) throws Exception {
 		ResultMessageDTO result = new ResultMessageDTO();
 		try {
@@ -128,6 +129,20 @@ public class RestService {
         }
 	}
 
+	@ApiOperation(httpMethod = "GET", value = "Used to start enritching batch")
+	@RequestMapping(value = "/api/batch/publish", method = RequestMethod.GET)
+	public ResponseEntity<String> publishBatch(@QueryParam("batchId")String batchId){
+	    try{
+	        ResultMessageDTO result = new ResultMessageDTO();
+	        storeService.publish(batchId);
+	        result.setStatus(Status.SUCCESS);
+            return new ResponseEntity<String>(mapper.writeValueAsString(result),HttpStatus.OK);
+	    }catch(Exception e){
+	        LOG.error("Error publishing batch", e);
+	        return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+	
     private Date parseDate(String date, Date defaultDate) {
         if(date == null)
             return defaultDate;

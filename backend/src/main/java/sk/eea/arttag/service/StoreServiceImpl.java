@@ -3,6 +3,9 @@
  */
 package sk.eea.arttag.service;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -11,8 +14,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
+import sk.eea.arttag.helpers.FilesHelper;
 import sk.eea.arttag.model.CulturalObject;
 import sk.eea.arttag.model.CulturalObjectRepository;
 import sk.eea.arttag.model.LocalizedString;
@@ -31,11 +39,16 @@ public class StoreServiceImpl implements StoreService {
 
     private static final TemporalAmount EXPIRATION = Duration.of(30, ChronoUnit.MINUTES);
 
+    private static final Logger LOG = LoggerFactory.getLogger(StoreService.class);
+
     @Autowired
 	private CulturalObjectRepository culturalObjectRepository;
 	
 	@Autowired
 	private TagRepository tagRepository;
+
+    @Value("${working.dir}")
+    private String workingDir;
 	
 	
 	/* (non-Javadoc)
@@ -96,6 +109,38 @@ public class StoreServiceImpl implements StoreService {
 	    
 	}
 
+    @Override
+    public void publish(String batchId) throws Exception {
+        List<CulturalObject> coList = culturalObjectRepository.findByBatchId(batchId);
+        Path batchDir = Paths.get(workingDir).resolve(batchId + System.currentTimeMillis());
+        try{
+            if(batchDir.toFile().exists())
+                throw new Exception("Working file for batch exists. This shouldn't happen!");
+            batchDir.toFile().mkdir();
+            List<CulturalObject> failedObjects = new ArrayList<CulturalObject>();
+            for(CulturalObject co : coList){
+                String targetFilename = String.valueOf(co.getId());
+                Boolean downloadSuccess = FilesHelper.download(co.getImagePath(),batchDir.resolve(targetFilename));
+                if(!downloadSuccess){
+                    failedObjects.add(co);
+                }else{
+                    co.setImagePath(targetFilename);
+                }
+            }
+            // do image magic trick + copy images to target
+            
+            coList.removeAll(failedObjects);
+            coList.forEach(co -> co.setActive(Boolean.TRUE));
+            culturalObjectRepository.save(coList);
+        }finally {
+            try {
+                FileUtils.deleteDirectory(batchDir.toFile());
+            } catch (IOException e) {
+                LOG.error("Could not delete working directory: {}", batchDir);
+            }
+        }
+    }
+    
     private String generateToken(TokenAttr attr) {
         return new StringBuilder().append(new Date().getTime())
                 .append(":").append(attr.getFromDate().getTime())

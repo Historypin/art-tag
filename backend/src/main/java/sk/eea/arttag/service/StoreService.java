@@ -43,5 +43,18 @@ public interface StoreService {
 	 */
     PageableTagsDTO listTags(Date fromDate, Date untilDate, String batchId);
 
+    /**
+     * Continue listing tags with returned token.
+     * @param resumptionToken
+     * @return
+     * @throws TokenExpiredException
+     */
     PageableTagsDTO listTags(String resumptionToken) throws TokenExpiredException;
+
+    /**
+     * Will publish objects for enriching.
+     * @param batchId
+     * @throws Exception 
+     */
+    void publish(String batchId) throws Exception;
 }

@@ -7,6 +7,7 @@ public class Player {
 
 	private String token;
 	private String name;
+	private String userId;
 	private List<Card> hand = new ArrayList<>();
 	private Card ownCardSelection;
 	private Card tableCardSelection;
@@ -15,9 +16,10 @@ public class Player {
 
 	public Player() {
 	}
-	public Player(String token, String name) {
+	public Player(String token, String name, String userId) {
 		this.token = token;
 		this.name = name;
+		this.userId = userId;
 	}
 
 	public List<Card> getHand() {
@@ -32,7 +34,6 @@ public class Player {
 	public void setDealer(boolean dealer) {
 		this.dealer = dealer;
 	}
-
 	public String getToken() {
 		return token;
 	}
@@ -44,6 +45,12 @@ public class Player {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	public Card getOwnCardSelection() {
 		return ownCardSelection;

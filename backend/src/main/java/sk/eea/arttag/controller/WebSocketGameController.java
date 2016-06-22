@@ -1,5 +1,20 @@
 package sk.eea.arttag.controller;
 
+import java.io.IOException;
+import java.net.URI;
+import java.security.Principal;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.websocket.EncodeException;
+
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,22 +22,13 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.GamePlayerView;
 import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.game.model.UserInput;
 import sk.eea.arttag.game.model.UserInputType;
 import sk.eea.arttag.game.service.GameService;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.websocket.EncodeException;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class WebSocketGameController extends TextWebSocketHandler {
 
@@ -33,8 +39,18 @@ public class WebSocketGameController extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+
+    	String gameId = findGameIdInURI(session.getUri(), "gameId");
+    	LOG.debug("OPEN GAME_ID: {}", gameId);
+
+    	Principal principal = session.getPrincipal();
+    	if (principal == null) {
+    		LOG.info("No principal");
+    	} else {
+    		LOG.info("Principal: {}", principal.getName());
+    	}
         clients.put(session.getId(), session);
-        GameService.getInstance().addPlayer(session.getId());
+        GameService.getInstance().addPlayer(session.getId(), principal.getName(), gameId);
     }
 
     @Override
@@ -143,5 +159,16 @@ public class WebSocketGameController extends TextWebSocketHandler {
                 .toString();
 
         return res;
+    }
+
+    private String findGameIdInURI(URI uri, String name) {
+        Map<String, String> query_pairs = new HashMap<String, String>();
+        String query = uri.getQuery();
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            query_pairs.put(pair.substring(0, idx), pair.substring(idx + 1));
+        }
+        return query_pairs.get(name);
     }
 }

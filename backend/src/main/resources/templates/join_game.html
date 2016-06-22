@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Blank page</title>
+    <title th:text="'Game' + ${gameId}"></title>
 
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
@@ -54,10 +54,11 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
-<script type="text/javascript">
+<script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
+    var endpoint = 'ws://localhost:8080/ws/game?gameId=' + /*[[${gameId}]]*/;
     var webSocket =
-            new WebSocket('ws://localhost:8080/ws/game');
+            new WebSocket(endpoint);
 
     webSocket.onerror = function (event) {
         onError(event)

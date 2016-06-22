@@ -1,7 +1,3 @@
-body {
-    margin: 0 auto;
-}
-
 .container-full {
     margin: 0 auto;
     width: 100%;
@@ -40,6 +36,88 @@ body {
 .vertical-align {
     display: flex;
     align-items: center;
+}
+
+#signinbutton
+{
+    /*border-radius: 250px;*/
+    border-color: transparent;
+    background-color: rgba(212, 212, 221, 0.8);
+}
+
+#indexpage
+{
+    height: 100vh;
+    background-image: url("https://wallpaperscraft.com/image/owl_bird_predator_eyes_feathers_66601_1920x1080.jpg");
+    background-repeat:no-repeat;
+    background-size:cover
+}
+
+#welcomediv
+{
+    background-color: rgba(100, 100, 100, 0.4);
+    max-height: 500px;
+}
+
+.fill-height {
+    min-height: 100%;
+    height:auto !important; /* cross-browser */
+    height: 100%; /* cross-browser */
+}
+
+.container-fluid {
+    height: 100vh;
+    overflow:hidden;
+}
+
+.modal {
+    text-align: center;
+    padding: 0!important;
+}
+
+.modal:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -4px; /* Adjusts for spacing */
+}
+
+.modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.stroke {
+    overflow: hidden;
+    text-align: center;
+}
+.stroke:before,
+.stroke:after {
+    background-color: #000;
+    content: "";
+    display: inline-block;
+    height: 1px;
+    position: relative;
+    vertical-align: middle;
+    width: 50%;
+}
+.stroke:before {
+    right: 0.5em;
+    margin-left: -50%;
+}
+.stroke:after {
+    left: 0.5em;
+    margin-right: -50%;
+}
+
+
+.modal-content
+{
+    -webkit-border-radius: 0px !important;
+    -moz-border-radius: 0px !important;
+    border-radius: 0px !important;
 }
 
 .lightslategray-background {background-color:lightslategray;}

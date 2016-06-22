@@ -13,59 +13,257 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet"/>
 
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
+          th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
+
     <link href="../static/css/console.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
 </head>
-<body>
-<fieldset>
-    <legend>Game</legend>
-    <div>Id<input id="GameId" type="text" value=""/></div>
-    <div>Name<input id="GameName" type="text" value=""/></div>
-    <div>Created<input id="GameCreated" type="text" value=""/></div>
-    <div>Round Remaining Time<input id="GameRemaining" type="text" value=""/></div>
-    <div>Status<input id="GameStatus" type="text" value=""/></div>
-    <div>Tags<input id="GameTags" type="text" value=""/></div>
-</fieldset>
-<fieldset>
-    <legend>Players</legend>
-    <ul id="Players"></ul>
-</fieldset>
-<fieldset>
-    <legend>Table</legend>
-    <ul id="Table"></ul>
-</fieldset>
-<fieldset>
-    <legend>Hand</legend>
-    <ul id="Hand"></ul>
-</fieldset>
-<div>
-    <input id="inputmessage" type="text"/>
-    <input type="submit" value="Broadcast message" onclick="send()"/>
-</div>
-<div>
-    <input id="Tags" type="text"/>
-    <input type="submit" value="Send Tags" onclick="sendTags()"/>
-</div>
-<div>
-    <input type="submit" value="Ready for next round" onclick="playerReady()"/>
-</div>
-<div id="messages"></div>
+<style>
+    body {
+        margin-top: 20px;
+    }
 
-<script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
+    .game-table {
+        list-style: none;
+    }
+
+    .hand {
+        list-style: none;
+    }
+
+    .players ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .chat .panel-body {
+        max-height: 500px;
+        overflow-y: scroll;
+    }
+
+    .chat ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .chat li span {
+        margin: 0;
+        color: #777777;
+    }
+</style>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+            <div class="row">
+                <div class="game-table col-md-12 col-lg-12">
+                    <legend>Table</legend>
+                    <ul data-bind="foreach: table">
+                        <li>
+                            <span data-bind="text: token"></span>
+                            <a href="#" data-bind="click: $parent.selectTableCard">select</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="hand col-md-12 col-lg-12">
+                    <legend>Hand</legend>
+                    <ul data-bind="foreach: hand">
+                        <li>
+                            <span data-bind="text: token"></span>
+                            <a href="#" data-bind="click: $parent.selectHandCard">select</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="hand col-md-12 col-lg-12">
+                    <legend>Controls</legend>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label class="sr-only" for="tagsInput">Tags input</label>
+                            <input type="text" class="form-control" id="tagsInput" placeholder="Write tag here" data-bind="textInput: tagsInput"/>
+                            <button class="btn btn-default" data-bind="click: sendTags">Send</button>
+                        </div>
+                    </div>
+                    <div class="form">
+                        <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-4">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Game</h3>
+                    </div>
+                    <div class="panel-body">
+                        Id: <b data-bind="text: game.id"/><br/>
+                        Name: <b data-bind="text: game.name"/><br/>
+                        Created: <b data-bind="text: game.created"/><br/>
+                        Round Remaining Time: <b data-bind="text: game.remainingTime"/><br/>
+                        Status: <b data-bind="text: game.status"/><br/>
+                        Tags: <b data-bind="text: game.tags"/><br/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="players panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Players</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul data-bind="foreach: game.players">
+                            <li data-bind="template: { name: 'player-line'}"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="chat panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Chat</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul data-bind="foreach: chatHistory">
+                            <li data-bind="if: message">
+                                <p class="chat-body" data-bind="template: { name: 'chat-line'}, autoScroll: true"></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm"
+                                   data-bind="textInput : chatInput, event: {keypress: enterChatMessage}"
+                                   placeholder="Type your message here..."/>
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" data-bind="click: sendChatMessage">
+                                Send</button>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"
+        th:src="@{/webjars/knockout/3.4.0/knockout.js}"></script>
+<script src="../static/js/knockout.mapping.js" th:src="@{/js/knockout.mapping.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
+
+<script type="text/html" id="chat-line">
+    <span data-bind="text: time"></span>
+    <strong data-bind="text: player"></strong>:
+    <span data-bind="text: message"></span>
+</script>
+
+<script type="text/html" id="player-line">
+    <em data-bind="text: name"></em>
+    <strong data-bind="text: dealer() ? '(D)' : ''"></strong>
+    <strong data-bind="text: readyForNextRound() ? '(y)' : ''"></strong>
+</script>
+
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     var endpoint = 'ws://localhost:8080/ws/game?gameId=' + /*[[${gameId}]]*/;
     var webSocket =
             new WebSocket(endpoint);
 
-    webSocket.onerror = function (event) {
-        onError(event)
+    ko.bindingHandlers.autoScroll = {
+        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            $(element).parents('.panel-body').scrollTop($(element).parents('.panel-body')[0].scrollHeight);
+        }
     };
 
-    webSocket.onopen = function (event) {
-        onOpen(event)
+    function ViewModel(data) {
+        data = data || {};
+        var self = this;
+        self = ko.mapping.fromJS(data);
+
+        self.enterChatMessage = function (d, e) {
+            e.keyCode === 13 && self.sendChatMessage();
+            return true;
+        };
+
+        self.sendChatMessage = function () {
+            if (self.chatInput()) {
+                var message = {value: ko.utils.unwrapObservable(self.chatInput()), type: 'CHAT_MESSAGE', gameId: ko.utils.unwrapObservable(self.game.id())};
+                webSocket.send(JSON.stringify(message));
+                var date = new Date();
+                self.chatHistory.push({player: "me", message: self.chatInput(), time: date.toLocaleTimeString()});
+                self.chatInput('');
+            }
+        };
+
+        self.sendTags = function () {
+            if(self.tagsInput()) {
+                var message = {value: ko.utils.unwrapObservable(self.tagsInput()), type: 'TAGS_SELECTED', gameId: ko.utils.unwrapObservable(self.game.id())};
+                webSocket.send(JSON.stringify(message));
+                self.tagsInput("");
+            }
+        };
+
+        self.sendPlayerReady = function () {
+            var message = {value: 'OK', type: 'PLAYER_READY_FOR_NEXT_ROUND', gameId: ko.utils.unwrapObservable(self.game.id())};
+            webSocket.send(JSON.stringify(message));
+        };
+
+        self.selectHandCard = function(card) {
+            var message = {value: card.token(), type: 'OWN_CARD_SELECTED', gameId: ko.utils.unwrapObservable(self.game.id())};
+            webSocket.send(JSON.stringify(message));
+        };
+
+        self.selectTableCard = function(card) {
+            var message = {value: card.token(), type: 'TABLE_CARD_SELECTED', gameId: ko.utils.unwrapObservable(self.game.id())};
+            webSocket.send(JSON.stringify(message));
+        };
+
+
+        return self;
+    }
+
+    var viewModel = new ViewModel({
+        "userToken": "",
+        "game": {
+            "id": "",
+            "name": "",
+            "remainingTime": 0,
+            "tags": "",
+            "created": "",
+            "players": [{
+                "name": "",
+                "dealer": false,
+                "readyForNextRound": false
+            }],
+            "status": ""
+        },
+        "hand": [{
+            "token": ""
+        }],
+        "table": [{
+            "token": ""
+        }],
+        "chatHistory": [{
+            "player": "",
+            "message": "",
+            "time": ""
+        }],
+        "chatInput": "",
+        "tagsInput": ""
+    });
+    ko.applyBindings(viewModel);
+
+    webSocket.onerror = function (event) {
+        onError(event)
     };
 
     webSocket.onmessage = function (event) {
@@ -73,88 +271,23 @@
     };
 
     function onMessage(event) {
-        var msg = JSON.parse(event.data);
-        console.log(msg);
-        document.getElementById('messages').innerHTML
-                += '<br />Received message: ' + event.data;
-        document.getElementById('GameRemaining').value = msg.Game.RemainingTime;
-        document.getElementById('GameCreated').value = msg.Game.Created;
-        document.getElementById('GameName').value = msg.Game.Name;
-        document.getElementById('GameId').value = msg.Game.Id;
-        document.getElementById('GameStatus').value = msg.Game.Status;
-        document.getElementById('GameTags').value = msg.Game.Tags;
-
-        var handDiv = '';
-        msg.Hand.forEach(function (card) {
-            handDiv += '<li>' + card.Token + '<input type="submit" value="select" onclick="selectCard(\''+ card.Token + '\')"/>' + '</li>';
-        });
-        document.getElementById('Hand').innerHTML = handDiv;
-
-        var tableDiv = '';
-        msg.Game.Table.forEach(function (card) {
-            tableDiv += '<li>' + card.Token + '<input type="submit" value="select" onclick="selectTableCard(\''+ card.Token + '\')"/>' + '</li>';
-        });
-        document.getElementById('Table').innerHTML = tableDiv;
-
-        var playersDiv = '';
-        msg.Game.Players.forEach(function (player) {
-            playersDiv += '<li>' + player.Name + (player.Dealer ? ' (D) ' : '') + (player.ReadyForNextRound ? ' :) ' : '') +'</li>';
-        });
-        document.getElementById('Players').innerHTML = playersDiv;
-    }
-
-    function onOpen(event) {
-        document.getElementById('messages').innerHTML
-                = 'Connection established';
+        var data = JSON.parse(event.data);
+        // chat message
+        if (typeof data.type !== 'undefined') {
+            var date = new Date();
+            viewModel.chatHistory.push({
+                player: data.playerName,
+                message: data.value,
+                time: date.toLocaleTimeString()
+            });
+        } else { // model message
+            ko.mapping.fromJS(data, {}, viewModel);
+        }
     }
 
     function onError(event) {
         alert(event.data);
     }
-
-    function send() {
-        var txt = document.getElementById('inputmessage').value;
-        webSocket.send(txt);
-        return false;
-    }
-
-	function selectCard(card) {
-        var id = document.getElementById('GameId').value;
-		var o = {value: card, type: 'OWN_CARD_SELECTED', gameId: id};
-		var m = JSON.stringify(o);
-		console.log(m);
-		webSocket.send(m);
-		return false;
-	}
-
-	function selectTableCard(card) {
-        var id = document.getElementById('GameId').value;
-		var o = {value: card, type: 'TABLE_CARD_SELECTED', gameId: id};
-		var m = JSON.stringify(o);
-		console.log(m);
-		webSocket.send(m);
-		return false;
-	}
-
-	function playerReady() {
-        var id = document.getElementById('GameId').value;
-		var o = {value: 'OK', type: 'PLAYER_READY_FOR_NEXT_ROUND', gameId: id};
-		var m = JSON.stringify(o);
-		console.log(m);
-		webSocket.send(m);
-		return false;
-	}
-
-	function sendTags() {
-        var id = document.getElementById('GameId').value;
-        var t = document.getElementById('Tags').value;
-		var o = {value: t, type: 'TAGS_SELECTED', gameId: id};
-		var m = JSON.stringify(o);
-		console.log(m);
-		webSocket.send(m);
-		return false;
-	}
-
     /* ]]> */
 </script>
 </body>

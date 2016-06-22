@@ -97,9 +97,6 @@ ALTER TABLE ONLY cultural_object
 ALTER TABLE ONLY localized_string
     ADD CONSTRAINT localized_string_pkey PRIMARY KEY (id);
 
-ALTER TABLE ONLY system_user
-    ADD CONSTRAINT system_user_pkey PRIMARY KEY (login);
-
 ALTER TABLE ONLY tag
     ADD CONSTRAINT tag_pkey PRIMARY KEY (id);
 

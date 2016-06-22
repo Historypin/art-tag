@@ -22,10 +22,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import sk.eea.arttag.helpers.FilesHelper;
 import sk.eea.arttag.model.CulturalObject;
-import sk.eea.arttag.model.CulturalObjectRepository;
 import sk.eea.arttag.model.LocalizedString;
 import sk.eea.arttag.model.Tag;
-import sk.eea.arttag.model.TagRepository;
+import sk.eea.arttag.repository.CulturalObjectRepository;
+import sk.eea.arttag.repository.TagRepository;
 import sk.eea.arttag.rest.api.PageableTagsDTO;
 import sk.eea.arttag.rest.api.TagDTO;
 

@@ -28,10 +28,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import sk.eea.arttag.ArttagApp;
 import sk.eea.arttag.model.CulturalObject;
-import sk.eea.arttag.model.CulturalObjectRepository;
 import sk.eea.arttag.model.LocalizedString;
 import sk.eea.arttag.model.Tag;
-import sk.eea.arttag.model.TagRepository;
+import sk.eea.arttag.repository.CulturalObjectRepository;
+import sk.eea.arttag.repository.TagRepository;
 import sk.eea.arttag.rest.api.ResultMessageDTO.Status;
 
 @RunWith(SpringJUnit4ClassRunner.class)

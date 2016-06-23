@@ -20,17 +20,18 @@ public class Game {
 	private List<Player> players = new LinkedList<>();
 	private Date endOfRound;
 	private String tags;
-	private List<Card> deck = new ArrayList<>();
+//	private List<Card> deck = new ArrayList<>();
 	private List<Card> table = new ArrayList<>();
 	private int minPlayers;
 	private int maxPlayers;
 	private boolean privateGame = false;
 	private String creatorUserId;
+	private GameTimeout gameTimeout;
 
 	public Game() {
 	}
 
-	public Game(String id, String name, int minPlayers, int maxPlayers, boolean privateGame, String creatorUserId) {
+	public Game(String id, String name, int minPlayers, int maxPlayers, boolean privateGame, String creatorUserId, GameTimeout gameTimeout) {
 		this.id = id;
 		this.name = name;
 		this.minPlayers = minPlayers;
@@ -39,6 +40,7 @@ public class Game {
 		this.status = GameStatus.NEW;
 		this.privateGame = privateGame;
 		this.creatorUserId = creatorUserId;
+		this.gameTimeout = gameTimeout;
 	}
 
 	public String getId() {
@@ -114,13 +116,13 @@ public class Game {
 		this.tags = tags;
 	}
 
-	public List<Card> getDeck() {
+/*	public List<Card> getDeck() {
 		return deck;
 	}
 
 	public void setDeck(List<Card> deck) {
 		this.deck = deck;
-	}
+	}*/
 
 	public List<Card> getTable() {
 		return table;
@@ -144,6 +146,10 @@ public class Game {
 
 	public String getCreatorUserId() {
 		return creatorUserId;
+	}
+
+	public GameTimeout getGameTimeout() {
+		return gameTimeout;
 	}
 
 	public void resetRound() {

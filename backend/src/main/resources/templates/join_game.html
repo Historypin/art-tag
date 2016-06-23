@@ -62,17 +62,17 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8 col-lg-8">
-            <div class="row" data-bind="if: table().length > 0">
+            <div class="row" data-bind="if: gameView.table().length > 0">
                 <div class="game-table col-md-12 col-lg-12">
                     <legend>Table</legend>
-                    <div data-bind="foreach: table">
+                    <div data-bind="foreach: gameView.table">
                         <div class="col-lg-3 col-md-4 col-xs-6 thumb">
                             <a class="thumbnail" href="#">
                                 <img class="img-responsive"
                                      data-toggle="modal"
                                      data-target="#imageModal"
                                      data-bind="attr: {
-                                        'src': $root.imagePath.concat(token()),
+                                        'src': source,
                                         'data-id': token
                                      }"
                                 ></img>
@@ -91,7 +91,7 @@
                                      data-toggle="modal"
                                      data-target="#imageModal"
                                      data-bind="attr: {
-                                        'src': $root.imagePath.concat(token()),
+                                        'src': source,
                                         'data-id': token
                                      }"
                                 ></img>
@@ -125,12 +125,11 @@
                         <h3 class="panel-title">Game</h3>
                     </div>
                     <div class="panel-body">
-                        Id: <b data-bind="text: game.id"/><br/>
-                        Name: <b data-bind="text: game.name"/><br/>
-                        Created: <b data-bind="text: game.created"/><br/>
-                        Round Remaining Time: <b data-bind="text: game.remainingTime"/><br/>
-                        Status: <b data-bind="text: game.status"/><br/>
-                        Tags: <b data-bind="text: game.tags"/><br/>
+                        Id: <b data-bind="text: gameView.id"/><br/>
+                        Name: <b data-bind="text: gameView.name"/><br/>
+                        Round Remaining Time: <b data-bind="text: gameView.remainingTime"/><br/>
+                        Status: <b data-bind="text: gameView.status"/><br/>
+                        Tags: <b data-bind="text: gameView.tags"/><br/>
                     </div>
                 </div>
             </div>
@@ -140,7 +139,7 @@
                         <h3 class="panel-title">Players</h3>
                     </div>
                     <div class="panel-body">
-                        <ul data-bind="foreach: game.players">
+                        <ul data-bind="foreach: gameView.players">
                             <li data-bind="template: { name: 'player-line'}"></li>
                         </ul>
                     </div>
@@ -178,7 +177,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <img src="//placehold.it/1000x600" class="img-responsive"></img>
+                    <img class="img-responsive"></img>
                     <div class="form-horizontal">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Id</label>
@@ -224,6 +223,7 @@
     <em data-bind="text: name"></em>
     <strong data-bind="text: dealer() ? '(D)' : ''"></strong>
     <strong data-bind="text: readyForNextRound() ? '(y)' : ''"></strong>
+    <strong data-bind="text: inactive() ? '(i)' : ''"></strong>
 </script>
 
 <script type="text/javascript" th:inline="javascript">
@@ -261,7 +261,6 @@
         data = data || {};
         var self = this;
         self = ko.mapping.fromJS(data, mapping);
-        self.imagePath = contextPath + 'img/';
 
         self.enterChatMessage = function (d, e) {
             e.keyCode === 13 && self.sendChatMessage();
@@ -273,7 +272,7 @@
                 var message = {
                     value: ko.utils.unwrapObservable(self.chatInput()),
                     type: 'CHAT_MESSAGE',
-                    gameId: ko.utils.unwrapObservable(self.game.id())
+                    gameId: ko.utils.unwrapObservable(self.gameView.id())
                 };
                 webSocket.send(JSON.stringify(message));
                 var date = new Date();
@@ -287,7 +286,7 @@
                 var message = {
                     value: ko.utils.unwrapObservable(self.tagsInput()),
                     type: 'TAGS_SELECTED',
-                    gameId: ko.utils.unwrapObservable(self.game.id())
+                    gameId: ko.utils.unwrapObservable(self.gameView.id())
                 };
                 webSocket.send(JSON.stringify(message));
                 self.tagsInput("");
@@ -298,7 +297,7 @@
             var message = {
                 value: 'OK',
                 type: 'PLAYER_READY_FOR_NEXT_ROUND',
-                gameId: ko.utils.unwrapObservable(self.game.id())
+                gameId: ko.utils.unwrapObservable(self.gameView.id())
             };
             webSocket.send(JSON.stringify(message));
         };
@@ -307,7 +306,7 @@
             var message = {
                 value: card.token(),
                 type: 'OWN_CARD_SELECTED',
-                gameId: ko.utils.unwrapObservable(self.game.id())
+                gameId: ko.utils.unwrapObservable(self.gameView.id())
             };
             webSocket.send(JSON.stringify(message));
         };
@@ -316,7 +315,7 @@
             var message = {
                 value: card.token(),
                 type: 'TABLE_CARD_SELECTED',
-                gameId: ko.utils.unwrapObservable(self.game.id())
+                gameId: ko.utils.unwrapObservable(self.gameView.id())
             };
             webSocket.send(JSON.stringify(message));
         };
@@ -326,53 +325,30 @@
     }
 
     var viewModel = new ViewModel({
-//        "userToken": "",
-//        "dealer": false,
-//        "hand": [{
-//            "token" : "",
-//            "source" : ""
-//        }],
-//        "gameView": {
-//            "id": "",
-//            "name": "",
-//            "status": "",
-//            "tags": "",
-//            "remainingTime": 0,
-//            "players": [{
-//                "token": "",
-//                "name": "",
-//                "ownCardSelection": null,
-//                "tableCardSelection": null,
-//                "readyForNextRound": false,
-//                "dealer": false
-//        }],
-//            "table": []
-//    }
-
-
-
-
-
-        "userToken": "",
-        "game": {
-            "id": "",
-            "name": "",
-            "remainingTime": 0,
-            "tags": "",
-            "created": "",
-            "players": [{
-                "name": "",
-                "dealer": false,
-                "readyForNextRound": false
-            }],
-            "status": ""
+        "userToken" : "",
+        "dealer" : false,
+        "hand" : [{
+            "token": "",
+            "source": ""
+        }],
+        "gameView" : {
+            "id" : "",
+            "name" : "",
+            "status" : "CREATED",
+            "tags" : "",
+            "remainingTime" : 0,
+            "players" : [ {
+                "token" : "",
+                "name" : "admin",
+                "readyForNextRound" : false,
+                "dealer" : false,
+                "inactive" : false
+        } ],
+            "table" : [{
+                "token": "",
+                "source": ""
+            }]
         },
-        "hand": [{
-            "token": ""
-        }],
-        "table": [{
-            "token": ""
-        }],
         "chatHistory": [{
             "player": "",
             "message": "",

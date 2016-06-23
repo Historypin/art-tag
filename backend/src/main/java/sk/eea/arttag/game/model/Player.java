@@ -1,5 +1,7 @@
 package sk.eea.arttag.game.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,14 +9,18 @@ public class Player {
 
 	private String token;
 	private String name;
+    @JsonIgnore
 	private String userId;
+    @JsonIgnore
 	private List<Card> hand = new ArrayList<>();
+    @JsonIgnore
     private Card ownCardSelection;
+    @JsonIgnore
 	private Card tableCardSelection;
 	private boolean readyForNextRound;
 	private boolean dealer;
 	private boolean inactive;//disconnected
-	private boolean skipThisRound;//user failed to act 
+	private boolean skipThisRound;//user failed to act
 
 	public Player() {
 	}

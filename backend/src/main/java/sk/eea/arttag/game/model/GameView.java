@@ -1,5 +1,7 @@
 package sk.eea.arttag.game.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,12 +13,13 @@ public class GameView {
 
 	private String id;
 	private String name;
+    @JsonIgnore
 	private Date created;
 	private GameStatus status;
-	private Date endOfRound;
+    @JsonIgnore
+    private Date endOfRound;
 	private String tags;
 	private int remainingTime;
-//	private Map<String, Player> players = new HashMap<>();;
 	private List<Player> players = new LinkedList<>();
 	private List<Card> table = new ArrayList<>();
 

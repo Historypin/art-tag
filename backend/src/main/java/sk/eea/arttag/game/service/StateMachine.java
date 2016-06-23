@@ -34,13 +34,18 @@ public class StateMachine {
 	}
 
 	public void triggerEvent(Game game, GameEvent event, UserInput userInput, String userToken, Player player) throws GameException {
+
+		if (game == null) {
+			return;
+		}
 		//verify validity of userInput (if not null)
 
 		switch (game.getStatus()) {
 		case NEW:
 			if (GameEvent.GAME_CREATED == event) {
 				game.setStatus(GameStatus.CREATED);
-				game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));// FIXME:
+				//TODO: start a timer or not?
+				game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
 				gameService.getGames().put(game.getId(), game);
 			}
 			break;
@@ -49,17 +54,28 @@ public class StateMachine {
 			if (GameEvent.PLAYER_JOINED == event) {
 				joinGame(game, player);
 
+			} else if (GameEvent.ROUND_STARTED == event) {
+				// PLAYER STARTED A GAME (user input)
+				// verify event sender is game creator
+				Player p = game.findPlayerByUserId(userInput.getPlayerName());
+				if (p != null && game.getCreatorUserId().equalsIgnoreCase(userInput.getPlayerName())) {
+					// try to start a game
+					startGame(game);
+				}
+
 			} else if (GameEvent.TIMEOUT == event) {
-				// start the game? or discard game due to minimal number of
-				// players not reached? or start a new timer?
-				game.setDeck(getInitialDeck());
-				dealCards(game, GameService.HAND_SIZE);
-				startRound(game);
+				// start the game? 
+				// or discard game due to minimal number of players not reached? 
+				// or start a new timer?
+				startGame(game);
 			}
 			break;
 
 		case ROUND_STARTED:
-			if (GameEvent.TAGS_SELECTED == event) {
+			if (GameEvent.PLAYER_JOINED == event) {
+				joinGame(game, player);
+
+			} else if (GameEvent.TAGS_SELECTED == event) {
 				processUserInput(game, userInput, userToken);
 				if (true) {//verify tags set correctly
 				}
@@ -73,7 +89,10 @@ public class StateMachine {
 			break;
 
 		case ROUND_TAGS_SELECTED:
-			if (GameEvent.PLAYER_OWN_CARD_SELECTED == event) {
+			if (GameEvent.PLAYER_JOINED == event) {
+				joinGame(game, player);
+
+			} else if (GameEvent.PLAYER_OWN_CARD_SELECTED == event) {
 				processUserInput(game, userInput, userToken);
 				// check if all players already selected own card
 				boolean notYetAllPlayersSelected = game.getPlayers().stream()
@@ -92,7 +111,10 @@ public class StateMachine {
 			break;
 
 		case ROUND_OWN_CARDS_SELECTED:
-			if (GameEvent.PLAYER_TABLE_CARD_SELECTED == event) {
+			if (GameEvent.PLAYER_JOINED == event) {
+				joinGame(game, player);
+
+			} else if (GameEvent.PLAYER_TABLE_CARD_SELECTED == event) {
 				processUserInput(game, userInput, userToken);
 				// check if all players already selected own card
 				boolean notYetAllPlayersSelected = game.getPlayers().stream()
@@ -115,7 +137,11 @@ public class StateMachine {
 				game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
 				game.setStatus(GameStatus.ROUND_STARTED);
 
-			} else */if (GameEvent.TIMEOUT == event) {
+			} else */
+			if (GameEvent.PLAYER_JOINED == event) {
+				joinGame(game, player);
+
+			} else if (GameEvent.TIMEOUT == event) {
 				// start the game? or discard game due to minimal number of
 				// players not reached? or start a new timer?
 				startRound(game);
@@ -142,7 +168,7 @@ public class StateMachine {
 		}
 	}
 
-	private boolean nextRound(Game game) {
+	private void nextRound(Game game) {
 
 		game.resetRound();
 
@@ -155,8 +181,10 @@ public class StateMachine {
 		    Player player = it.next();
 		    if (dealerFound) {
 			    player.roundReset();
-		    	player.setDealer(true);
-		    	dealerAssigned = true;
+			    if (!player.isInactive()) {
+			    	player.setDealer(true);
+			    	dealerAssigned = true;
+			    }
 		    } else {
 			    dealerFound = player.isDealer();
 			    player.roundReset();
@@ -166,22 +194,19 @@ public class StateMachine {
 		if (!dealerAssigned) {
 //			it = game.getPlayers().entrySet().iterator();
 			it = game.getPlayers().iterator();
-			if (it.hasNext()) {
+			while (it.hasNext()) {
 //			    Map.Entry<String, Player> entry = it.next();
 			    Player player = it.next();
-			    player.setDealer(true);
-			} else {
-				return false;
+			    if (!player.isInactive()) {
+				    player.setDealer(true);
+				    break;
+			    }
 			}
 		}
 
-		boolean playerWithNoCardsExists = game.getPlayers().stream()
-				.anyMatch(p -> p.getHand().size() < 1);
-		if (playerWithNoCardsExists) {
-			return false;
-		}
-
-		return true;
+		//obsolete
+/*		boolean playerWithNoCardsExists = game.getPlayers().stream()
+				.anyMatch(p -> p.getHand().size() < 1);*/
 	}
 
 	private void showTable(Game game) {
@@ -189,14 +214,21 @@ public class StateMachine {
 		game.setTable(table);
 	}
 
-	private void startRound(Game game) {
-		boolean canStartNextRound = nextRound(game);
-		if (!canStartNextRound) {
-			game.setStatus(GameStatus.FINISHED);
+	private void startGame(Game game) throws GameException {
+		// evaluate number of players in game, possibly we can start the game
+		if (game.getMinPlayers() <= game.getPlayers().size()) {
+			game.setDeck(getInitialDeck());
+			dealCards(game, GameService.HAND_SIZE);
+			startRound(game);
 		} else {
-			game.setStatus(GameStatus.ROUND_STARTED);
-			game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
+			throw new GameException(GameExceptionType.MIN_NUMBER_OF_PLAYERS_NOT_REACHED);
 		}
+	}
+
+	private void startRound(Game game) {
+		nextRound(game);
+		game.setStatus(GameStatus.ROUND_STARTED);
+		game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
 	}
 
 	private void finishRound(Game game) {
@@ -207,27 +239,50 @@ public class StateMachine {
 	}
 
 	private void joinGame(Game game, Player player) throws GameException {
-		//TODO: evaluate game not null, game status, number of active players, private/public, join/rejoin
+		//game status, 
+		//number of active players, 
+		//private/public, 
+		//join/rejoin (evaluate if userToken is already in joined players)
 
-		// verify game state
-		// evaluate if userToken is already in joined players
 		String userId = player.getUserId();
 		Player playerInGame = game.findPlayerByUserId(userId);
 		if (playerInGame != null) {
+			//RECONNECT A PLAYER
+			//evaluate game status (all except FINISHED)
+			if (GameStatus.FINISHED == game.getStatus()) {
+				LOG.info("Rejecting player {} to join the game, game already finished", userId);
+				throw new GameException(GameExceptionType.GAME_ALREADY_FINISHED);
+			}
 			if (playerInGame.isInactive()) {
-				LOG.debug("Reconnecting player '{}' to game", userId);
+				LOG.info("Reconnecting player '{}' to game", userId);
 				playerInGame.setInactive(false);
 				playerInGame.setToken(player.getToken());
 			} else {
-				LOG.info("Refusing player '{}' to join game", userId);
+				LOG.info("Player {} already in game", userId);
 				throw new GameException(GameExceptionType.PLAYER_ALREADY_IN_GAME);
 			}
 		} else {
-			//TODO: evaluate min/max players
-			LOG.debug("Adding player '{}' to game", userId);
-			game.addPlayer(player);
+			//ADD A NEW PLAYER
+			//evaluate min/max players
+			//evaluate game status (only CREATED)
+			if (GameStatus.CREATED == game.getStatus()) {
+				if (game.getMaxPlayers() > game.getPlayers().size()) {
+					LOG.info("Adding player '{}' to game", userId);
+					game.addPlayer(player);
+				} else {
+					LOG.info("Rejecting player {} to join the game, max number of players reached", userId);
+					throw new GameException(GameExceptionType.MAX_NUMBER_OF_PLAYERS_REACHED);
+				}
+			} else {
+				LOG.info("Rejecting player {} to join the game, game already in progress", userId);
+				throw new GameException(GameExceptionType.GAME_ALREADY_STARTED);
+			}
 		};
-		// evaluate number of users, possibly we can start the game
+
+		// try to start the game after max number of players reached
+		if (game.getMaxPlayers() == game.getPlayers().size()) {
+			startGame(game);
+		}
 	}
 
 	private List<Card> getInitialDeck() {

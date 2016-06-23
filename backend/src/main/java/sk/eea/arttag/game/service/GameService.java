@@ -125,7 +125,9 @@ public class GameService {
 		GameEvent gameEvent = UserInputType.TAGS_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED : (
 				UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED : (
 						UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED: (
-								UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND: null))
+								UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND: (
+										UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED: null
+										)))
 				);
 		stateMachine.triggerEvent(game, gameEvent, input, userToken, null);
 //		updateGameAfterUserInput(game, input, userToken);

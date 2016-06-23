@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Index page</title>
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
+          th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
+
+    <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="container-fluid">
+    <div id='joinGameScreenUpperHalf' class="row">
+        <!--<div class="col-sm-6 col-sm-offset-3">
+          <div class="center-block btn-group-vertical" role="group">
+        <a th:href="@{/join_game}" class="btn btn-primary btn-lg btn-block">Join game</a>
+            <a th:href="@{/create_game}" class="btn btn-default btn-lg btn-block">Create game</a>
+            <a th:href="@{/score}" class="btn btn-default btn-lg btn-block">Score</a>
+            <a th:href="@{/help}" class="btn btn-default btn-lg btn-block">Help</a>
+            <a th:href="@{/logout}" class="btn btn-default btn-lg btn-block">Logout</a>
+        </div>
+      </div>-->
+        <div class='row vertical-align'>
+            <div class='col-sm-2'>
+                <div class="col-sm-offset-2 ">
+                    <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class='col-sm-8 orange-background'>
+                <div class='centeredText margin10px'>
+                    <h1>ARTTAG
+                        <br></br>
+                        <small>THE ART OF FUN</small>
+                    </h1>
+                </div>
+            </div>
+            <div class='col-sm-2'>
+                <div class='col-md-offset-4'>
+                    <a><small>LANGUAGE</small></a>
+                    <div class='btn margin10px'>
+                        <i class="fa fa-search fa-2x" aria-hidden="true"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row lightslategray-background" style="height: 100%;">
+            <div class="col-sm-12" style="height: 50%; background-color: aqua;">
+
+            </div>
+        </div>
+    </div>
+    <div id='joinGameScreenLowerHalf' class="row">
+        <div class='col-xs-6 centeredText'>
+            <h1 class="h1">Join the game</h1>
+            <input type="email" id="joingameinputbox" placeholder="The name of the game"></input>
+            <br></br>
+            <small><a th:href="@{/join_game}">AVAILABLE GAMES</a></small>
+        </div>
+        <div class='col-xs-6 centeredText'>
+            <h1>Create new game</h1>
+
+            <input type="email" id="createnewgameinputbox" placeholder="Name the game"></input>
+            <br></br>
+            <small><a th:href="@{/create_game}">INVITE YOUR FRIENDS</a></small>
+        </div>
+    </div>
+</div>
+
+<script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+<script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
+</body>
+</html>

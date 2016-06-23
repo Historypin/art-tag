@@ -70,8 +70,8 @@ public class StateMachine {
 				}
 
 			} else if (GameEvent.TIMEOUT == event) {
-				// start the game? 
-				// or discard game due to minimal number of players not reached? 
+				// start the game?
+				// or discard game due to minimal number of players not reached?
 				// or start a new timer?
 				startGame(game);
 			}
@@ -245,9 +245,9 @@ public class StateMachine {
 	}
 
 	private void joinGame(Game game, Player player) throws GameException {
-		//game status, 
-		//number of active players, 
-		//private/public, 
+		//game status,
+		//number of active players,
+		//private/public,
 		//join/rejoin (evaluate if userToken is already in joined players)
 
 		String userId = player.getUserId();
@@ -296,7 +296,7 @@ public class StateMachine {
         List<Card> deck = new ArrayList<>();
         for (int i = 1; i <= 12; i++) {
             final String cardToken = String.format("%02d.jpeg", i);
-            final String cardSource = String.format("%s/%s", applicationProperties.getHostname(), cardToken);
+            final String cardSource = String.format("http://%s/img/%s", applicationProperties.getHostname(), cardToken);
             deck.add(new Card(cardToken, cardSource));
         }
         Collections.shuffle(deck);

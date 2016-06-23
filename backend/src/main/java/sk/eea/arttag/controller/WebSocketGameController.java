@@ -117,10 +117,17 @@ public class WebSocketGameController extends TextWebSocketHandler {
 
     private static void sendMessages(List<GamePlayerView> gamePlayerViews) throws IOException, EncodeException {
         for (GamePlayerView view : gamePlayerViews) {
-            final TextMessage message = new TextMessage(objectMapper.writeValueAsString(view));
+        	LOG.debug(view.toString());
+        	String txt = objectMapper.writeValueAsString(view);
+        	LOG.debug(txt);
+            final TextMessage message = new TextMessage(txt);
+            LOG.debug("Clients: {}", clients.size());
             final WebSocketSession webSocketSession = clients.get(view.getUserToken());
             if (webSocketSession != null) {
+            	LOG.debug("Sending message");
                 webSocketSession.sendMessage(message);
+            } else {
+            	LOG.debug("No session");
             }
         }
     }

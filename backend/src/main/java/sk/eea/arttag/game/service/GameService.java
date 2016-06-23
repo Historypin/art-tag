@@ -37,8 +37,8 @@ public class GameService {
 
     @PostConstruct
     public void init() throws GameException {
-        create("1", "game1");
-        create("2", "game2");
+        create("1", "game1", "admin");
+        create("2", "game2", "admin");
     }
 
 	public Map<String, Game> getGames() {
@@ -63,9 +63,9 @@ public class GameService {
 	}
 
 	//TODO:
-	public void create(String id, String name) throws GameException {
+	public void create(String id, String name, String creatorUserId) throws GameException {
 		LOG.debug("CREATE");
-		Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false);
+		Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false, creatorUserId);
 		stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);
 	}
 
@@ -116,7 +116,9 @@ public class GameService {
 		GameEvent gameEvent = UserInputType.TAGS_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED : (
 				UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED : (
 						UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED: (
-								UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND: null))
+								UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND: (
+										UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED: null
+										)))
 				);
 		stateMachine.triggerEvent(game, gameEvent, input, userToken, null);
 //		updateGameAfterUserInput(game, input, userToken);

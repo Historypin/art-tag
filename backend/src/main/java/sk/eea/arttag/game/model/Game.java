@@ -25,11 +25,12 @@ public class Game {
 	private int minPlayers;
 	private int maxPlayers;
 	private boolean privateGame = false;
+	private String creatorUserId;
 
 	public Game() {
 	}
 
-	public Game(String id, String name, int minPlayers, int maxPlayers, boolean privateGame) {
+	public Game(String id, String name, int minPlayers, int maxPlayers, boolean privateGame, String creatorUserId) {
 		this.id = id;
 		this.name = name;
 		this.minPlayers = minPlayers;
@@ -37,6 +38,7 @@ public class Game {
 		this.created = new Date();
 		this.status = GameStatus.NEW;
 		this.privateGame = privateGame;
+		this.creatorUserId = creatorUserId;
 	}
 
 	public String getId() {
@@ -138,6 +140,10 @@ public class Game {
 
 	public boolean isPrivateGame() {
 		return privateGame;
+	}
+
+	public String getCreatorUserId() {
+		return creatorUserId;
 	}
 
 	public void resetRound() {

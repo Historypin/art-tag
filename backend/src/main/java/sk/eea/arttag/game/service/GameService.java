@@ -122,7 +122,7 @@ public class GameService {
 		}
 
 		//evaluate possible events a user can trigger
-		GameEvent gameEvent = UserInputType.TAGS_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED : (
+		GameEvent gameEvent = UserInputType.TOPIC_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED : (
 				UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED : (
 						UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED: (
 								UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND: (

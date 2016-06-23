@@ -76,7 +76,7 @@ public class StateMachine {
 				if (true) {//verify tags set correctly
 				}
 				game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutTopicSelected()));
-				game.setStatus(GameStatus.ROUND_TAGS_SELECTED);
+				game.setStatus(GameStatus.ROUND_TOPIC_SELECTED);
 
 			} else if (GameEvent.TIMEOUT == event) {
 				// dealer did not select any tags, finish round
@@ -84,7 +84,7 @@ public class StateMachine {
 			}
 			break;
 
-		case ROUND_TAGS_SELECTED:
+		case ROUND_TOPIC_SELECTED:
 			if (GameEvent.PLAYER_JOINED == event) {
 				joinGame(game, player);
 
@@ -321,7 +321,7 @@ public class StateMachine {
 		// TODO check possible states for user input to be valid
 
 		switch (input.getType()) {
-		case TAGS_SELECTED:
+		case TOPIC_SELECTED:
 			game.setTags(input.getValue());
 			break;
 

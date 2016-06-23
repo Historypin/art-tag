@@ -9,10 +9,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import sk.eea.arttag.ApplicationProperties;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
@@ -23,15 +27,17 @@ import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.game.model.RoundSummary;
 import sk.eea.arttag.game.model.UserInput;
 
+@Component
 public class StateMachine {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StateMachine.class);
 
+    @Autowired
 	private GameService gameService;
 
-	public StateMachine(GameService gameService) {
-		this.gameService = gameService;
-	}
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
 
 	public void triggerEvent(Game game, GameEvent event, UserInput userInput, String userToken, Player player) throws GameException {
 		//verify validity of userInput (if not null)
@@ -207,34 +213,38 @@ public class StateMachine {
 	}
 
 	private void joinGame(Game game, Player player) throws GameException {
-		//TODO: evaluate game not null, game status, number of active players, private/public, join/rejoin
+        //TODO: evaluate game not null, game status, number of active players, private/public, join/rejoin
 
-		// verify game state
-		// evaluate if userToken is already in joined players
-		String userId = player.getUserId();
-		Player playerInGame = game.findPlayerByUserId(userId);
-		if (playerInGame != null) {
-			if (playerInGame.isInactive()) {
-				LOG.debug("Reconnecting player '{}' to game", userId);
-				playerInGame.setInactive(false);
-				playerInGame.setToken(player.getToken());
-			} else {
-				LOG.info("Refusing player '{}' to join game", userId);
-				throw new GameException(GameExceptionType.PLAYER_ALREADY_IN_GAME);
-			}
-		} else {
-			//TODO: evaluate min/max players
-			LOG.debug("Adding player '{}' to game", userId);
-			game.addPlayer(player);
-		};
-		// evaluate number of users, possibly we can start the game
-	}
+        // verify game state
+        // evaluate if userToken is already in joined players
+        String userId = player.getUserId();
+        Player playerInGame = game.findPlayerByUserId(userId);
+        if (playerInGame != null) {
+            if (playerInGame.isInactive()) {
+                LOG.debug("Reconnecting player '{}' to game", userId);
+                playerInGame.setInactive(false);
+                playerInGame.setToken(player.getToken());
+            } else {
+                LOG.info("Refusing player '{}' to join game", userId);
+                throw new GameException(GameExceptionType.PLAYER_ALREADY_IN_GAME);
+            }
+        } else {
+            //TODO: evaluate min/max players
+            LOG.debug("Adding player '{}' to game", userId);
+            game.addPlayer(player);
+        }
+        ;
+    }
 
 	private List<Card> getInitialDeck() {
 		LOG.debug("INITIAL_DECK");
-		List<Card> deck = IntStream.range(1, 30).mapToObj(i -> new Card(String.valueOf(i)))
-				.collect(Collectors.toList());
-		Collections.shuffle(deck);
+        List<Card> deck = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            final String cardToken = String.format("%02d.jpeg", i);
+            final String cardSource = String.format("%s/%s", applicationProperties.getHostname(), cardToken);
+            deck.add(new Card(cardToken, cardSource));
+        }
+        Collections.shuffle(deck);
 		return deck;
 	}
 

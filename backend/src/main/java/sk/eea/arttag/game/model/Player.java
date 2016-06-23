@@ -9,7 +9,7 @@ public class Player {
 	private String name;
 	private String userId;
 	private List<Card> hand = new ArrayList<>();
-	private Card ownCardSelection;
+    private Card ownCardSelection;
 	private Card tableCardSelection;
 	private boolean readyForNextRound;
 	private boolean dealer;

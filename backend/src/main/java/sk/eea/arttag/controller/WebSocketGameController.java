@@ -110,8 +110,6 @@ public class WebSocketGameController extends TextWebSocketHandler {
             LOG.error("fuckup", e);
         } catch (RuntimeException re) {
             LOG.error("horrible fuckup", re);
-        } catch (GameException ge) {
-            LOG.error("game fuckup", ge);
         }
     }
 

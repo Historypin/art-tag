@@ -30,10 +30,10 @@ public class GameService {
 
 	private Map<String, Game> games = new HashMap<>();
 	private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
-	public static final int ROUND_LENGTH_IN_SECONDS = 60;
+	public static final int ROUND_LENGTH_IN_SECONDS = 600;
 	public static final int HAND_SIZE = 5;
-	public static final int GAME_MIN_PLAYERS = 4;
-	public static final int GAME_MAX_PLAYERS = 8;
+	public static final int GAME_MIN_PLAYERS = 1;
+	public static final int GAME_MAX_PLAYERS = 2;
 
     @PostConstruct
     public void init() throws GameException {
@@ -45,12 +45,16 @@ public class GameService {
 		return games;
 	}
 
-	public List<GamePlayerView> getGameViews() throws GameException {
+	public List<GamePlayerView> getGameViews() {
 		List<GamePlayerView> views = new ArrayList<>();
 		for (Game game : getGames().values()) {
 			boolean gameTimeout = game.getRemainingTime() < 0;
 			if (gameTimeout) {
-				stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
+				try {
+					stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
+				} catch (GameException e) {
+					//TODO: display the message to a player/players
+				}
 			}
 			views.addAll(game.createGameViews());
 		}

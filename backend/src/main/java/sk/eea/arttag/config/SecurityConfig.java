@@ -41,24 +41,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .antMatchers("/login**", "/register**", "/js/**", "/css/**", "/webjars/**").permitAll()
+                    .antMatchers("/intro**", "/login**", "/register**", "/js/**", "/css/**", "/webjars/**", "/fonts/**", "/img/**").permitAll()
                     .antMatchers("/**").authenticated()
                 .and()
                 .formLogin()
-                    .loginPage("/login")
+                    .loginPage("/intro#loginmodal")
                     .loginProcessingUrl("/login.do")
-                    .defaultSuccessUrl("/")
-                    .failureUrl("/login?error")
+                    .defaultSuccessUrl("/join_page")
+                    .failureUrl("/intro?error#loginmodal")
                     .usernameParameter("username")
                     .passwordParameter("password")
                 .and()
                 .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/login")
+                    .logoutSuccessUrl("/intro")
                     .invalidateHttpSession(true)
                 .and()
                 .sessionManagement()
-                    .invalidSessionUrl("/login")
+                    .invalidSessionUrl("/intro")
                     .maximumSessions(1);
     }
 }

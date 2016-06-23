@@ -9,10 +9,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import sk.eea.arttag.ApplicationProperties;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
@@ -23,15 +27,17 @@ import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.game.model.RoundSummary;
 import sk.eea.arttag.game.model.UserInput;
 
+@Component
 public class StateMachine {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StateMachine.class);
 
+    @Autowired
 	private GameService gameService;
 
-	public StateMachine(GameService gameService) {
-		this.gameService = gameService;
-	}
+    @Autowired
+    private ApplicationProperties applicationProperties;
+
 
 	public void triggerEvent(Game game, GameEvent event, UserInput userInput, String userToken, Player player) throws GameException {
 
@@ -287,9 +293,13 @@ public class StateMachine {
 
 	private List<Card> getInitialDeck() {
 		LOG.debug("INITIAL_DECK");
-		List<Card> deck = IntStream.range(1, 30).mapToObj(i -> new Card(String.valueOf(i)))
-				.collect(Collectors.toList());
-		Collections.shuffle(deck);
+        List<Card> deck = new ArrayList<>();
+        for (int i = 1; i <= 12; i++) {
+            final String cardToken = String.format("%02d.jpeg", i);
+            final String cardSource = String.format("%s/%s", applicationProperties.getHostname(), cardToken);
+            deck.add(new Card(cardToken, cardSource));
+        }
+        Collections.shuffle(deck);
 		return deck;
 	}
 

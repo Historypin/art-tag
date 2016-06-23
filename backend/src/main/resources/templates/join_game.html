@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title th:text="'Game' + ${gameId}"></title>
 
-    <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
 
@@ -52,31 +51,53 @@
         margin: 0;
         color: #777777;
     }
+
+    .thumb {
+        margin-bottom: 30px;
+        width: 400px;
+        height: 300px;
+    }
 </style>
 <body>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8 col-lg-8">
-            <div class="row">
+            <div class="row" data-bind="if: table().length > 0">
                 <div class="game-table col-md-12 col-lg-12">
                     <legend>Table</legend>
-                    <ul data-bind="foreach: table">
-                        <li>
-                            <span data-bind="text: token"></span>
-                            <a href="#" data-bind="click: $parent.selectTableCard">select</a>
-                        </li>
-                    </ul>
+                    <div data-bind="foreach: table">
+                        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                            <a class="thumbnail" href="#">
+                                <img class="img-responsive"
+                                     data-toggle="modal"
+                                     data-target="#imageModal"
+                                     data-bind="attr: {
+                                        'src': $root.imagePath.concat(token()),
+                                        'data-id': token
+                                     }"
+                                ></img>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" data-bind="if: hand().length > 0">
                 <div class="hand col-md-12 col-lg-12">
                     <legend>Hand</legend>
-                    <ul data-bind="foreach: hand">
-                        <li>
-                            <span data-bind="text: token"></span>
-                            <a href="#" data-bind="click: $parent.selectHandCard">select</a>
-                        </li>
-                    </ul>
+                    <div data-bind="foreach: hand">
+                        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                            <a class="thumbnail" href="#">
+                                <img class="img-responsive"
+                                     data-toggle="modal"
+                                     data-target="#imageModal"
+                                     data-bind="attr: {
+                                        'src': $root.imagePath.concat(token()),
+                                        'data-id': token
+                                     }"
+                                ></img>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -86,7 +107,8 @@
                     <div class="form-inline">
                         <div class="form-group">
                             <label class="sr-only" for="tagsInput">Tags input</label>
-                            <input type="text" class="form-control" id="tagsInput" placeholder="Write tag here" data-bind="textInput: tagsInput"/>
+                            <input type="text" class="form-control" id="tagsInput" placeholder="Write tag here"
+                                   data-bind="textInput: tagsInput"/>
                             <button class="btn btn-default" data-bind="click: sendTags">Send</button>
                         </div>
                     </div>
@@ -151,6 +173,36 @@
             </div>
         </div>
     </div>
+
+    <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="//placehold.it/1000x600" class="img-responsive"></img>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Id</label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static" id="modal-id"></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Url</label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static" id="modal-url"></p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <p class="form-control-static" id="modal-name"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
@@ -158,6 +210,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"
         th:src="@{/webjars/knockout/3.4.0/knockout.js}"></script>
 <script src="../static/js/knockout.mapping.js" th:src="@{/js/knockout.mapping.js}"></script>
+<script src="../static/js/md5.js" th:src="@{/js/md5.js}"></script>
+<script src="../static/js/hashcode.js" th:src="@{/js/hashcode.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
 
 <script type="text/html" id="chat-line">
@@ -174,9 +228,10 @@
 
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
-    var endpoint = 'ws://localhost:8080/ws/game?gameId=' + /*[[${gameId}]]*/;
-    var webSocket =
-            new WebSocket(endpoint);
+    var hostname = /*[[${@environment.getProperty('application.hostname')}]]*/;
+    var contextPath = /*[[@{/}]]*/;
+    var gameId = /*[[${gameId}]]*/;
+    var webSocket = new WebSocket(`ws://${hostname}${contextPath}ws/game?gameId=${gameId}`);
 
     ko.bindingHandlers.autoScroll = {
         update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -184,10 +239,29 @@
         }
     };
 
+    var mapping = {
+        'hand': {
+            key: function(data) {
+                return ko.utils.unwrapObservable(data.token);
+            }
+        },
+        'table': {
+            key: function(data) {
+                return ko.utils.unwrapObservable(data.token);
+            }
+        },
+        'players': {
+            key: function(data) {
+                return ko.utils.unwrapObservable(HashCode.value(data));
+            }
+        }
+    };
+
     function ViewModel(data) {
         data = data || {};
         var self = this;
-        self = ko.mapping.fromJS(data);
+        self = ko.mapping.fromJS(data, mapping);
+        self.imagePath = contextPath + 'img/';
 
         self.enterChatMessage = function (d, e) {
             e.keyCode === 13 && self.sendChatMessage();
@@ -196,7 +270,11 @@
 
         self.sendChatMessage = function () {
             if (self.chatInput()) {
-                var message = {value: ko.utils.unwrapObservable(self.chatInput()), type: 'CHAT_MESSAGE', gameId: ko.utils.unwrapObservable(self.game.id())};
+                var message = {
+                    value: ko.utils.unwrapObservable(self.chatInput()),
+                    type: 'CHAT_MESSAGE',
+                    gameId: ko.utils.unwrapObservable(self.game.id())
+                };
                 webSocket.send(JSON.stringify(message));
                 var date = new Date();
                 self.chatHistory.push({player: "me", message: self.chatInput(), time: date.toLocaleTimeString()});
@@ -205,25 +283,41 @@
         };
 
         self.sendTags = function () {
-            if(self.tagsInput()) {
-                var message = {value: ko.utils.unwrapObservable(self.tagsInput()), type: 'TAGS_SELECTED', gameId: ko.utils.unwrapObservable(self.game.id())};
+            if (self.tagsInput()) {
+                var message = {
+                    value: ko.utils.unwrapObservable(self.tagsInput()),
+                    type: 'TAGS_SELECTED',
+                    gameId: ko.utils.unwrapObservable(self.game.id())
+                };
                 webSocket.send(JSON.stringify(message));
                 self.tagsInput("");
             }
         };
 
         self.sendPlayerReady = function () {
-            var message = {value: 'OK', type: 'PLAYER_READY_FOR_NEXT_ROUND', gameId: ko.utils.unwrapObservable(self.game.id())};
+            var message = {
+                value: 'OK',
+                type: 'PLAYER_READY_FOR_NEXT_ROUND',
+                gameId: ko.utils.unwrapObservable(self.game.id())
+            };
             webSocket.send(JSON.stringify(message));
         };
 
-        self.selectHandCard = function(card) {
-            var message = {value: card.token(), type: 'OWN_CARD_SELECTED', gameId: ko.utils.unwrapObservable(self.game.id())};
+        self.selectHandCard = function (card) {
+            var message = {
+                value: card.token(),
+                type: 'OWN_CARD_SELECTED',
+                gameId: ko.utils.unwrapObservable(self.game.id())
+            };
             webSocket.send(JSON.stringify(message));
         };
 
-        self.selectTableCard = function(card) {
-            var message = {value: card.token(), type: 'TABLE_CARD_SELECTED', gameId: ko.utils.unwrapObservable(self.game.id())};
+        self.selectTableCard = function (card) {
+            var message = {
+                value: card.token(),
+                type: 'TABLE_CARD_SELECTED',
+                gameId: ko.utils.unwrapObservable(self.game.id())
+            };
             webSocket.send(JSON.stringify(message));
         };
 
@@ -232,6 +326,33 @@
     }
 
     var viewModel = new ViewModel({
+//        "userToken": "",
+//        "dealer": false,
+//        "hand": [{
+//            "token" : "",
+//            "source" : ""
+//        }],
+//        "gameView": {
+//            "id": "",
+//            "name": "",
+//            "status": "",
+//            "tags": "",
+//            "remainingTime": 0,
+//            "players": [{
+//                "token": "",
+//                "name": "",
+//                "ownCardSelection": null,
+//                "tableCardSelection": null,
+//                "readyForNextRound": false,
+//                "dealer": false
+//        }],
+//            "table": []
+//    }
+
+
+
+
+
         "userToken": "",
         "game": {
             "id": "",
@@ -281,13 +402,34 @@
                 time: date.toLocaleTimeString()
             });
         } else { // model message
-            ko.mapping.fromJS(data, {}, viewModel);
+            ko.mapping.fromJS(data, mapping, viewModel);
         }
     }
 
     function onError(event) {
         alert(event.data);
     }
+
+
+    function centerModal() {
+        $(this).css('display', 'block');
+        var $dialog = $(this).find(".modal-dialog");
+        var offset = ($(window).height() - $dialog.height()) / 2;
+        // Center modal vertically in window
+        $dialog.css("margin-top", offset);
+    }
+
+    $(document).on("click", ".thumbnail .img-responsive", function () {
+        var id = $(this).attr('data-id');
+        var src = $(this).attr('src');
+        $(".modal-body #modal-id").text(id);
+        $(".modal-body .img-responsive").attr('src', src);
+    });
+
+    $('.modal').on('show.bs.modal', centerModal);
+    $(window).on("resize", function () {
+        $('.modal:visible').each(centerModal);
+    });
     /* ]]> */
 </script>
 </body>

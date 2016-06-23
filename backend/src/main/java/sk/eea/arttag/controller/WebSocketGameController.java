@@ -1,5 +1,21 @@
 package sk.eea.arttag.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+import sk.eea.arttag.game.model.GameException;
+import sk.eea.arttag.game.model.GamePlayerView;
+import sk.eea.arttag.game.model.UserInput;
+import sk.eea.arttag.game.service.GameService;
+
+import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.net.URI;
 import java.security.Principal;
@@ -8,65 +24,52 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.websocket.EncodeException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import sk.eea.arttag.game.model.Card;
-import sk.eea.arttag.game.model.GameException;
-import sk.eea.arttag.game.model.GamePlayerView;
-import sk.eea.arttag.game.model.Player;
-import sk.eea.arttag.game.model.UserInput;
-import sk.eea.arttag.game.service.GameService;
-
+@Component
 public class WebSocketGameController extends TextWebSocketHandler {
 
     private static final String TOKEN = "token";
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketGameController.class);
+
     private static final Map<String, WebSocketSession> clients = Collections
         .synchronizedMap(new HashMap<String, WebSocketSession>());
 
-    private static final Logger LOG = LoggerFactory.getLogger(WebSocketGameController.class);
+    private static GameService gameService;
+
+    private static ObjectMapper objectMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    public WebSocketGameController(GameService gameService, ObjectMapper objectMapper) {
+        WebSocketGameController.gameService = gameService;
+        WebSocketGameController.objectMapper = objectMapper;
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-    	String gameId = findGameIdInURI(session.getUri(), "gameId");
-    	LOG.debug("OPEN GAME_ID: {}", gameId);
+        String gameId = findGameIdInURI(session.getUri(), "gameId");
+        LOG.debug("OPEN GAME_ID: {}", gameId);
 
-    	Principal principal = session.getPrincipal();
-    	if (principal == null) {
-    		LOG.info("No principal");
-    	} else {
-    		LOG.info("Principal: {}", principal.getName());
-    	}
+        Principal principal = session.getPrincipal();
+        if (principal == null) {
+            LOG.info("No principal");
+        } else {
+            LOG.info("Principal: {}", principal.getName());
+        }
 
         try {
-            GameService.getInstance().addPlayer(session.getId(), principal.getName(), gameId);
+            gameService.addPlayer(session.getId(), principal.getName(), gameId);
             clients.put(session.getId(), session);
-        	LOG.info("Player: {} has connected", session.getPrincipal().getName());
-		} catch (GameException e) {
-			LOG.info("Failed to add player to game: {}", e.getMessage());
-			sendError(session.getId());
-		}
+            LOG.info("Player: {} has connected", session.getPrincipal().getName());
+        } catch (GameException e) {
+            LOG.info("Failed to add player to game: {}", e.getMessage());
+            sendError(session.getId());
+        }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         clients.remove(session.getId());
-        GameService.getInstance().removePlayer(session.getId());
+        gameService.removePlayer(session.getId());
     }
 
     @Override
@@ -90,7 +93,7 @@ public class WebSocketGameController extends TextWebSocketHandler {
                 case OWN_CARD_SELECTED:
                 case TABLE_CARD_SELECTED:
                 case PLAYER_READY_FOR_NEXT_ROUND:
-                    GameService.getInstance().userInput(session.getId(), userInput);
+                    gameService.userInput(session.getId(), userInput);
                     break;
                 default:
                     LOG.error("UserInput type '{}' is not implemented yet!", userInput.getType());
@@ -98,78 +101,87 @@ public class WebSocketGameController extends TextWebSocketHandler {
         }
     }
 
-    public static Runnable JOB = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                List<GamePlayerView> games = GameService.getInstance().getGameViews();
-                sendMessages(games);
-            } catch (IOException | EncodeException e) {
-                LOG.error("fuckup", e);
-            } catch (RuntimeException re) {
-                LOG.error("horrible fuckup", re);
-            } catch (GameException ge) {
-                LOG.error("game fuckup", ge);
-			}
+    @Scheduled(fixedRate = 1000)
+    public void trigger() {
+        try {
+            List<GamePlayerView> games = gameService.getGameViews();
+            sendMessages(games);
+        } catch (IOException | EncodeException e) {
+            LOG.error("fuckup", e);
+        } catch (RuntimeException re) {
+            LOG.error("horrible fuckup", re);
+        } catch (GameException ge) {
+            LOG.error("game fuckup", ge);
         }
-    };
+    }
 
     private static void sendMessages(List<GamePlayerView> gamePlayerViews) throws IOException, EncodeException {
         for (GamePlayerView view : gamePlayerViews) {
-            String token = view.getUserToken();
-            //LOG.debug("Sending message to player {}", token);
-            //LOG.debug("view: {}", view);
-            final TextMessage message = new TextMessage(marshall(view));
-            WebSocketSession s = clients.get(token);
-            if (s != null) {
-                s.sendMessage(message);
+        	LOG.debug(view.toString());
+        	String txt = objectMapper.writeValueAsString(view);
+        	LOG.debug(txt);
+            final TextMessage message = new TextMessage(txt);
+            LOG.debug("Clients: {}", clients.size());
+            final WebSocketSession webSocketSession = clients.get(view.getUserToken());
+            if (webSocketSession != null) {
+            	LOG.debug("Sending message");
+                webSocketSession.sendMessage(message);
+            } else {
+            	LOG.debug("No session");
             }
         }
     }
 
     private void sendError(String userToken) {
-    	//TODO
+        //TODO
     }
 
-    private static String marshall(GamePlayerView view) {
-        JsonArrayBuilder handBuilder = Json.createArrayBuilder();
-        for (Card card : view.getHand()) {
-            handBuilder.add(Json.createObjectBuilder()
-                .add("token", card.getToken()));
-        }
-
-        JsonArrayBuilder tableBuilder = Json.createArrayBuilder();
-        for (Card card : view.getGameView().getTable()) {
-            tableBuilder.add(Json.createObjectBuilder()
-                .add("token", card.getToken()));
-        }
-
-        JsonArrayBuilder playersBuilder = Json.createArrayBuilder();
-//        for (Player player : view.getGameView().getPlayers().values()) {
-        for (Player player : view.getGameView().getPlayers()) {
-        	playersBuilder.add(Json.createObjectBuilder()
-                .add("name", player.getName())
-                .add("dealer", player.isDealer())
-                .add("readyForNextRound", player.isReadyForNextRound()));
-        }
-
-        final String res = Json.createObjectBuilder()
-            .add("userToken", view.getUserToken())
-            .add("game", Json.createObjectBuilder()
-                .add("id", view.getGameView().getId())
-                .add("name", view.getGameView().getName())
-                .add("remainingTime", view.getGameView().getRemainingTime())
-                .add("tags", view.getGameView().getTags() != null ? view.getGameView().getTags() : "")
-                .add("created", view.getGameView().getCreated().toString())
-                .add("players", playersBuilder)
-                .add("status", view.getGameView().getStatus().name()))
-            .add("hand", handBuilder)
-            .add("table", tableBuilder)
-            .build()
-            .toString();
-
-        return res;
-    }
+    //    private static String marshall(GamePlayerView view) {
+    //        JsonArrayBuilder handBuilder = Json.createArrayBuilder();
+    ////        for (Card card : view.getHand()) {
+    ////            handBuilder.add(Json.createObjectBuilder()
+    ////                .add("token", card.getToken()));
+    ////        }
+    //        for (int i = 1; i <= 5; i++) {
+    //            handBuilder.add(Json.createObjectBuilder().add("token", String.format("%02d.jpeg", i)));
+    //        }
+    //
+    //        JsonArrayBuilder tableBuilder = Json.createArrayBuilder();
+    ////        for (Card card : view.getGameView().getTable()) {
+    ////            tableBuilder.add(Json.createObjectBuilder()
+    ////                .add("token", card.getToken()));
+    ////        }
+    //
+    //        for (int i = 1; i <= 5; i++) {
+    //            tableBuilder.add(Json.createObjectBuilder().add("token", String.format("%02d.jpeg", i)));
+    //        }
+    //
+    //        JsonArrayBuilder playersBuilder = Json.createArrayBuilder();
+    ////        for (Player player : view.getGameView().getPlayers().values()) {
+    //        for (Player player : view.getGameView().getPlayers()) {
+    //        	playersBuilder.add(Json.createObjectBuilder()
+    //                .add("name", player.getName())
+    //                .add("dealer", player.isDealer())
+    //                .add("readyForNextRound", player.isReadyForNextRound()));
+    //        }
+    //
+    //        final String res = Json.createObjectBuilder()
+    //            .add("userToken", view.getUserToken())
+    //            .add("game", Json.createObjectBuilder()
+    //                .add("id", view.getGameView().getId())
+    //                .add("name", view.getGameView().getName())
+    //                .add("remainingTime", view.getGameView().getRemainingTime())
+    //                .add("tags", view.getGameView().getTags() != null ? view.getGameView().getTags() : "")
+    //                .add("created", view.getGameView().getCreated().toString())
+    //                .add("players", playersBuilder)
+    //                .add("status", view.getGameView().getStatus().name()))
+    //            .add("hand", handBuilder)
+    //            .add("table", tableBuilder)
+    //            .build()
+    //            .toString();
+    //
+    //        return res;
+    //    }
 
     private String findGameIdInURI(URI uri, String name) {
         Map<String, String> query_pairs = new HashMap<String, String>();

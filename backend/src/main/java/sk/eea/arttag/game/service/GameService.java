@@ -9,6 +9,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
 import sk.eea.arttag.game.model.GameException;
@@ -18,10 +20,13 @@ import sk.eea.arttag.game.model.RoundSummary;
 import sk.eea.arttag.game.model.UserInput;
 import sk.eea.arttag.game.model.UserInputType;
 
+import javax.annotation.PostConstruct;
+
+@Component
 public class GameService {
 
-	private static GameService instance;
-	private static StateMachine stateMachine;
+	@Autowired
+    private StateMachine stateMachine;
 
 	private Map<String, Game> games = new HashMap<>();
 	private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
@@ -30,31 +35,17 @@ public class GameService {
 	public static final int GAME_MIN_PLAYERS = 4;
 	public static final int GAME_MAX_PLAYERS = 8;
 
-	protected GameService() {
-	}
-
-	public static GameService getInstance() {
-		if (instance == null) {
-			instance = new GameService();
-			instance.stateMachine = new StateMachine(instance);
-			//TODO
-			try {
-				String uuid = UUID.randomUUID().toString();
-				instance.create("1", uuid);
-				uuid = UUID.randomUUID().toString();
-				instance.create("2", uuid);
-			} catch (GameException e) {
-			}
-		}
-		return instance;
-	}
+    @PostConstruct
+    public void init() throws GameException {
+        create("1", "game1", "admin");
+        create("2", "game2", "admin");
+    }
 
 	public Map<String, Game> getGames() {
 		return games;
 	}
 
 	public List<GamePlayerView> getGameViews() throws GameException {
-
 		List<GamePlayerView> views = new ArrayList<>();
 		for (Game game : getGames().values()) {
 			boolean gameTimeout = game.getRemainingTime() < 0;
@@ -72,9 +63,9 @@ public class GameService {
 	}
 
 	//TODO:
-	public void create(String id, String name) throws GameException {
+	public void create(String id, String name, String creatorUserId) throws GameException {
 		LOG.debug("CREATE");
-		Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false);
+		Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false, creatorUserId);
 		stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);
 	}
 
@@ -134,6 +125,6 @@ public class GameService {
 	}
 
 	public void processRoundSummary(RoundSummary summary) {
-		
+
 	}
 }

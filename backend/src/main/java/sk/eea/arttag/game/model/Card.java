@@ -1,29 +1,32 @@
 package sk.eea.arttag.game.model;
 
-import java.util.Random;
-
 public class Card {
 
-	private String token;
+    private String token;
 
-	public Card() {
-/*		Random r = new Random();
-		char c = (char) (r.nextInt(26) + 'A');
-		this.token = String.valueOf(c);*/
-	}
-	public Card(String token) {
-		this.token = token;
-	}
+    private String source;
 
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
-	}
+    public Card() {
+    }
 
-	@Override
-	public String toString() {
-		return token;
-	}
+    public Card(String token, String source) {
+        this.token = token;
+        this.source = source;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
 }

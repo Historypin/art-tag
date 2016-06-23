@@ -84,27 +84,29 @@
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-body ">
-                    <h1 class="centeredText">Sign in</h1>
-                    <p>
-                        <small>your username or email *</small>
-                    </p>
-                    <input type="email" id="unameoremail" placeholder="Username/Email"/>
-                    <p>
-                        <small>Password *</small>
-                    </p>
-                    <input type="email" id="password" placeholder="Password"/>
-                    <br/>
-                    <input type="checkbox"/>
-                    <p>KEEP ME SIGNED IN</p>
-                    <button type="button" class="btn btn-success btn-block">SIGN IN</button>
-                    <p><em>Forgot Password or Username?</em></p>
+                    <form class="form-horizontal" th:action="@{/login.do}" method="post">
+                        <h1 class="centeredText">Sign in</h1>
+                        <p>
+                            <small>your username or email *</small>
+                        </p>
+                        <input type="text" id="username" name="username" placeholder="Username/Email"/>
+                        <p>
+                            <small>Password *</small>
+                        </p>
+                        <input type="password" id="password" name="password" placeholder="Password"/>
+                        <br/>
+                        <input type="checkbox"/>
+                        <p>KEEP ME SIGNED IN</p>
+                        <button class="btn btn-success btn-block" type="submit" >SIGN IN</button>
+                        <p><em>Forgot Password or Username?</em></p>
 
-                    <h5 class="stroke">or</h5>
+                        <h5 class="stroke">or</h5>
 
-                    <button type="button" class="btn btn-success btn-block"
-                            onclick="location.href='#registermodal'; enableModal();">REGISTER
-                    </button>
-                    <br/>
+                        <button type="button" class="btn btn-success btn-block"
+                                onclick="location.href='#registermodal'; enableModal();">REGISTER
+                        </button>
+                        <br/>
+                    </form>
                 </div>
             </div>
         </div>

@@ -13,6 +13,8 @@ public class Player {
 	private Card tableCardSelection;
 	private boolean readyForNextRound;
 	private boolean dealer;
+	private boolean inactive;//disconnected
+	private boolean skipThisRound;//user failed to act 
 
 	public Player() {
 	}
@@ -69,6 +71,12 @@ public class Player {
 	}
 	public void setReadyForNextRound(boolean readyForNextRound) {
 		this.readyForNextRound = readyForNextRound;
+	}
+	public boolean isInactive() {
+		return inactive;
+	}
+	public void setInactive(boolean inactive) {
+		this.inactive = inactive;
 	}
 
 	@Override

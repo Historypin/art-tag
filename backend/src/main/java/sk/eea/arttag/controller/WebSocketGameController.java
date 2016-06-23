@@ -23,6 +23,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import sk.eea.arttag.game.model.Card;
+import sk.eea.arttag.game.model.GameException;
 import sk.eea.arttag.game.model.GamePlayerView;
 import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.game.model.UserInput;
@@ -51,9 +52,15 @@ public class WebSocketGameController extends TextWebSocketHandler {
     	} else {
     		LOG.info("Principal: {}", principal.getName());
     	}
-        LOG.info("Player: {} has connected", session.getPrincipal().getName());
-        clients.put(session.getId(), session);
-        GameService.getInstance().addPlayer(session.getId(), principal.getName(), gameId);
+
+        try {
+            GameService.getInstance().addPlayer(session.getId(), principal.getName(), gameId);
+            clients.put(session.getId(), session);
+        	LOG.info("Player: {} has connected", session.getPrincipal().getName());
+		} catch (GameException e) {
+			LOG.info("Failed to add player to game: {}", e.getMessage());
+			sendError(session.getId());
+		}
     }
 
     @Override
@@ -94,16 +101,16 @@ public class WebSocketGameController extends TextWebSocketHandler {
     public static Runnable JOB = new Runnable() {
         @Override
         public void run() {
-            List<GamePlayerView> games = GameService.getInstance().getGameViews();
             try {
+                List<GamePlayerView> games = GameService.getInstance().getGameViews();
                 sendMessages(games);
             } catch (IOException | EncodeException e) {
-                e.printStackTrace();
                 LOG.error("fuckup", e);
             } catch (RuntimeException re) {
-                re.printStackTrace();
                 LOG.error("horrible fuckup", re);
-            }
+            } catch (GameException ge) {
+                LOG.error("game fuckup", ge);
+			}
         }
     };
 
@@ -113,8 +120,15 @@ public class WebSocketGameController extends TextWebSocketHandler {
             //LOG.debug("Sending message to player {}", token);
             //LOG.debug("view: {}", view);
             final TextMessage message = new TextMessage(marshall(view));
-            clients.get(token).sendMessage(message);
+            WebSocketSession s = clients.get(token);
+            if (s != null) {
+                s.sendMessage(message);
+            }
         }
+    }
+
+    private void sendError(String userToken) {
+    	//TODO
     }
 
     private static String marshall(GamePlayerView view) {
@@ -131,8 +145,9 @@ public class WebSocketGameController extends TextWebSocketHandler {
         }
 
         JsonArrayBuilder playersBuilder = Json.createArrayBuilder();
-        for (Player player : view.getGameView().getPlayers().values()) {
-            playersBuilder.add(Json.createObjectBuilder()
+//        for (Player player : view.getGameView().getPlayers().values()) {
+        for (Player player : view.getGameView().getPlayers()) {
+        	playersBuilder.add(Json.createObjectBuilder()
                 .add("name", player.getName())
                 .add("dealer", player.isDealer())
                 .add("readyForNextRound", player.isReadyForNextRound()));

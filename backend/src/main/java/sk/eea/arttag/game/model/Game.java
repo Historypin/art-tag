@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Game {
 
@@ -14,7 +16,8 @@ public class Game {
 	private Date created;
 	private GameStatus status;
 //	private Map<String, Player> players = new HashMap<>();
-	private Map<String, Player> players = Collections.synchronizedMap(new LinkedHashMap<>());
+//	private Map<String, Player> players = Collections.synchronizedMap(new LinkedHashMap<>());
+	private List<Player> players = new LinkedList<>();
 	private Date endOfRound;
 	private String tags;
 	private List<Card> deck = new ArrayList<>();
@@ -68,20 +71,26 @@ public class Game {
 		this.status = status;
 	}
 
-	public Map<String, Player> getPlayers() {
+/*	public Map<String, Player> getPlayers() {
 		return players;
 	}
-
 	public void setPlayers(Map<String, Player> players) {
+		this.players = players;
+	}*/
+	public List<Player> getPlayers() {
+		return players;
+	}
+	public void setPlayers(List<Player> players) {
 		this.players = players;
 	}
 
 	public void addPlayer(Player player) {
-		this.players.put(player.getToken(), player);
+		this.players.add(player);
 	}
-	public void removePlayer(Player player) {
-		this.players.remove(player.getToken());
-	}
+
+/*	public void removePlayer(Player player) {
+		this.players.remove(player);
+	}*/
 
 	public Date getEndOfRound() {
 		return endOfRound;
@@ -136,6 +145,22 @@ public class Game {
 		tags = null;
 	}
 
+	public Player findPlayerByUserId(String userId) {
+/*		List<Player> players = getPlayers().values().stream()
+				.filter(p -> userId.equalsIgnoreCase(p.getUserId()))
+				.collect(Collectors.toList());*/
+		List<Player> players = getPlayers().stream()
+				.filter(p -> userId.equalsIgnoreCase(p.getUserId()))
+				.collect(Collectors.toList());
+		return players.size() > 0 ? players.get(0) : null;
+	}
+	public Player findPlayerByUserToken(String userToken) {
+		List<Player> players = getPlayers().stream()
+				.filter(p -> userToken.equalsIgnoreCase(p.getToken()))
+				.collect(Collectors.toList());
+		return players.size() > 0 ? players.get(0) : null;
+	}
+
 	@Override
 	public String toString() {
 		return "Game [getId()=" + getId() + ", getName()=" + getName() + ", getCreated()=" + getCreated()
@@ -157,7 +182,8 @@ public class Game {
 		view.setStatus(getStatus());
 
 		List<GamePlayerView> gamePlayerViews = new ArrayList<>();
-		for (Player player : players.values()) {
+//		for (Player player : players.values()) {
+		for (Player player : players) {
 			GamePlayerView gamePlayerView = new GamePlayerView();
 			gamePlayerView.setGameView(view);
 			gamePlayerView.setUserToken(player.getToken());

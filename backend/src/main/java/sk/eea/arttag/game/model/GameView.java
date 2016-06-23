@@ -3,6 +3,7 @@ package sk.eea.arttag.game.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,8 @@ public class GameView {
 	private Date endOfRound;
 	private String tags;
 	private int remainingTime;
-	private Map<String, Player> players = new HashMap<>();;
+//	private Map<String, Player> players = new HashMap<>();;
+	private List<Player> players = new LinkedList<>();
 	private List<Card> table = new ArrayList<>();
 
 	public GameView() {
@@ -77,11 +79,17 @@ public class GameView {
 		this.remainingTime = remainingTime;
 	}
 
-	public Map<String, Player> getPlayers() {
+/*	public Map<String, Player> getPlayers() {
 		return players;
 	}
 
 	public void setPlayers(Map<String, Player> players) {
+		this.players = players;
+	}*/
+	public List<Player> getPlayers() {
+		return players;
+	}
+	public void setPlayers(List<Player> players) {
 		this.players = players;
 	}
 

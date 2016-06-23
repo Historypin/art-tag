@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
+import sk.eea.arttag.game.model.GameException;
 import sk.eea.arttag.game.model.GamePlayerView;
 import sk.eea.arttag.game.model.Player;
+import sk.eea.arttag.game.model.RoundSummary;
 import sk.eea.arttag.game.model.UserInput;
 import sk.eea.arttag.game.model.UserInputType;
 
@@ -36,10 +38,13 @@ public class GameService {
 			instance = new GameService();
 			instance.stateMachine = new StateMachine(instance);
 			//TODO
-			String uuid = UUID.randomUUID().toString();
-			instance.create("1", uuid);
-			uuid = UUID.randomUUID().toString();
-			instance.create("2", uuid);
+			try {
+				String uuid = UUID.randomUUID().toString();
+				instance.create("1", uuid);
+				uuid = UUID.randomUUID().toString();
+				instance.create("2", uuid);
+			} catch (GameException e) {
+			}
 		}
 		return instance;
 	}
@@ -48,13 +53,13 @@ public class GameService {
 		return games;
 	}
 
-	public List<GamePlayerView> getGameViews() {
+	public List<GamePlayerView> getGameViews() throws GameException {
 
 		List<GamePlayerView> views = new ArrayList<>();
 		for (Game game : getGames().values()) {
 			boolean gameTimeout = game.getRemainingTime() < 0;
 			if (gameTimeout) {
-				stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null);
+				stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
 			}
 			views.addAll(game.createGameViews());
 		}
@@ -67,45 +72,52 @@ public class GameService {
 	}
 
 	//TODO:
-	public void create(String id, String name) {
+	public void create(String id, String name) throws GameException {
 		LOG.debug("CREATE");
 		Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false);
-		stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null);
+		stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);
 	}
 
 	//TODO:
-	public void addPlayer(String userToken, String userId, String gameId) {
+	public void addPlayer(String userToken, String userId, String gameId) throws GameException {
 		LOG.debug("ADD_PLAYER");
 		Player player = new Player(userToken, userId, userId);
 		Game game = getGames().get(gameId);
-		//TODO: evaluate game not null, game status, number of active players, private/public, join/rejoin
-		game.addPlayer(player);
-		stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken);
+		stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken, player);
 	}
 
-	public void removePlayer(String token) {
+	public void removePlayer(String userToken) {
 		LOG.debug("REMOVE_PLAYER");
 		for (Game game : getGames().values()) {
-			game.getPlayers().remove(token);
+//			Player player = game.getPlayers().get(token);
+			Player player = game.findPlayerByUserToken(userToken);
+			if (player != null) {
+				player.setInactive(true);
+			}
+			//TODO: trigger event
 		}
 	}
 
-	public void userInput(String userToken, UserInput input) {
+	public void userInput(String userToken, UserInput input) throws GameException {
 		String gameId = input.getGameId();
 		if (gameId == null || input == null || input.getType() == null || input.getValue() == null) {
 			//ignore
+			LOG.debug("one of (gameId, input, input.type, input.value) null");
 			return;
 		}
 		Game game = this.games.get(gameId);
 		if (game == null) {
 			//ignore
+			LOG.debug("Game null");
 			return;
 		}
 
 		//check userToken in current game
-		Player player = game.getPlayers().get(userToken);
+//		Player player = game.getPlayers().get(userToken);
+		Player player = game.findPlayerByUserToken(userToken);
 		if (player == null) {
 			//ignore
+			LOG.debug("Player null");
 			return;
 		}
 
@@ -115,150 +127,11 @@ public class GameService {
 						UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED: (
 								UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND: null))
 				);
-		stateMachine.triggerEvent(game, gameEvent, input, userToken);
+		stateMachine.triggerEvent(game, gameEvent, input, userToken, null);
 //		updateGameAfterUserInput(game, input, userToken);
 	}
 
-/*	private void updateGame(Game game, GameEvent reason) {
-		LOG.debug("UPDATE_GAME {}", reason.name());
-
-		switch (reason) {
-		case GAME_CREATED:
-			game.setStatus(GameStatus.CREATED);
-			game.setEndOfRound(timeout(ROUND_LENGTH_IN_SECONDS));//FIXME: remove
-			this.games.put(game.getId(), game);
-			break;
-
-//		case PLAYER_JOINED:
-//		case PLAYER_DISCONNECTED:
-		case ROUND_STARTED:
-			game.setStatus(GameStatus.ROUND_STARTED);
-			game.setEndOfRound(timeout(ROUND_LENGTH_IN_SECONDS));
-			break;
-
-		case TAGS_SELECTED:
-			game.setStatus(GameStatus.ROUND_TAGS_SELECTED);
-			game.setEndOfRound(timeout(ROUND_LENGTH_IN_SECONDS));
-			break;
-
-		case PLAYER_OWN_CARD_SELECTED: {
-			//check if all players already selected a table card
-			boolean notYetAllPlayersSelected = game.getPlayers().values().stream().anyMatch(p -> p.getOwnCardSelection() == null);
-			if (!notYetAllPlayersSelected) {
-				game.setStatus(GameStatus.ROUND_OWN_CARDS_SELECTED);
-				game.setEndOfRound(timeout(ROUND_LENGTH_IN_SECONDS));
-			}
-			break;
-		}
-
-		case ALL_PLAYERS_OWN_CARD_SELECTED:
-			game.setStatus(GameStatus.ROUND_OWN_CARDS_SELECTED);
-			game.setEndOfRound(timeout(ROUND_LENGTH_IN_SECONDS));
-			break;
-
-		case ALL_PLAYERS_TABLE_CARD_SELECTED:
-			game.setStatus(GameStatus.ROUND_TABLE_CARDS_SELECTED);
-			game.setEndOfRound(timeout(ROUND_LENGTH_IN_SECONDS));
-			break;
-
-		case PLAYER_TABLE_CARD_SELECTED: {
-			//check if all players already selected a table card
-			boolean notYetAllPlayersSelected = game.getPlayers().values().stream().anyMatch(p -> p.getTableCardSelection() == null);
-			if (!notYetAllPlayersSelected) {
-				game.setStatus(GameStatus.ROUND_TABLE_CARDS_SELECTED);
-				game.setEndOfRound(timeout(ROUND_LENGTH_IN_SECONDS));
-			}
-			break;
-		}
-
-		case TIMEOUT:
-			switch (game.getStatus()) {
-			case CREATED:
-				start(game.getId());
-				break;
-
-			case ROUND_STARTED:
-				startRound(game.getId());
-				break;
-
-			case ROUND_TAGS_SELECTED:
-				updateGame(game, GameEvent.ALL_PLAYERS_OWN_CARD_SELECTED);
-				break;
-
-			case ROUND_OWN_CARDS_SELECTED:
-				updateGame(game, GameEvent.ALL_PLAYERS_TABLE_CARD_SELECTED);
-				break;
-
-			case ROUND_TABLE_CARDS_SELECTED:
-//				updateGame(game, GameUpdateReason.);
-				break;
-
-			case ROUND_FINISHED:
-				startRound(game.getId());
-				break;
-
-			default:
-				break;
-			}
-			break;
-
-		default:
-			break;
-		}
-	}*/
-
-/*	private void updateGameAfterUserInput(Game game, UserInput input, String userToken) {
-
-		//check userToken in current game
-		Player player = game.getPlayers().get(userToken);
-		if (player == null) {
-			//ignore
-			return;
-		}
-
-		//TODO check possible states for user input to be valid
-
-		switch (input.getType()) {
-		case TAGS_SELECTED:
-			game.setTags(input.getValue());
-			updateGame(game, GameEvent.TAGS_SELECTED);
-			break;
-
-		case OWN_CARD_SELECTED: {
-			String cardToken = input.getValue();
-			//find the card by token
-			Card card = player.getHand().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst().get();
-			if (card == null) {
-				//ignore
-				return;
-			}
-			//pop the card out of players hand
-			player.getHand().remove(card);
-			//set to ownSelection
-			player.setOwnCardSelection(card);
-			updateGame(game, GameEvent.PLAYER_OWN_CARD_SELECTED);
-			break;
-		}
-
-		case TABLE_CARD_SELECTED: {
-			String cardToken = input.getValue();
-			//find the card by token
-			Card card = player.getHand().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst().get();
-			if (card == null) {
-				//ignore
-				return;
-			}
-			//pop the card out of players hand
-			player.getHand().remove(card);
-			//set to tableSelection
-			player.setTableCardSelection(card);
-			updateGame(game, GameEvent.PLAYER_TABLE_CARD_SELECTED);
-			break;
-		}
-
-		default:
-			break;
-		}
-	}*/
-
+	public void processRoundSummary(RoundSummary summary) {
+		
+	}
 }

@@ -21,15 +21,6 @@
 <body>
 <div class="container-fluid">
     <div id='joinGameScreenUpperHalf' class="row">
-        <!--<div class="col-sm-6 col-sm-offset-3">
-          <div class="center-block btn-group-vertical" role="group">
-        <a th:href="@{/join_game}" class="btn btn-primary btn-lg btn-block">Join game</a>
-            <a th:href="@{/create_game}" class="btn btn-default btn-lg btn-block">Create game</a>
-            <a th:href="@{/score}" class="btn btn-default btn-lg btn-block">Score</a>
-            <a th:href="@{/help}" class="btn btn-default btn-lg btn-block">Help</a>
-            <a th:href="@{/logout}" class="btn btn-default btn-lg btn-block">Logout</a>
-        </div>
-      </div>-->
         <div class='row vertical-align'>
             <div class='col-sm-2'>
                 <div class="col-sm-offset-2 ">
@@ -67,6 +58,11 @@
             <input type="email" id="joingameinputbox" placeholder="The name of the game"></input>
             <br></br>
             <small><a th:href="@{/join_game}">AVAILABLE GAMES</a></small>
+            <br></br>
+            <small><a th:href="@{/join_game/1}">GAME 1</a></small>
+            <br></br>
+            <small><a th:href="@{/join_game/2}">GAME 2</a></small>
+            <br></br>
         </div>
         <div class='col-xs-6 centeredText'>
             <h1>Create new game</h1>

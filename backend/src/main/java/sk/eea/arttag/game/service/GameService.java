@@ -4,33 +4,37 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Random;
+
+import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import sk.eea.arttag.ApplicationProperties;
+import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
 import sk.eea.arttag.game.model.GameException;
 import sk.eea.arttag.game.model.GamePlayerView;
+import sk.eea.arttag.game.model.GameTimeout;
 import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.game.model.RoundSummary;
 import sk.eea.arttag.game.model.UserInput;
 import sk.eea.arttag.game.model.UserInputType;
 
-import javax.annotation.PostConstruct;
-
 @Component
 public class GameService {
 
+    @Autowired
+    private ApplicationProperties applicationProperties;
 	@Autowired
     private StateMachine stateMachine;
 
 	private Map<String, Game> games = new HashMap<>();
 	private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
-	public static final int ROUND_LENGTH_IN_SECONDS = 600;
 	public static final int HAND_SIZE = 5;
 	public static final int GAME_MIN_PLAYERS = 1;
 	public static final int GAME_MAX_PLAYERS = 2;
@@ -69,7 +73,8 @@ public class GameService {
 	//TODO:
 	public void create(String id, String name, String creatorUserId) throws GameException {
 		LOG.debug("CREATE");
-		Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false, creatorUserId);
+		GameTimeout gameTimeout = new GameTimeout(600, 600, 600, 600, 600);
+		Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false, creatorUserId, gameTimeout);
 		stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);
 	}
 
@@ -117,7 +122,7 @@ public class GameService {
 		}
 
 		//evaluate possible events a user can trigger
-		GameEvent gameEvent = UserInputType.TAGS_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED : (
+		GameEvent gameEvent = UserInputType.TOPIC_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED : (
 				UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED : (
 						UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED: (
 								UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND: (
@@ -130,5 +135,12 @@ public class GameService {
 
 	public void processRoundSummary(RoundSummary summary) {
 
+	}
+
+	public Card getCard(Game game) {
+		int i = new Random().nextInt(100);
+        final String cardToken = String.format("%02d.jpeg", i);
+        final String cardSource = String.format("%s/%s", applicationProperties.getHostname(), cardToken);
+		return new Card(cardToken, cardSource);
 	}
 }

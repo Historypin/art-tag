@@ -89,7 +89,7 @@ public class WebSocketGameController extends TextWebSocketHandler {
                         }
                     }
                     break;
-                case TAGS_SELECTED:
+                case TOPIC_SELECTED:
                 case OWN_CARD_SELECTED:
                 case TABLE_CARD_SELECTED:
                 case PLAYER_READY_FOR_NEXT_ROUND:

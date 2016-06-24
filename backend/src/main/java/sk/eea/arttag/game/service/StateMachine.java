@@ -1,22 +1,16 @@
 package sk.eea.arttag.game.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sk.eea.arttag.ApplicationProperties;
+
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
@@ -35,10 +29,6 @@ public class StateMachine {
     @Autowired
 	private GameService gameService;
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
-
 	public void triggerEvent(Game game, GameEvent event, UserInput userInput, String userToken, Player player) throws GameException {
 
 		if (game == null) {
@@ -51,7 +41,7 @@ public class StateMachine {
 			if (GameEvent.GAME_CREATED == event) {
 				game.setStatus(GameStatus.CREATED);
 				//TODO: start a timer or not?
-				game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
+				game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutGameCreated()));
 				gameService.getGames().put(game.getId(), game);
 			}
 			break;
@@ -85,8 +75,8 @@ public class StateMachine {
 				processUserInput(game, userInput, userToken);
 				if (true) {//verify tags set correctly
 				}
-				game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
-				game.setStatus(GameStatus.ROUND_TAGS_SELECTED);
+				game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutTopicSelected()));
+				game.setStatus(GameStatus.ROUND_TOPIC_SELECTED);
 
 			} else if (GameEvent.TIMEOUT == event) {
 				// dealer did not select any tags, finish round
@@ -94,7 +84,7 @@ public class StateMachine {
 			}
 			break;
 
-		case ROUND_TAGS_SELECTED:
+		case ROUND_TOPIC_SELECTED:
 			if (GameEvent.PLAYER_JOINED == event) {
 				joinGame(game, player);
 
@@ -105,13 +95,13 @@ public class StateMachine {
 						.anyMatch(p -> p.getOwnCardSelection() == null);
 				if (!notYetAllPlayersSelected) {
 					game.setStatus(GameStatus.ROUND_OWN_CARDS_SELECTED);
-					game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
+					game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutOwnCardsSelected()));
 					showTable(game);
 				}
 			} else if (GameEvent.TIMEOUT == event) {
 				// timeout triggered before all players selected own cards
 				game.setStatus(GameStatus.ROUND_OWN_CARDS_SELECTED);
-				game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
+				game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutOwnCardsSelected()));
 				showTable(game);
 			}
 			break;
@@ -210,6 +200,7 @@ public class StateMachine {
 			}
 		}
 
+		dealCards(game, GameService.HAND_SIZE);
 		//obsolete
 /*		boolean playerWithNoCardsExists = game.getPlayers().stream()
 				.anyMatch(p -> p.getHand().size() < 1);*/
@@ -223,7 +214,6 @@ public class StateMachine {
 	private void startGame(Game game) throws GameException {
 		// evaluate number of players in game, possibly we can start the game
 		if (game.getMinPlayers() <= game.getPlayers().size()) {
-			game.setDeck(getInitialDeck());
 			dealCards(game, GameService.HAND_SIZE);
 			startRound(game);
 		} else {
@@ -234,14 +224,14 @@ public class StateMachine {
 	private void startRound(Game game) {
 		nextRound(game);
 		game.setStatus(GameStatus.ROUND_STARTED);
-		game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
+		game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutRoundStarted()));
 	}
 
 	private void finishRound(Game game) {
 		RoundSummary summary = RoundSummary.create(game);
 		gameService.processRoundSummary(summary);
 		game.setStatus(GameStatus.ROUND_FINISHED);
-		game.setEndOfRound(timeout(GameService.ROUND_LENGTH_IN_SECONDS));
+		game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutRoundFinished()));
 	}
 
 	private void joinGame(Game game, Player player) throws GameException {
@@ -291,7 +281,7 @@ public class StateMachine {
 		}
 	}
 
-	private List<Card> getInitialDeck() {
+/*	private List<Card> getInitialDeck() {
 		LOG.debug("INITIAL_DECK");
         List<Card> deck = new ArrayList<>();
         for (int i = 1; i <= 12; i++) {
@@ -301,15 +291,14 @@ public class StateMachine {
         }
         Collections.shuffle(deck);
 		return deck;
-	}
+	}*/
 
 	private void dealCards(Game game, int numberOfCards) {
 		LOG.debug("DEAL_CARDS");
 		for (Player player : game.getPlayers()) {
 			List<Card> cards = new ArrayList<>();
-			for (int i = 0; i < numberOfCards; i++) {
-				Card card = game.getDeck().remove(0);
-				cards.add(card);
+			for (int i = player.getHand().size(); i < numberOfCards; i++) {
+				cards.add(gameService.getCard(game));
 			}
 			player.setHand(cards);
 		}
@@ -332,7 +321,7 @@ public class StateMachine {
 		// TODO check possible states for user input to be valid
         Card card;
 		switch (input.getType()) {
-		case TAGS_SELECTED:
+		case TOPIC_SELECTED:
             // TODO: refactor this parsing!!!
             String[] parts = input.getValue().split(";", 2);
 

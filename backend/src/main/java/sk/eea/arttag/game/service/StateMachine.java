@@ -330,16 +330,31 @@ public class StateMachine {
 		}
 
 		// TODO check possible states for user input to be valid
-
+        Card card;
 		switch (input.getType()) {
 		case TAGS_SELECTED:
-			game.setTags(input.getValue());
+            // TODO: refactor this parsing!!!
+            String[] parts = input.getValue().split(";", 2);
+
+            game.setTags(parts[0]);
+
+            // find the card by token
+            card = player.getHand().stream().filter(c -> parts[1].equalsIgnoreCase(c.getToken())).findFirst()
+                .get();
+            if (card == null) {
+                // ignore
+                return;
+            }
+            // pop the card out of players hand
+            player.getHand().remove(card);
+            // set to ownSelection
+            player.setOwnCardSelection(card);
 			break;
 
 		case OWN_CARD_SELECTED: {
 			String cardToken = input.getValue();
 			// find the card by token
-			Card card = player.getHand().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst()
+			card = player.getHand().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst()
 					.get();
 			if (card == null) {
 				// ignore
@@ -355,7 +370,7 @@ public class StateMachine {
 		case TABLE_CARD_SELECTED: {
 			String cardToken = input.getValue();
 			// find the card by token
-			Card card = game.getTable().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst().get();
+			card = game.getTable().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst().get();
 			if (card == null) {
 				// ignore
 				return;

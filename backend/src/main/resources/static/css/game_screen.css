@@ -1,0 +1,35 @@
+.game-table {
+    list-style: none;
+}
+
+.hand {
+    list-style: none;
+}
+
+.players ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat .panel-body {
+    max-height: 500px;
+    overflow-y: scroll;
+}
+
+.chat ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat li span {
+    margin: 0;
+    color: #777777;
+}
+
+.thumb {
+    margin-bottom: 30px;
+    width: 400px;
+    height: 300px;
+}

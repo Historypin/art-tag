@@ -1,6 +1,5 @@
 package sk.eea.arttag;
 
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -8,17 +7,23 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("application")
 public class ApplicationProperties {
 
-	private String version;
+    private String version;
 
     private String hostname;
 
-	public String getVersion() {
-		return version;
-	}
+    private String hostnamePrefix;
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    private Integer maxDescriptionSize;
+
+    private String culturalObjectsPublicPath;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public String getHostname() {
         return hostname;
@@ -26,5 +31,29 @@ public class ApplicationProperties {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+
+    public Integer getMaxDescriptionSize() {
+        return maxDescriptionSize;
+    }
+
+    public void setMaxDescriptionSize(Integer maxDescriptionSize) {
+        this.maxDescriptionSize = maxDescriptionSize;
+    }
+
+    public String getHostnamePrefix() {
+        return hostnamePrefix;
+    }
+
+    public void setHostnamePrefix(String hostnamePrefix) {
+        this.hostnamePrefix = hostnamePrefix;
+    }
+
+    public String getCulturalObjectsPublicPath() {
+        return culturalObjectsPublicPath;
+    }
+
+    public void setCulturalObjectsPublicPath(String culturalObjectsPublicPath) {
+        this.culturalObjectsPublicPath = culturalObjectsPublicPath;
     }
 }

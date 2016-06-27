@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,7 +51,8 @@ public class RestServiceIT {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        client = JerseyClientBuilder.createClient().register(Logger.getLogger(RestServiceIT.class.getName()));
+        HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("api", "admin");
+        client = JerseyClientBuilder.createClient().register(Logger.getLogger(RestServiceIT.class.getName())).register(feature);
         objectMapper = new ObjectMapper();
     }
 
@@ -178,7 +180,7 @@ public class RestServiceIT {
             assertEquals(Integer.valueOf(50),Integer.valueOf(tags.getTags().size()));
         }catch(Exception e){
             e.printStackTrace();
-            fail("Exception was thrown");            
+            fail("Exception was thrown");
         }finally{
             coRepository.delete(co);
         }
@@ -219,7 +221,7 @@ public class RestServiceIT {
             assertEquals(Integer.valueOf(1),Integer.valueOf(tags.getTags().size()));
         }catch(Exception e){
             e.printStackTrace();
-            fail("Exception was thrown");            
+            fail("Exception was thrown");
         }finally{
             coRepository.delete(co);
         }
@@ -247,7 +249,7 @@ public class RestServiceIT {
             fail("Exception was thrown");
         }
     }
-    
+
     public CulturalObjectDTO generateCO() {
         CulturalObjectDTO culturalObject = new CulturalObjectDTO();
         culturalObject.setAuthor("Author");
@@ -260,7 +262,7 @@ public class RestServiceIT {
         culturalObject.setImagePath("http://localhost:8080/test_image.jpeg");
         return culturalObject;
     }
-    
+
     public void addTags(CulturalObject co, Integer count){
         for(int i=0;i<count;i++){
             Tag tag = new Tag();

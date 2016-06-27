@@ -114,7 +114,7 @@ public class StateMachine {
 				processUserInput(game, userInput, userToken);
 				// check if all players already selected own card
 				boolean notYetAllPlayersSelected = game.getPlayers().stream()
-						.anyMatch(p -> p.getTableCardSelection() == null);
+						.anyMatch(p -> !p.isDealer() && p.getTableCardSelection() == null);
 				if (!notYetAllPlayersSelected) {
 					finishRound(game);
 				}
@@ -214,7 +214,7 @@ public class StateMachine {
 	private void startGame(Game game) throws GameException {
 		// evaluate number of players in game, possibly we can start the game
 		if (game.getMinPlayers() <= game.getPlayers().size()) {
-			dealCards(game, GameService.HAND_SIZE);
+//			dealCards(game, GameService.HAND_SIZE);
 			startRound(game);
 		} else {
 			throw new GameException(GameExceptionType.MIN_NUMBER_OF_PLAYERS_NOT_REACHED);
@@ -296,11 +296,11 @@ public class StateMachine {
 	private void dealCards(Game game, int numberOfCards) {
 		LOG.debug("DEAL_CARDS");
 		for (Player player : game.getPlayers()) {
-			List<Card> cards = new ArrayList<>();
 			for (int i = player.getHand().size(); i < numberOfCards; i++) {
-				cards.add(gameService.getCard(game));
+				Card card = gameService.getCard(game);
+				player.getHand().add(card);
+				LOG.debug("Adding card {} to player {}", card, player.getUserId());
 			}
-			player.setHand(cards);
 		}
 	}
 

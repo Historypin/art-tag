@@ -115,7 +115,7 @@ public class WebSocketGameController extends TextWebSocketHandler {
 
     private static void sendMessages(List<GamePlayerView> gamePlayerViews) throws IOException, EncodeException {
         for (GamePlayerView view : gamePlayerViews) {
-        	LOG.debug(view.toString());
+        	//LOG.debug(view.toString());
         	String txt = objectMapper.writeValueAsString(view);
         	LOG.debug(txt);
             final TextMessage message = new TextMessage(txt);

@@ -138,7 +138,7 @@ public class GameService {
 	}
 
 	public Card getCard(Game game) {
-		int i = new Random().nextInt(100);
+		int i = new Random().nextInt(12) + 1;
         final String cardToken = String.format("%02d.jpeg", i);
         final String cardSource = String.format("%s/%s", applicationProperties.getHostname(), cardToken);
 		return new Card(cardToken, cardSource);

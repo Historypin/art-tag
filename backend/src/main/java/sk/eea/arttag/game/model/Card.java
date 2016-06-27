@@ -3,7 +3,6 @@ package sk.eea.arttag.game.model;
 public class Card {
 
     private String token;
-
     private String source;
 
     public Card() {
@@ -29,4 +28,9 @@ public class Card {
     public void setSource(String source) {
         this.source = source;
     }
+
+	@Override
+	public String toString() {
+		return "Card [token=" + token + ", source=" + source + "]";
+	}
 }

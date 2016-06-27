@@ -114,7 +114,7 @@ public class StateMachine {
 				processUserInput(game, userInput, userToken);
 				// check if all players already selected own card
 				boolean notYetAllPlayersSelected = game.getPlayers().stream()
-						.anyMatch(p -> p.getTableCardSelection() == null);
+						.anyMatch(p -> !p.isDealer() && p.getTableCardSelection() == null);
 				if (!notYetAllPlayersSelected) {
 					finishRound(game);
 				}
@@ -214,7 +214,7 @@ public class StateMachine {
 	private void startGame(Game game) throws GameException {
 		// evaluate number of players in game, possibly we can start the game
 		if (game.getMinPlayers() <= game.getPlayers().size()) {
-			dealCards(game, GameService.HAND_SIZE);
+//			dealCards(game, GameService.HAND_SIZE);
 			startRound(game);
 		} else {
 			throw new GameException(GameExceptionType.MIN_NUMBER_OF_PLAYERS_NOT_REACHED);
@@ -296,11 +296,11 @@ public class StateMachine {
 	private void dealCards(Game game, int numberOfCards) {
 		LOG.debug("DEAL_CARDS");
 		for (Player player : game.getPlayers()) {
-			List<Card> cards = new ArrayList<>();
 			for (int i = player.getHand().size(); i < numberOfCards; i++) {
-				cards.add(gameService.getCard(game));
+				Card card = gameService.getCard(game);
+				player.getHand().add(card);
+				LOG.debug("Adding card {} to player {}", card, player.getUserId());
 			}
-			player.setHand(cards);
 		}
 	}
 
@@ -319,16 +319,31 @@ public class StateMachine {
 		}
 
 		// TODO check possible states for user input to be valid
-
+        Card card;
 		switch (input.getType()) {
 		case TOPIC_SELECTED:
-			game.setTags(input.getValue());
+            // TODO: refactor this parsing!!!
+            String[] parts = input.getValue().split(";", 2);
+
+            game.setTags(parts[0]);
+
+            // find the card by token
+            card = player.getHand().stream().filter(c -> parts[1].equalsIgnoreCase(c.getToken())).findFirst()
+                .get();
+            if (card == null) {
+                // ignore
+                return;
+            }
+            // pop the card out of players hand
+            player.getHand().remove(card);
+            // set to ownSelection
+            player.setOwnCardSelection(card);
 			break;
 
 		case OWN_CARD_SELECTED: {
 			String cardToken = input.getValue();
 			// find the card by token
-			Card card = player.getHand().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst()
+			card = player.getHand().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst()
 					.get();
 			if (card == null) {
 				// ignore
@@ -344,7 +359,7 @@ public class StateMachine {
 		case TABLE_CARD_SELECTED: {
 			String cardToken = input.getValue();
 			// find the card by token
-			Card card = game.getTable().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst().get();
+			card = game.getTable().stream().filter(c -> cardToken.equalsIgnoreCase(c.getToken())).findFirst().get();
 			if (card == null) {
 				// ignore
 				return;

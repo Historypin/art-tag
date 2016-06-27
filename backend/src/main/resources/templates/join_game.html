@@ -19,108 +19,28 @@
           th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
 
     <link href="../static/css/console.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
+    <link href="../static/css/game_screen.css" th:href="@{/css/game_screen.css}" rel="stylesheet"/>
+    <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
 </head>
-<style>
-    body {
-        margin-top: 20px;
-    }
-
-    .game-table {
-        list-style: none;
-    }
-
-    .hand {
-        list-style: none;
-    }
-
-    .players ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .chat .panel-body {
-        max-height: 500px;
-        overflow-y: scroll;
-    }
-
-    .chat ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    .chat li span {
-        margin: 0;
-        color: #777777;
-    }
-
-    .thumb {
-        margin-bottom: 30px;
-        width: 400px;
-        height: 300px;
-    }
-</style>
 <body>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8 col-lg-8">
-            <div class="row" data-bind="if: gameView.table().length > 0">
+            <div class="row" data-bind="if: gameView.table().length > 0 ">
                 <div class="game-table col-md-12 col-lg-12">
                     <legend>Table</legend>
-                    <div data-bind="foreach: gameView.table">
-                        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                            <a class="thumbnail" href="#">
-                                <img class="img-responsive"
-                                     data-toggle="modal"
-                                     data-target="#imageModal"
-                                     data-bind="attr: {
-                                        'src': source,
-                                        'data-id': token
-                                     }"
-                                ></img>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row" data-bind="if: hand().length > 0">
-                <div class="hand col-md-12 col-lg-12">
-                    <legend>Hand</legend>
-                    <div data-bind="foreach: hand">
-                        <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                            <a class="thumbnail" href="#">
-                                <img class="img-responsive"
-                                     data-toggle="modal"
-                                     data-target="#imageModal"
-                                     data-bind="attr: {
-                                        'src': source,
-                                        'data-id': token
-                                     }"
-                                ></img>
-                            </a>
-                        </div>
-                    </div>
+                    <div data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></div>
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
                 <div class="hand col-md-12 col-lg-12">
-                    <legend>Controls</legend>
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label class="sr-only" for="tagsInput">Tags input</label>
-                            <input type="text" class="form-control" id="tagsInput" placeholder="Write tag here"
-                                   data-bind="textInput: tagsInput"/>
-                            <button class="btn btn-default" data-bind="click: sendTags">Send</button>
-                        </div>
-                    </div>
-                    <div class="form">
-                        <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round</button>
-                    </div>
+                    <legend>Hand</legend>
+                    <div data-bind="template: { name: 'card-thumbnail', foreach: hand }"></div>
                 </div>
             </div>
         </div>
+
         <div class="col-md-4 col-lg-4">
             <div class="row">
                 <div class="panel panel-default">
@@ -136,6 +56,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="players panel panel-default">
                     <div class="panel-heading">
@@ -145,9 +66,13 @@
                         <ul data-bind="foreach: gameView.players">
                             <li data-bind="template: { name: 'player-line'}"></li>
                         </ul>
+                        <div data-bind="if: gameView.status() === 'ROUND_FINISHED'">
+                            <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round</button>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="chat panel panel-default">
                     <div class="panel-heading">
@@ -176,28 +101,54 @@
         </div>
     </div>
 
+    <!-- Modal window with image preview, and user inputs -->
     <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <img class="img-responsive"></img>
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Id</label>
-                            <div class="col-sm-10">
-                                <p class="form-control-static" id="modal-id"></p>
-                            </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <img class="img-responsive"/>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Url</label>
-                            <div class="col-sm-10">
-                                <p class="form-control-static" id="modal-url"></p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Name</label>
-                            <div class="col-sm-10">
-                                <p class="form-control-static" id="modal-name"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-horizontal">
+                                <input type="hidden" class="modal-id"/>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Url</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-static" id="modal-id"></p>
+                                    </div>
+                                </div>
+                                <!-- TAG INPUT -->
+                                <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
+                                    <label class="col-sm-2 control-label">Topic</label>
+                                    <div class="col-sm-10">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control input-sm"
+                                                   data-bind="textInput: tagsInput, event: {keypress: enterTag}" placeholder="Write round topic here..."/>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-warning btn-sm" data-bind="click: sendTag">Send</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- HAND CARD SELECTION -->
+                                <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED'">
+                                    <label class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-10">
+                                        <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
+                                    </div>
+                                </div>
+
+                                <!-- TABLE CARD SELECTION -->
+                                <div class="form-group" data-bind="if: gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
+                                    <label class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-10">
+                                        <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -215,6 +166,7 @@
 <script src="../static/js/md5.js" th:src="@{/js/md5.js}"></script>
 <script src="../static/js/hashcode.js" th:src="@{/js/hashcode.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
+<script src="../static/js/loader.js" th:src="@{/js/loader.js}"></script>
 
 <script type="text/html" id="chat-line">
     <span data-bind="text: time"></span>
@@ -229,37 +181,59 @@
     <strong data-bind="text: inactive() ? '(i)' : ''"></strong>
 </script>
 
+<script type="text/html" id="card-thumbnail">
+    <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+        <a class="thumbnail" href="#">
+            <img class="img-responsive"
+                 data-toggle="modal"
+                 data-target="#imageModal"
+                 data-bind="attr: {'src': source,'data-id': token}"/>
+        </a>
+    </div>
+</script>
+
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     var hostname = /*[[${@environment.getProperty('application.hostname')}]]*/;
     var contextPath = /*[[@{/}]]*/;
     var gameId = /*[[${gameId}]]*/;
     var webSocket = new WebSocket(`ws://${hostname}${contextPath}ws/game?gameId=${gameId}`);
+    var alreadyConnected = false;
 
+    // show loader on start
+    $('body').loader();
+    $.loader.open();
+
+    // handles scrolling of chat messages always to bottom
     ko.bindingHandlers.autoScroll = {
         update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
             $(element).parents('.panel-body').scrollTop($(element).parents('.panel-body')[0].scrollHeight);
         }
     };
 
+    /*
+     Specifies keys to use for comparing change of objects by knockout-mapping plugin.
+     With this, only when change in key is detected, mapping will refresh the element in DOM.
+     */
     var mapping = {
         'hand': {
-            key: function(data) {
+            key: function (data) {
                 return ko.utils.unwrapObservable(data.token);
             }
         },
         'table': {
-            key: function(data) {
+            key: function (data) {
                 return ko.utils.unwrapObservable(data.token);
             }
         },
         'players': {
-            key: function(data) {
+            key: function (data) {
                 return ko.utils.unwrapObservable(HashCode.value(data));
             }
         }
     };
 
+    // knockoutJS viewModel for this page
     function ViewModel(data) {
         data = data || {};
         var self = this;
@@ -267,6 +241,11 @@
 
         self.enterChatMessage = function (d, e) {
             e.keyCode === 13 && self.sendChatMessage();
+            return true;
+        };
+
+        self.enterTag = function (d, e) {
+            e.keyCode === 13 && self.sendTag();
             return true;
         };
 
@@ -284,15 +263,17 @@
             }
         };
 
-        self.sendTags = function () {
+        self.sendTag = function () {
             if (self.tagsInput()) {
+                var selectedCard = $(".modal-body .modal-id").val();
                 var message = {
-                    value: ko.utils.unwrapObservable(self.tagsInput()),
-                    type: 'TAGS_SELECTED',
+                    value: ko.utils.unwrapObservable(self.tagsInput()) + ";" + selectedCard,
+                    type: 'TOPIC_SELECTED',
                     gameId: ko.utils.unwrapObservable(self.gameView.id())
                 };
                 webSocket.send(JSON.stringify(message));
                 self.tagsInput("");
+                $('#imageModal').modal('hide');
             }
         };
 
@@ -305,49 +286,54 @@
             webSocket.send(JSON.stringify(message));
         };
 
-        self.selectHandCard = function (card) {
+        self.selectHandCard = function () {
+            var selectedCard = $(".modal-body .modal-id").val();
             var message = {
-                value: card.token(),
+                value: selectedCard,
                 type: 'OWN_CARD_SELECTED',
                 gameId: ko.utils.unwrapObservable(self.gameView.id())
             };
             webSocket.send(JSON.stringify(message));
+            $('#imageModal').modal('hide');
         };
 
-        self.selectTableCard = function (card) {
+        self.selectTableCard = function () {
+            var selectedCard = $(".modal-body .modal-id").val();
             var message = {
-                value: card.token(),
+                value: selectedCard,
                 type: 'TABLE_CARD_SELECTED',
                 gameId: ko.utils.unwrapObservable(self.gameView.id())
             };
             webSocket.send(JSON.stringify(message));
+            $('#imageModal').modal('hide');
         };
 
 
         return self;
     }
 
+    // viewModel prototype
     var viewModel = new ViewModel({
-        "userToken" : "",
-        "dealer" : false,
-        "hand" : [{
+        "userToken": "",
+        "dealer": false,
+        "hand": [{
             "token": "",
             "source": ""
         }],
-        "gameView" : {
-            "id" : "",
-            "name" : "",
-            "status" : "CREATED",
-            "tags" : "",
-            "remainingTime" : 0,
-            "players" : [ {
-                "token" : "",
-                "name" : "admin",
-                "readyForNextRound" : false,
-                "dealer" : false,
-                "inactive" : false
-        } ],
-            "table" : [{
+        "gameView": {
+            "id": "",
+            "name": "",
+            "status": "",
+            "tags": "",
+            "remainingTime": 0,
+            "players": [{
+                "token": "",
+                "name": "admin",
+                "readyForNextRound": false,
+                "dealer": false,
+                "inactive": false
+            }],
+            "table": [{
                 "token": "",
                 "source": ""
             }]
@@ -362,15 +348,13 @@
     });
     ko.applyBindings(viewModel);
 
+    // websocket on error handler
     webSocket.onerror = function (event) {
-        onError(event)
+        alert(event.data);
     };
 
+    // websocket on message handler
     webSocket.onmessage = function (event) {
-        onMessage(event)
-    };
-
-    function onMessage(event) {
         var data = JSON.parse(event.data);
         // chat message
         if (typeof data.type !== 'undefined') {
@@ -382,32 +366,20 @@
             });
         } else { // model message
             ko.mapping.fromJS(data, mapping, viewModel);
+            // close loader on first data arrival from server
+            if (!alreadyConnected) {
+                $.loader.close();
+            }
+            alreadyConnected = true;
         }
-    }
-
-    function onError(event) {
-        alert(event.data);
-    }
-
-
-    function centerModal() {
-        $(this).css('display', 'block');
-        var $dialog = $(this).find(".modal-dialog");
-        var offset = ($(window).height() - $dialog.height()) / 2;
-        // Center modal vertically in window
-        $dialog.css("margin-top", offset);
-    }
+    };
 
     $(document).on("click", ".thumbnail .img-responsive", function () {
         var id = $(this).attr('data-id');
         var src = $(this).attr('src');
-        $(".modal-body #modal-id").text(id);
+        $(".modal-body .modal-id").val(id);
+        $(".modal-body #modal-id").text(id); // TODO: remove this
         $(".modal-body .img-responsive").attr('src', src);
-    });
-
-    $('.modal').on('show.bs.modal', centerModal);
-    $(window).on("resize", function () {
-        $('.modal:visible').each(centerModal);
     });
     /* ]]> */
 </script>

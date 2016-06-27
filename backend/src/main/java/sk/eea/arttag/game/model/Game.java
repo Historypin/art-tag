@@ -9,7 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sk.eea.arttag.game.service.GameService;
+
 public class Game {
+
+	private static final Logger LOG = LoggerFactory.getLogger(Game.class);
 
 	private String id;
 	private String name;
@@ -202,6 +209,7 @@ public class Game {
 			gamePlayerView.setDealer(player.isDealer());
 			gamePlayerView.setHand(player.getHand());
 			gamePlayerViews.add(gamePlayerView);
+			LOG.debug("GPV: {}", gamePlayerView.toString());
 		}
 
 		return gamePlayerViews;

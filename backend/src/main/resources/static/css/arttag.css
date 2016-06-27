@@ -120,5 +120,10 @@
     border-radius: 0px !important;
 }
 
+body
+{
+    font-family: Monserrat;
+}
+
 .lightslategray-background {background-color:lightslategray;}
 .orange-background {background-color:orange;}

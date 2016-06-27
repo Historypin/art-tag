@@ -138,9 +138,21 @@ public class GameService {
 	}
 
 	public Card getCard(Game game) {
-		int i = new Random().nextInt(12) + 1;
-        final String cardToken = String.format("%02d.jpeg", i);
-        final String cardSource = String.format("%s/%s", applicationProperties.getHostname(), cardToken);
+        Random random = new Random();
+        String cardToken;
+        do {
+            cardToken = String.format("%02d.jpeg", random.nextInt(12) + 1);
+        } while (!isUnique(cardToken, game));
+        final String cardSource = String.format("%s://%s/%s/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(), applicationProperties.getCulturalObjectsPublicPath(), cardToken);
 		return new Card(cardToken, cardSource);
 	}
+
+    private boolean isUnique(String cardToken, Game game) {
+        for(Player player : game.getPlayers()) {
+            if(player.getHand().stream().anyMatch(card -> card.getToken().equals(cardToken))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

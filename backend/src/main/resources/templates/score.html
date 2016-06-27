@@ -4,10 +4,9 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Blank page</title>
+    <title>Index page</title>
 
-    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css' />
-
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'/>
 
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
@@ -19,29 +18,92 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
           th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
 
-    <link href="../static/css/console.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
+    <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <h1>Score</h1>
-        <table class="table table-striped">
-            <tr>
-                <th>Games played</th>
-                <th>Games won</th>
-                <th>Total score</th>
-            </tr>
-            <tr th:each='score : ${scores}'>
-                <td th:text="${score.gamesPlayed}"></td>
-                <td th:text="${score.gamesWon}"></td>
-                <td th:text='${score.totalScore}'></td>
-            </tr>
-        </table>
+<div class="container-fluid" style="height: 100vh;background-repeat:no-repeat;background-size:cover;background-image: url('https://i.ytimg.com/vi/UFFi9PWKDjg/maxresdefault.jpg');">
+
+    <div id='joinGameScreenUpperHalf' class="row">
+        <div class='row vertical-align'>
+            <div class='col-sm-2'>
+                <div class="col-sm-offset-2 ">
+                    <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+                </div>
+            </div>
+            <div class='col-sm-8'>
+                <div class='centeredText margin10px orange-background'>
+                    <h1>ARTTAG
+                        <br />
+                        <small>THE ART OF FUN</small>
+                    </h1>
+                </div>
+            </div>
+            <div class='col-sm-2'>
+                <div class='col-md-offset-4'>
+                    <div class='btn margin10px'>
+                        <i class="fa fa-search fa-2x" aria-hidden="true"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row" style="height: 100%;">
+            <div class="row" style="height: 10%;">
+
+            </div>
+            <div class="row col-sm-12 centeredText" >
+                <div class="col-sm-2">
+                    <!-- placeholder -->
+                </div>
+                <div class="col-sm-8">
+                    <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
+                    <div class="col-sm-9 lightslategray-background">
+                        <table class="table table-striped">
+                            <tr>
+                                <th>Games played</th>
+                                <th>Games won</th>
+                                <th>Total score</th>
+                            </tr>
+                            <tr th:each='score : ${scores}'>
+                                <td th:text="${score.gamesPlayed}"></td>
+                                <td th:text="${score.gamesWon}"></td>
+                                <td th:text='${score.totalScore}'></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-sm-2 ">
+                    <!-- placeholder -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id='joinGameScreenLowerHalf' class="row">
+        <div class='col-xs-6 centeredText'>
+            <h1 class="h1">Join the game</h1>
+            <input type="email" id="joingameinputbox" placeholder="The name of the game"></input>
+            <br />
+            <small><a th:href="@{/join_game}">AVAILABLE GAMES</a></small>
+            <br />
+            <small><a th:href="@{/join_game/1}">GAME 1</a></small>
+            <br />
+            <small><a th:href="@{/join_game/2}">GAME 2</a></small>
+            <br />
+        </div>
+        <div class='col-xs-6 centeredText'>
+            <h1>Create new game</h1>
+
+            <input type="email" id="createnewgameinputbox" placeholder="Name the game"></input>
+            <br />
+            <small><a th:href="@{/create_game}">INVITE YOUR FRIENDS</a></small>
+        </div>
     </div>
 </div>
 
 <script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
 </body>
 </html>

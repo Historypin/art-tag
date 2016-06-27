@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Index page</title>
 
-    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css' />
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'/>
 
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
@@ -21,7 +21,8 @@
     <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
 </head>
 <body>
-<div class="container-fluid">
+<div class="container-fluid" style="height: 100vh;background-repeat:no-repeat;background-size:cover;background-image: url('https://i.ytimg.com/vi/UFFi9PWKDjg/maxresdefault.jpg');">
+
     <div id='joinGameScreenUpperHalf' class="row">
         <div class='row vertical-align'>
             <div class='col-sm-2'>
@@ -29,10 +30,10 @@
                     <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
                 </div>
             </div>
-            <div class='col-sm-8 orange-background'>
-                <div class='centeredText margin10px'>
+            <div class='col-sm-8'>
+                <div class='centeredText margin10px orange-background'>
                     <h1>ARTTAG
-                        <br></br>
+                        <br />
                         <small>THE ART OF FUN</small>
                     </h1>
                 </div>
@@ -47,9 +48,44 @@
             </div>
         </div>
 
-        <div class="row lightslategray-background" style="height: 100%;">
-            <div class="col-sm-12" style="height: 50%; background-color: aqua;">
+        <div class="row" style="height: 100%;">
+            <div class="row" style="height: 10%;">
 
+            </div>
+            <div class="row col-sm-12 centeredText" >
+                <div class="col-sm-2">
+                    <!-- placeholder -->
+                </div>
+                <div class="col-sm-8">
+                    <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
+                    <div class="col-sm-9 lightslategray-background">
+                        Name the game: <input type="text" name="fname" /><br />
+                        <input type="submit" value="Create" />
+
+                        <!--
+
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
+
+                        -->
+                    </div>
+                </div>
+                <div class="col-sm-2 ">
+                    <!-- placeholder -->
+                </div>
             </div>
         </div>
     </div>
@@ -57,19 +93,19 @@
         <div class='col-xs-6 centeredText'>
             <h1 class="h1">Join the game</h1>
             <input type="email" id="joingameinputbox" placeholder="The name of the game"></input>
-            <br></br>
+            <br />
             <small><a th:href="@{/join_game}">AVAILABLE GAMES</a></small>
-            <br></br>
+            <br />
             <small><a th:href="@{/join_game/1}">GAME 1</a></small>
-            <br></br>
+            <br />
             <small><a th:href="@{/join_game/2}">GAME 2</a></small>
-            <br></br>
+            <br />
         </div>
         <div class='col-xs-6 centeredText'>
             <h1>Create new game</h1>
 
             <input type="email" id="createnewgameinputbox" placeholder="Name the game"></input>
-            <br></br>
+            <br />
             <small><a th:href="@{/create_game}">INVITE YOUR FRIENDS</a></small>
         </div>
     </div>

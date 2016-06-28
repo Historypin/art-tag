@@ -3,6 +3,7 @@ package sk.eea.arttag.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,7 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     @Autowired
     private DataSource dataSource;
@@ -37,29 +38,50 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .passwordEncoder(passwordEncoder());
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
+    @Configuration
+    @Order(1)
+    public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                .antMatcher("/api/**")
                 .authorizeRequests()
-                    .antMatchers("/").permitAll()
-                    .antMatchers("/js/**", "/css/**", "/webjars/**", "/fonts/**", "/img/**").permitAll()
-                    .anyRequest().authenticated()
+                .anyRequest().hasRole("API")
+                .and()
+                .httpBasic()
+                .and()
+                .csrf().disable();
+        }
+    }
+
+    @Configuration
+    public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http
+                .authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers("/js/**", "/css/**", "/webjars/**", "/fonts/**", "/img/**").permitAll()
+                .anyRequest().hasRole("USER")
                 .and()
                 .formLogin()
-                    .loginPage("/#signinmodal")
-                    .loginProcessingUrl("/login.do")
-                    .defaultSuccessUrl("/join_page")
-                    .failureUrl("/?error#signinmodal")
-                    .usernameParameter("username")
-                    .passwordParameter("password")
+                .loginPage("/#signinmodal")
+                .loginProcessingUrl("/login.do")
+                .defaultSuccessUrl("/join_page")
+                .failureUrl("/?error#signinmodal")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .and()
                 .logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/")
-                    .invalidateHttpSession(true)
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true)
                 .and()
                 .sessionManagement()
-                    .invalidSessionUrl("/")
-                    .maximumSessions(1);
+                .invalidSessionUrl("/")
+                .maximumSessions(1);
+        }
     }
 }

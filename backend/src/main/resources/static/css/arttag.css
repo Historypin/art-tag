@@ -6,7 +6,6 @@
 #joinGameScreenUpperHalf
 {
     height: 70vh;
-    background-color: lightsteelblue;
 }
 
 #joinGameScreenLowerHalf
@@ -50,7 +49,7 @@
     height: 100vh;
     background-image: url("https://wallpaperscraft.com/image/owl_bird_predator_eyes_feathers_66601_1920x1080.jpg");
     background-repeat:no-repeat;
-    background-size:cover
+    background-size:cover;
 }
 
 #welcomediv

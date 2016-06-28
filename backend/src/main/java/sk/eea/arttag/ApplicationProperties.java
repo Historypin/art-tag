@@ -11,7 +11,11 @@ public class ApplicationProperties {
 
     private String hostname;
 
+    private String hostnamePrefix;
+
     private Integer maxDescriptionSize;
+
+    private String culturalObjectsPublicPath;
 
     public String getVersion() {
         return version;
@@ -35,5 +39,21 @@ public class ApplicationProperties {
 
     public void setMaxDescriptionSize(Integer maxDescriptionSize) {
         this.maxDescriptionSize = maxDescriptionSize;
+    }
+
+    public String getHostnamePrefix() {
+        return hostnamePrefix;
+    }
+
+    public void setHostnamePrefix(String hostnamePrefix) {
+        this.hostnamePrefix = hostnamePrefix;
+    }
+
+    public String getCulturalObjectsPublicPath() {
+        return culturalObjectsPublicPath;
+    }
+
+    public void setCulturalObjectsPublicPath(String culturalObjectsPublicPath) {
+        this.culturalObjectsPublicPath = culturalObjectsPublicPath;
     }
 }

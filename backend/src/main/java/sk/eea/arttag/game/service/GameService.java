@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import sk.eea.arttag.ApplicationProperties;
 import sk.eea.arttag.game.model.Card;
-import sk.eea.arttag.game.model.CardMetadata;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
 import sk.eea.arttag.game.model.GameException;
@@ -33,6 +31,8 @@ public class GameService {
     private ApplicationProperties applicationProperties;
     @Autowired
     private StateMachine stateMachine;
+    @Autowired
+    private CardService cardService;
 
     private Map<String, Game> games = new HashMap<>();
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
@@ -139,16 +139,6 @@ public class GameService {
 
     public List<Card> getInitialDeck(int numberOfCards) {
         LOG.debug("INITIAL_DECK");
-        List<Card> deck = new ArrayList<>();
-
-        //TODO call CardService.getCards()
-        for (int i = 0; i <= numberOfCards; i++) {
-            final String cardToken = String.format("%02d.jpeg", i);
-            final String cardSource = String.format("http://%s/img/%s", applicationProperties.getHostname(), cardToken);
-            deck.add(new Card(cardToken, cardSource, new CardMetadata("author", "externalUrl", "description")));
-        }
-        //Collections.shuffle(deck);
-        return deck;
+        return cardService.getCards(numberOfCards);
     }
-
 }

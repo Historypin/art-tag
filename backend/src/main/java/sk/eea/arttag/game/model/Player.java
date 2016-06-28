@@ -21,6 +21,8 @@ public class Player {
 	private boolean dealer;
 	private boolean inactive;//disconnected
 	private boolean skipThisRound;//user failed to act
+	private int gameScore;
+	private int lastRoundScore;
 
 	public Player() {
 	}
@@ -28,6 +30,8 @@ public class Player {
 		this.token = token;
 		this.name = name;
 		this.userId = userId;
+		this.gameScore = 0;
+		this.lastRoundScore = 0;
 	}
 
 	public List<Card> getHand() {
@@ -84,11 +88,25 @@ public class Player {
 	public void setInactive(boolean inactive) {
 		this.inactive = inactive;
 	}
+	public int getGameScore() {
+		return gameScore;
+	}
+	public void setGameScore(int gameScore) {
+		this.gameScore = gameScore;
+	}
+	public int getLastRoundScore() {
+		return lastRoundScore;
+	}
+	public void setLastRoundScore(int lastRoundScore) {
+		this.lastRoundScore = lastRoundScore;
+	}
 
 	@Override
 	public String toString() {
-		return "Player [token=" + token + ", name=" + name + ", hand=" + hand + ", ownBid=" + ownCardSelection
-				+ ", matchingCardSelected=" + tableCardSelection + ", dealer=" + dealer + "]";
+		return "Player [token=" + token + ", name=" + name + ", userId=" + userId + ", hand=" + hand
+				+ ", ownCardSelection=" + ownCardSelection + ", tableCardSelection=" + tableCardSelection
+				+ ", readyForNextRound=" + readyForNextRound + ", dealer=" + dealer + ", inactive=" + inactive
+				+ ", gameScore=" + gameScore + ", lastRoundScore=" + lastRoundScore + "]";
 	}
 
 	public void roundReset() {

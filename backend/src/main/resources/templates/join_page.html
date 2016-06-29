@@ -60,27 +60,8 @@
                     <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
                     <div class="col-sm-9 lightslategray-background">
                         Name the game: <input type="text" name="fname" /><br />
-                        <input type="submit" value="Create" />
+                        <input type="submit" value="Join" />
 
-                        <!--
-
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-                            CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!CHANGE THIS!
-
-                        -->
                     </div>
                 </div>
                 <div class="col-sm-2 ">
@@ -90,23 +71,36 @@
         </div>
     </div>
     <div id='joinGameScreenLowerHalf' class="row">
-        <div class='col-xs-6 centeredText'>
-            <h1 class="h1">Join the game</h1>
-            <input type="email" id="joingameinputbox" placeholder="The name of the game"></input>
-            <br />
-            <small><a th:href="@{/join_game}">AVAILABLE GAMES</a></small>
-            <br />
-            <small><a th:href="@{/join_game/1}">GAME 1</a></small>
-            <br />
-            <small><a th:href="@{/join_game/2}">GAME 2</a></small>
-            <br />
-        </div>
-        <div class='col-xs-6 centeredText'>
-            <h1>Create new game</h1>
+        <div class="row">
+            <div class='col-xs-6 centeredText'>
+                <h1 class="h1">Join the game</h1>
+                <input type="email" id="joingameinputbox" placeholder="The name of the game" />
+                <br />
+                <small><a th:href="@{/join_game}">AVAILABLE GAMES</a></small>
+                <br />
+                <small><a th:href="@{/join_game/1}">GAME 1</a></small>
+                <br />
+                <small><a th:href="@{/join_game/2}">GAME 2</a></small>
+                <br />
+            </div>
+            <div class='col-xs-6 centeredText'>
+                <h1>Create new game</h1>
 
-            <input type="email" id="createnewgameinputbox" placeholder="Name the game"></input>
-            <br />
-            <small><a th:href="@{/create_game}">INVITE YOUR FRIENDS</a></small>
+                <input type="email" id="createnewgameinputbox" placeholder="Name the game" />
+                <br />
+                <small><a th:href="@{/create_game}">INVITE YOUR FRIENDS</a></small>
+            </div>
+        </div>
+        <div class="row orange-background fill-height col-centered">
+            <div class="col-sm-3">
+                <img th:src="@{/img/en_cef.png}" src="/img/en_cef.png" style="max-width:100%;max-height:100%;"/>
+            </div>
+            <div class="col-sm-6">
+                asd
+            </div>
+            <div class="col-sm-3 col-centered">
+                <img th:src="@{/img/madewith.png}" src="/img/madewith.png"/>
+            </div>
         </div>
     </div>
 </div>

@@ -122,6 +122,4 @@ ALTER TABLE ONLY tag
     ADD CONSTRAINT fk_rr0jdrb0km505m2m59c7kjlwa FOREIGN KEY (value) REFERENCES localized_string(id);
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;

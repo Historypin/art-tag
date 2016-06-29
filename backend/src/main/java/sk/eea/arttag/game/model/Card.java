@@ -4,33 +4,31 @@ public class Card {
 
     private String token;
     private String source;
+    private CardMetadata metadata;
 
     public Card() {
     }
 
-    public Card(String token, String source) {
+    public Card(String token, String source, CardMetadata metadata) {
         this.token = token;
         this.source = source;
+        this.metadata = metadata;
     }
 
     public String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getSource() {
         return source;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+    public CardMetadata getMetadata() {
+        return metadata;
     }
 
-	@Override
-	public String toString() {
-		return "Card [token=" + token + ", source=" + source + "]";
-	}
+    @Override
+    public String toString() {
+        return "Card [token=" + token + ", source=" + source + ", metadata=" + metadata + "]";
+    }
 }

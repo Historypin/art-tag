@@ -30,8 +30,7 @@ public class WebSocketGameController extends TextWebSocketHandler {
     private static final String TOKEN = "token";
     private static final Logger LOG = LoggerFactory.getLogger(WebSocketGameController.class);
 
-    private static final Map<String, WebSocketSession> clients = Collections
-        .synchronizedMap(new HashMap<String, WebSocketSession>());
+    private static final Map<String, WebSocketSession> clients = Collections.synchronizedMap(new HashMap<String, WebSocketSession>());
 
     private static GameService gameService;
 
@@ -115,17 +114,17 @@ public class WebSocketGameController extends TextWebSocketHandler {
 
     private static void sendMessages(List<GamePlayerView> gamePlayerViews) throws IOException, EncodeException {
         for (GamePlayerView view : gamePlayerViews) {
-        	//LOG.debug(view.toString());
-        	String txt = objectMapper.writeValueAsString(view);
-        	LOG.debug(txt);
+            //LOG.debug(view.toString());
+            String txt = objectMapper.writeValueAsString(view);
+            LOG.debug(txt);
             final TextMessage message = new TextMessage(txt);
             LOG.debug("Clients: {}", clients.size());
             final WebSocketSession webSocketSession = clients.get(view.getUserToken());
             if (webSocketSession != null) {
-            	LOG.debug("Sending message");
+                LOG.debug("Sending message");
                 webSocketSession.sendMessage(message);
             } else {
-            	LOG.debug("No session");
+                LOG.debug("No session");
             }
         }
     }

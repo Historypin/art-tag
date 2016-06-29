@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import javax.annotation.PostConstruct;
 
@@ -32,12 +31,15 @@ public class GameService {
     private ApplicationProperties applicationProperties;
     @Autowired
     private StateMachine stateMachine;
+    @Autowired
+    private CardService cardService;
 
     private Map<String, Game> games = new HashMap<>();
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
     public static final int HAND_SIZE = 5;
+    public static final int INITIAL_DECK_SIZE = 100;
     public static final int GAME_MIN_PLAYERS = 1;
-    public static final int GAME_MAX_PLAYERS = 2;
+    public static final int GAME_MAX_PLAYERS = 3;
 
     @PostConstruct
     public void init() throws GameException {
@@ -122,14 +124,11 @@ public class GameService {
         }
 
         //evaluate possible events a user can trigger
-        GameEvent gameEvent = UserInputType.TOPIC_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED : (
-            UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED : (
-                UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED : (
-                    UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ?
-                        GameEvent.PLAYER_READY_FOR_NEXT_ROUND : (
-                        UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null
-                    )))
-        );
+        GameEvent gameEvent = UserInputType.TOPIC_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED
+                : (UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED
+                        : (UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED
+                                : (UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND
+                                        : (UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null))));
         stateMachine.triggerEvent(game, gameEvent, input, userToken, null);
         //		updateGameAfterUserInput(game, input, userToken);
     }
@@ -138,24 +137,8 @@ public class GameService {
 
     }
 
-    public Card getCard(Game game) {
-        Random random = new Random();
-        String cardToken;
-        do {
-            cardToken = String.format("%02d.jpeg", random.nextInt(12) + 1);
-        } while (!isUnique(cardToken, game));
-        final String cardSource = String
-            .format("%s://%s/%s/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(),
-                applicationProperties.getCulturalObjectsPublicPath(), cardToken);
-        return new Card(cardToken, cardSource);
-    }
-
-    private boolean isUnique(String cardToken, Game game) {
-        for (Player player : game.getPlayers()) {
-            if (player.getHand().stream().anyMatch(card -> card.getToken().equals(cardToken))) {
-                return false;
-            }
-        }
-        return true;
+    public List<Card> getInitialDeck(int numberOfCards) {
+        LOG.debug("INITIAL_DECK");
+        return cardService.getCards(numberOfCards);
     }
 }

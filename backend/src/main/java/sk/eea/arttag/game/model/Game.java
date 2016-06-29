@@ -27,7 +27,7 @@ public class Game {
 	private List<Player> players = new LinkedList<>();
 	private Date endOfRound;
 	private String tags;
-//	private List<Card> deck = new ArrayList<>();
+	private List<Card> deck = new ArrayList<>();
 	private List<Card> table = new ArrayList<>();
 	private int minPlayers;
 	private int maxPlayers;
@@ -123,13 +123,13 @@ public class Game {
 		this.tags = tags;
 	}
 
-/*	public List<Card> getDeck() {
+	public List<Card> getDeck() {
 		return deck;
 	}
 
 	public void setDeck(List<Card> deck) {
 		this.deck = deck;
-	}*/
+	}
 
 	public List<Card> getTable() {
 		return table;

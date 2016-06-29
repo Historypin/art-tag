@@ -18,9 +18,9 @@ public interface TagRepository  extends JpaRepository<Tag, Long>{
 	Tag findByValueAndCulturalObjectId(@Param("language") String language, @Param("value") String value, @Param("culturalObject") CulturalObject culturalObject);
 
     @Query(value="select tag.* from tag as tag left join cultural_object as co on co.id = tag.co_id where tag.created >= :fromDate and tag.created < :untilDate and co.batch_id = :batchId order by tag.created asc offset :cursor limit :limit", nativeQuery=true)
-    List<Tag> findTagsForEnrichment(@Param("fromDate") Date fromDate, @Param("untilDate") Date untilDate, @Param("batchId") String batchId, @Param("cursor")int page, @Param("limit") int count);
+    List<Tag> findTagsForEnrichment(@Param("fromDate") Date fromDate, @Param("untilDate") Date untilDate, @Param("batchId") Long batchId, @Param("cursor")int page, @Param("limit") int count);
 
     @Query(value="select count(tag.id) from tag as tag left join cultural_object as co on co.id = tag.co_id where tag.created >= :fromDate and tag.created < :untilDate and co.batch_id = :batchId", nativeQuery=true)
-    Integer countTagsForEnrichment(@Param("fromDate")Date fromDate, @Param("untilDate")Date untilDate, @Param("batchId")String batchId);
+    Integer countTagsForEnrichment(@Param("fromDate")Date fromDate, @Param("untilDate")Date untilDate, @Param("batchId")Long batchId);
 
 }

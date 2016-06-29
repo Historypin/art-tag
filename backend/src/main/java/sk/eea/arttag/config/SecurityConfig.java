@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import sk.eea.arttag.ApplicationProperties;
 
 import javax.sql.DataSource;
 
@@ -58,12 +59,15 @@ public class SecurityConfig {
     @Configuration
     public static class FormLoginWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
+        @Autowired
+        private ApplicationProperties applicationProperties;
+
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/js/**", "/css/**", "/webjars/**", "/fonts/**", "/img/**").permitAll()
+                .antMatchers("/js/**", "/css/**", "/webjars/**", "/fonts/**", "/img/**", String.format("/%s/**", applicationProperties.getCulturalObjectsPublicPath())).permitAll()
                 .anyRequest().hasRole("USER")
                 .and()
                 .formLogin()

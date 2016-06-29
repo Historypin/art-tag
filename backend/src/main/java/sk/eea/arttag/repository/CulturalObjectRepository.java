@@ -22,8 +22,11 @@ public interface CulturalObjectRepository extends JpaRepository<CulturalObject, 
 
 	@Modifying
 	@Query("update CulturalObject cu set cu.active=false where cu.batchId = :batchId")
-	void stopEnrichingBatch(@Param("batchId") String batchId);
+	void stopEnrichingBatch(@Param("batchId") Long batchId);
 
-    List<CulturalObject> findByBatchId(String batchId);
+	@Query(value = "select nextval('hibernate_sequence')", nativeQuery = true)
+	Long getNextSequence();
+
+    List<CulturalObject> findByBatchId(Long batchId);
 
 }

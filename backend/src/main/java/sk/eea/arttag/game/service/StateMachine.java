@@ -391,6 +391,7 @@ public class StateMachine {
                 }
                 // set to tableSelection
                 player.setTableCardSelection(card);
+                card.addPlayerSelection(player.getName());
                 break;
             }
 

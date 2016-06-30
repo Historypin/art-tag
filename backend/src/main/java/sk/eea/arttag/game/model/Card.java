@@ -9,6 +9,8 @@ public class Card {
     private String source;
     private CardMetadata metadata;
     private List<String> playerSelections = new ArrayList<>();
+    private String cardSelectedBy; //userId of the player who selected this card
+    private boolean dealersCard;
 
     public Card() {
     }
@@ -17,6 +19,15 @@ public class Card {
         this.token = token;
         this.source = source;
         this.metadata = metadata;
+    }
+
+    public Card(Card original) {
+        this.token = original.getToken();
+        this.source = original.getSource();
+        this.metadata = original.getMetadata();
+        this.playerSelections = original.getPlayerSelections();
+        this.cardSelectedBy = null;
+        this.dealersCard = false;
     }
 
     public String getToken() {
@@ -34,10 +45,23 @@ public class Card {
     public List<String> getPlayerSelections() {
         return playerSelections;
     }
+    public boolean isDealersCard() {
+        return dealersCard;
+    }
+    public void setDealersCard(boolean dealersCard) {
+        this.dealersCard = dealersCard;
+    }
+    public String getCardSelectedBy() {
+        return cardSelectedBy;
+    }
+    public void setCardSelectedBy(String cardSelectedBy) {
+        this.cardSelectedBy = cardSelectedBy;
+    }
 
     @Override
     public String toString() {
-        return "Card [token=" + token + ", source=" + source + ", metadata=" + metadata + "]";
+        return "Card [token=" + token + ", source=" + source + ", playerSelections=" + playerSelections + ", cardSelectedBy=" + cardSelectedBy
+                + ", dealersCard=" + dealersCard + "]";
     }
 
     @Override

@@ -120,6 +120,7 @@ public class StateMachine {
                             .anyMatch(p -> !p.isInactive() && !p.isDealer() && p.getTableCardSelection() == null);
                     if (!notYetAllPlayersSelected) {
                         finishRound(game);
+                        showTable(game);
                     }
                 } else if (GameEvent.TIMEOUT == event) {
                     // timeout triggered before all players selected table cards
@@ -127,6 +128,7 @@ public class StateMachine {
                     game.getPlayers().stream().filter(p -> !p.isDealer() && p.getTableCardSelection() == null).forEach(p -> p.setInactive(true));
 
                     finishRound(game);
+                    showTable(game);
                 }
                 break;
 
@@ -215,9 +217,7 @@ public class StateMachine {
     }
 
     private void showTable(Game game) {
-        List<Card> table = game.getPlayers().stream().filter(p -> p.getOwnCardSelection() != null).map(p -> p.getOwnCardSelection())
-                .collect(Collectors.toList());
-        game.setTable(table);
+        game.generateTable();
     }
 
     private void startGame(Game game) throws GameException {
@@ -240,6 +240,7 @@ public class StateMachine {
     private void finishRound(Game game) {
         RoundSummary summary = RoundSummary.create(game);
         gameService.processRoundSummary(summary);
+        game.updatePlayerScoreAfterRoundFinished(summary.getPlayerSummary());
         game.setStatus(GameStatus.ROUND_FINISHED);
         game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutRoundFinished()));
     }
@@ -352,6 +353,9 @@ public class StateMachine {
                 player.getHand().remove(card);
                 // set to ownSelection
                 player.setOwnCardSelection(card);
+
+                card.setCardSelectedBy(player.getUserId());
+                card.setDealersCard(player.isDealer());
                 break;
 
             case OWN_CARD_SELECTED: {
@@ -372,6 +376,8 @@ public class StateMachine {
                 player.getHand().remove(card);
                 // set to ownSelection
                 player.setOwnCardSelection(card);
+
+                card.setCardSelectedBy(player.getUserId());
                 break;
             }
 

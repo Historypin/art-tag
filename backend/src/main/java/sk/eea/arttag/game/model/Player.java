@@ -114,5 +114,6 @@ public class Player {
 		this.tableCardSelection = null;
 		this.readyForNextRound = false;
 		this.dealer = false;
+		this.lastRoundScore = 0;
 	}
 }

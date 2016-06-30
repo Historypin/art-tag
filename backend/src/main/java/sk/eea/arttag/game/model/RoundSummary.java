@@ -9,7 +9,7 @@ import java.util.Optional;
 public class RoundSummary {
 
     private Game game;
-    private List<PlayerRoundSummary> playerSummary = new ArrayList<>();
+    private Map<String, Integer> playerSummary = new HashMap<>();
     private List<CardRoundSummary> cardSummary = new ArrayList<>();
 
     private RoundSummary(Game game) {
@@ -73,16 +73,20 @@ public class RoundSummary {
             cardSummary.add(new CardRoundSummary(c.getToken(), cardScore));
         });
         //PLAYER SUMMARY
-        playerRoundSummaries.forEach((k, v) -> {
+        playerSummary = playerRoundSummaries;
+/*        playerRoundSummaries.forEach((k, v) -> {
             playerSummary.add(new PlayerRoundSummary(k, v));
-        });
+        });*/
     }
 
     public Game getGame() {
         return game;
     }
 
-    public List<PlayerRoundSummary> getPlayerSummary() {
+    public Map<String, Integer> getPlayerSummary() {
         return playerSummary;
+    }
+    public List<CardRoundSummary> getCardSummary() {
+        return cardSummary;
     }
 }

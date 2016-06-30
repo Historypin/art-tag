@@ -3,31 +3,27 @@
     width: 100%;
 }
 
-#joinGameScreenUpperHalf
-{
+#joinGameScreenUpperHalf {
     height: 70vh;
 }
 
-#joinGameScreenLowerHalf
-{
+#joinGameScreenLowerHalf {
     height: 30vh;
     background-color: rgb(217, 242, 236);
 }
 
-.centeredText
-{
+.centeredText {
     text-align: center;
 }
 
-.margin10px
-{
+.margin10px {
     margin-top: 10px;
     margin-bottom: 10px;
     margin-right: 10px;
     margin-left: 10px;
 }
 
-.col-centered{
+.col-centered {
     float: none;
     margin: 0 auto;
 }
@@ -37,41 +33,38 @@
     align-items: center;
 }
 
-#signinbutton
-{
+#signinbutton {
     /*border-radius: 250px;*/
     border-color: transparent;
     background-color: rgba(212, 212, 221, 0.8);
 }
 
-#indexpage
-{
+#indexpage {
     height: 100vh;
     background-image: url("https://wallpaperscraft.com/image/owl_bird_predator_eyes_feathers_66601_1920x1080.jpg");
-    background-repeat:no-repeat;
-    background-size:cover;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
-#welcomediv
-{
+#welcomediv {
     background-color: rgba(100, 100, 100, 0.4);
     max-height: 500px;
 }
 
 .fill-height {
     min-height: 100%;
-    height:auto !important; /* cross-browser */
+    height: auto !important; /* cross-browser */
     height: 100%; /* cross-browser */
 }
 
 .container-fluid {
     height: 100vh;
-    overflow:hidden;
+    overflow: hidden;
 }
 
 .modal {
     text-align: center;
-    padding: 0!important;
+    padding: 0 !important;
 }
 
 .modal:before {
@@ -92,6 +85,7 @@
     overflow: hidden;
     text-align: center;
 }
+
 .stroke:before,
 .stroke:after {
     background-color: #000;
@@ -102,27 +96,81 @@
     vertical-align: middle;
     width: 50%;
 }
+
 .stroke:before {
     right: 0.5em;
     margin-left: -50%;
 }
+
 .stroke:after {
     left: 0.5em;
     margin-right: -50%;
 }
 
-
-.modal-content
-{
+.modal-content {
     -webkit-border-radius: 0px !important;
     -moz-border-radius: 0px !important;
     border-radius: 0px !important;
 }
 
-body
-{
+body {
     font-family: Monserrat;
 }
 
-.lightslategray-background {background-color:lightslategray;}
-.orange-background {background-color:orange;}
+.lightslategray-background {
+    background-color: lightslategray;
+}
+
+.orange-background {
+    background-color: orange;
+}
+
+/*
+    Gallery code
+ */
+
+.gallery {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.gallery li {
+    margin: 20px;
+    padding: 0;
+    float: left;
+    position: relative;
+    width: 30%;
+    height: 20%;
+    background-color: white;
+}
+
+
+.gallery img {
+    border: 15px solid #3e2b14;
+    padding: 10px;
+    width:100%;
+    height:100%;
+}
+
+.errorimage {
+    text-align: center;
+    border: 1px solid green;
+}
+.errorimage ul {
+    border: 2px solid red;
+    display: inline-block;
+    margin: 10px 0;
+    padding: 2px;
+}
+.errorimage li {
+    display: inline-block;
+}
+.errorimage li a {
+    display: inline-block;
+    background: #444;
+    color: #FFF;
+    padding: 5px;
+    text-decoration: none;
+}
+

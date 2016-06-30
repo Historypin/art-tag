@@ -6,13 +6,13 @@ public class PageableTagsDTO {
 
 	private Integer position;
 	private Integer totalCount;
-	private String batchId;
+	private Long batchId;
 	private List<TagDTO> tags;
 	private String resumptionToken;
 
 	public PageableTagsDTO() {}
 
-    public PageableTagsDTO(Integer position, Integer totalCount, String batchId, String resumptionToken, List<TagDTO> tags) {
+    public PageableTagsDTO(Integer position, Integer totalCount, Long batchId, String resumptionToken, List<TagDTO> tags) {
 		super();
 		this.position = position;
 		this.totalCount = totalCount;
@@ -29,7 +29,7 @@ public class PageableTagsDTO {
 		return totalCount;
 	}
 
-	public String getBatchId() {
+	public Long getBatchId() {
 		return batchId;
 	}
 
@@ -49,7 +49,7 @@ public class PageableTagsDTO {
         this.totalCount = totalCount;
     }
 
-    public void setBatchId(String batchId) {
+    public void setBatchId(Long batchId) {
         this.batchId = batchId;
     }
 

@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS tag CASCADE;
 DROP TABLE IF EXISTS user_favourite CASCADE;
 DROP TABLE IF EXISTS authorities CASCADE;
 DROP INDEX IF EXISTS ix_auth_login CASCADE;
+DROP INDEX IF EXISTS ix_batch_id CASCADE;
 
 CREATE SEQUENCE hibernate_sequence
 INCREMENT 1
@@ -22,12 +23,13 @@ CREATE TABLE cultural_object (
     id bigint NOT NULL,
     active boolean,
     author character varying(255),
-    batch_id character varying(255),
+    batch_id bigint NOT NULL,
     external_id character varying(255),
     external_url character varying(255),
-    image_path character varying(255)
+    external_source character varying(255),
+    internal_file_system_path character varying(255),
+    public_source character varying(255)
 );
-
 
 ALTER TABLE cultural_object OWNER TO arttag;
 
@@ -61,16 +63,16 @@ CREATE TABLE system_user (
 
 ALTER TABLE system_user OWNER TO arttag;
 
-create table authorities (
+CREATE TABLE authorities (
     id bigint PRIMARY KEY NOT NULL,
     login character varying(255) NOT NULL,
     authority character varying(255) NOT NULL,
-    constraint fk_authorities_users foreign key(login) references system_user(login)
+    CONSTRAINT fk_authorities_users foreign key(login) references system_user(login)
 );
 
 ALTER TABLE authorities OWNER TO arttag;
 
-create unique index ix_auth_login on authorities (login,authority);
+CREATE UNIQUE INDEX ix_auth_login on authorities (login,authority);
 
 CREATE TABLE tag (
     id bigint NOT NULL,
@@ -88,6 +90,7 @@ CREATE TABLE user_favourite (
     favourite_objects bigint NOT NULL
 );
 
+CREATE INDEX ix_batch_id ON cultural_object(batch_id);
 
 ALTER TABLE user_favourite OWNER TO arttag;
 
@@ -104,22 +107,19 @@ ALTER TABLE ONLY cultural_object_description
     ADD CONSTRAINT uk_h2i90e72pisp2vuj5utfldjlu UNIQUE (description);
 
 ALTER TABLE ONLY tag
-    ADD CONSTRAINT fk_1iwtqrxth63w8e7apvb6ixoeb FOREIGN KEY (co_id) REFERENCES cultural_object(id);
+    ADD CONSTRAINT fk_1iwtqrxth63w8e7apvb6ixoeb FOREIGN KEY (co_id) REFERENCES cultural_object(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_favourite
-    ADD CONSTRAINT fk_8ljy7tssl4ahp47njfgyl25yr FOREIGN KEY (system_user) REFERENCES system_user(login);
+    ADD CONSTRAINT fk_8ljy7tssl4ahp47njfgyl25yr FOREIGN KEY (system_user) REFERENCES system_user(login) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_favourite
-    ADD CONSTRAINT fk_8xf40q0ykhcn5s9o9cex36viq FOREIGN KEY (favourite_objects) REFERENCES cultural_object(id);
+    ADD CONSTRAINT fk_8xf40q0ykhcn5s9o9cex36viq FOREIGN KEY (favourite_objects) REFERENCES cultural_object(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY cultural_object_description
-    ADD CONSTRAINT fk_grueo06cbonwq7qyu62wd9q3a FOREIGN KEY (cultural_object) REFERENCES cultural_object(id);
+    ADD CONSTRAINT fk_grueo06cbonwq7qyu62wd9q3a FOREIGN KEY (cultural_object) REFERENCES cultural_object(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY cultural_object_description
-    ADD CONSTRAINT fk_h2i90e72pisp2vuj5utfldjlu FOREIGN KEY (description) REFERENCES localized_string(id);
+    ADD CONSTRAINT fk_h2i90e72pisp2vuj5utfldjlu FOREIGN KEY (description) REFERENCES localized_string(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY tag
-    ADD CONSTRAINT fk_rr0jdrb0km505m2m59c7kjlwa FOREIGN KEY (value) REFERENCES localized_string(id);
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-GRANT ALL ON SCHEMA public TO PUBLIC;
+    ADD CONSTRAINT fk_rr0jdrb0km505m2m59c7kjlwa FOREIGN KEY (value) REFERENCES localized_string(id) ON DELETE CASCADE;

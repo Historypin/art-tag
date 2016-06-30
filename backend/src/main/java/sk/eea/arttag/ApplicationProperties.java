@@ -17,6 +17,8 @@ public class ApplicationProperties {
 
     private String culturalObjectsPublicPath;
 
+    private String culturalObjectsFileSystemPath;
+
     public String getVersion() {
         return version;
     }
@@ -55,5 +57,13 @@ public class ApplicationProperties {
 
     public void setCulturalObjectsPublicPath(String culturalObjectsPublicPath) {
         this.culturalObjectsPublicPath = culturalObjectsPublicPath;
+    }
+
+    public String getCulturalObjectsFileSystemPath() {
+        return culturalObjectsFileSystemPath;
+    }
+
+    public void setCulturalObjectsFileSystemPath(String culturalObjectsFileSystemPath) {
+        this.culturalObjectsFileSystemPath = culturalObjectsFileSystemPath;
     }
 }

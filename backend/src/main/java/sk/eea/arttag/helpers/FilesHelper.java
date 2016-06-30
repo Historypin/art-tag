@@ -14,14 +14,13 @@ public class FilesHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilesHelper.class);
 
-    public static Boolean download(String imagePath, Path targetFileName) {
+    public static boolean download(String imagePath, Path targetPath) {
         try {
             URL url = new URL(imagePath);
             if(!url.getProtocol().startsWith("http")){
                 LOG.info("Only HTTP(s) protocols are accepted");
             }
-            targetFileName.toFile().createNewFile();
-            try(InputStream is = url.openStream();FileOutputStream os = new FileOutputStream(targetFileName.toFile())){
+            try(InputStream is = url.openStream();FileOutputStream os = new FileOutputStream(targetPath.toFile())){
                 byte[] buf = new byte[1024];
                 while(is.read(buf)>0){
                     os.write(buf);
@@ -32,9 +31,9 @@ public class FilesHelper {
             }
         } catch (Exception e ) {
             LOG.info("Invalid URL for download file");
-            return Boolean.FALSE;
+            return false;
         }
-        return Boolean.TRUE;
+        return true;
     }
 
 }

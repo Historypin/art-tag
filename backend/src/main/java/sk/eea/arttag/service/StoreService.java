@@ -24,7 +24,7 @@ public interface StoreService {
 	 * Stops enrichment of collection identified by batchId.
 	 * @param batchId
 	 */
-	void stopEnrichingBatch(String batchId);
+	void stopEnrichingBatch(Long batchId);
 
 	/**
 	 * Adds tag to CulturalObject.
@@ -41,7 +41,7 @@ public interface StoreService {
 	 * @param batchId
 	 * @return
 	 */
-    PageableTagsDTO listTags(Date fromDate, Date untilDate, String batchId);
+    PageableTagsDTO listTags(Date fromDate, Date untilDate, Long batchId);
 
     /**
      * Continue listing tags with returned token.
@@ -56,5 +56,5 @@ public interface StoreService {
      * @param batchId
      * @throws Exception 
      */
-    void publish(String batchId) throws Exception;
+    void publish(Long batchId) throws Exception;
 }

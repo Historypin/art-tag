@@ -22,8 +22,6 @@ public class CulturalObjectDTO {
     @ApiModelProperty("URL to object's downloadable image ")
     private String externalSource;
     @NotNull
-    @ApiModelProperty("Identifier of batch")
-    private Long batchId;
     private Map<String, String> description;
 
     public Long getId() {
@@ -66,14 +64,6 @@ public class CulturalObjectDTO {
         this.externalSource = externalSource;
     }
 
-    public Long getBatchId() {
-        return batchId;
-    }
-
-    public void setBatchId(Long batchId) {
-        this.batchId = batchId;
-    }
-
     public Map<String, String> getDescription() {
         return this.description;
     }
@@ -85,7 +75,6 @@ public class CulturalObjectDTO {
     public static CulturalObject toCulturalObject(CulturalObjectDTO culturalObjectDTO) {
         CulturalObject result = new CulturalObject();
         result.setId(culturalObjectDTO.getId());
-        result.setBatchId(culturalObjectDTO.getBatchId());
         result.setAuthor(culturalObjectDTO.getAuthor());
         if (culturalObjectDTO.getDescription() != null) {
             result.setDescription(

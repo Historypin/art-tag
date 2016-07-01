@@ -25,10 +25,10 @@ CREATE TABLE cultural_object (
     author character varying(255),
     batch_id bigint NOT NULL,
     external_id character varying(255),
-    external_url character varying(255),
-    external_source character varying(255),
+    external_url text,
+    external_source text,
     internal_file_system_path character varying(255),
-    public_source character varying(255)
+    public_source text
 );
 
 ALTER TABLE cultural_object OWNER TO arttag;

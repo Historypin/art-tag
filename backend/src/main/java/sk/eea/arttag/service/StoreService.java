@@ -15,10 +15,11 @@ public interface StoreService {
 
 	/**
 	 * Adds new cultural object into database.
+	 * @param batchId id of batch
 	 * @param culturalObject
 	 * @return 
 	 */
-	CulturalObject addCulturalObject(CulturalObject culturalObject);
+	CulturalObject addCulturalObject(Long batchId, CulturalObject culturalObject);
 
 	/**
 	 * Stops enrichment of collection identified by batchId.

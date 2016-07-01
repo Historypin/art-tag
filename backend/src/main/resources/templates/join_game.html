@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title th:text="'Game' + ${gameId}"></title>
 
-    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css' />
-
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'/>
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
@@ -18,7 +17,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
           th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
 
-    <link href="../static/css/console.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
+    <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
     <link href="../static/css/game_screen.css" th:href="@{/css/game_screen.css}" rel="stylesheet"/>
     <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
 </head>
@@ -26,6 +25,11 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-8 col-lg-8">
+            <div class="row">
+                <div class="col-md-6 text-left"><h3 data-bind="text: gameView.tags"></h3></div>
+                <div class="col-md-6 text-right"><h3 data-bind="text: formattedRemainingTime"></h3></div>
+            </div>
+
             <div class="row" data-bind="if: gameView.table().length > 0 ">
                 <div class="game-table col-md-12 col-lg-12">
                     <legend>Table</legend>
@@ -43,36 +47,19 @@
 
         <div class="col-md-4 col-lg-4">
             <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Game</h3>
-                    </div>
-                    <div class="panel-body">
-                        Id: <b data-bind="text: gameView.id"/><br/>
-                        Name: <b data-bind="text: gameView.name"/><br/>
-                        Round Remaining Time: <b data-bind="text: gameView.remainingTime"/><br/>
-                        Status: <b data-bind="text: gameView.status"/><br/>
-                        Tags: <b data-bind="text: gameView.tags"/><br/>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="players panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Players</h3>
                     </div>
                     <div class="panel-body">
-                        <ul data-bind="foreach: gameView.players">
-                            <li data-bind="template: { name: 'player-line'}"></li>
-                        </ul>
+                        <table class="table" data-bind="template: { name: 'player-row', foreach: gameView.players }">
+                        </table>
                         <div data-bind="if: gameView.status() === 'ROUND_FINISHED'">
                             <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round</button>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="chat panel panel-default">
                     <div class="panel-heading">
@@ -108,17 +95,28 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <img class="img-responsive"/>
+                            <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-horizontal">
-                                <input type="hidden" class="modal-id"/>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">Url</label>
+                                    <label class="col-sm-2 control-label">Author</label>
                                     <div class="col-sm-10">
-                                        <p class="form-control-static" id="modal-id"></p>
+                                        <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Description</label>
+                                    <div class="col-sm-10">
+                                        <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Link</label>
+                                    <div class="col-sm-10">
+                                        <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
                                     </div>
                                 </div>
                                 <!-- TAG INPUT -->
@@ -141,7 +139,6 @@
                                         <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
                                     </div>
                                 </div>
-
                                 <!-- TABLE CARD SELECTION -->
                                 <div class="form-group" data-bind="if: gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
                                     <label class="col-sm-2 control-label"></label>
@@ -162,32 +159,49 @@
         th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"
         th:src="@{/webjars/knockout/3.4.0/knockout.js}"></script>
+<script th:src="@{/webjars/sprintf.js/1.0.0/sprintf.min.js}"></script>
 <script src="../static/js/knockout.mapping.js" th:src="@{/js/knockout.mapping.js}"></script>
 <script src="../static/js/md5.js" th:src="@{/js/md5.js}"></script>
 <script src="../static/js/hashcode.js" th:src="@{/js/hashcode.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
 <script src="../static/js/loader.js" th:src="@{/js/loader.js}"></script>
 
+<!-- template for rendering template chat -->
 <script type="text/html" id="chat-line">
     <span data-bind="text: time"></span>
     <strong data-bind="text: player"></strong>:
     <span data-bind="text: message"></span>
 </script>
 
-<script type="text/html" id="player-line">
-    <em data-bind="text: name"></em>
-    <strong data-bind="text: dealer() ? '(D)' : ''"></strong>
-    <strong data-bind="text: readyForNextRound() ? '(y)' : ''"></strong>
-    <strong data-bind="text: inactive() ? '(i)' : ''"></strong>
+<!-- template for rendering row in players table-->
+<script type="text/html" id="player-row">
+    <tr>
+        <td><span class="player" data-bind="text: name, css: { 'text-bold': userId() === thisUserId }"></span></td>
+        <td>
+            <!-- ko if: dealer -->
+            <i class="fa fa-comment-o" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="User is riddler"></i>
+            <!-- /ko -->
+            <!-- ko if: readyForNextRound -->
+            <i class="fa fa-check" data-bind="if: readyForNextRound" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+               title="User is ready for next round"></i>
+            <!-- /ko -->
+            <!-- ko if: inactive -->
+            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="User is inactive"></i>
+            <!-- /ko -->
+        </td>
+        <td><span class="total-score" data-bind="text: gameScore"></span></td>
+        <td data-bind="if: $root.gameView.status() === 'ROUND_FINISHED'" class="round-score">(+<span data-bind="text: lastRoundScore"></span>)</td>
+    </tr>
 </script>
 
+<!-- template for rendering card thumbnail in table and hand -->
 <script type="text/html" id="card-thumbnail">
     <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-        <a class="thumbnail" href="#">
+        <a class="thumbnail" href="#" data-bind="click: $root.thumbnailSelected">
             <img class="img-responsive"
                  data-toggle="modal"
                  data-target="#imageModal"
-                 data-bind="attr: {'src': source,'data-id': token}"/>
+                 data-bind="attr: {'src': source}"/>
         </a>
     </div>
 </script>
@@ -197,6 +211,8 @@
     var hostname = /*[[${@environment.getProperty('application.hostname')}]]*/;
     var contextPath = /*[[@{/}]]*/;
     var gameId = /*[[${gameId}]]*/;
+    var thisUserId = /*[[${userId}]]*/;
+
     var webSocket = new WebSocket(`ws://${hostname}${contextPath}ws/game?gameId=${gameId}`);
     var alreadyConnected = false;
 
@@ -215,7 +231,7 @@
      Specifies keys to use for comparing change of objects by knockout-mapping plugin.
      With this, only when change in key is detected, mapping will refresh the element in DOM.
      */
-    var mapping = {
+    var viewModelMapping = {
         'hand': {
             key: function (data) {
                 return ko.utils.unwrapObservable(data.token);
@@ -228,16 +244,15 @@
         },
         'players': {
             key: function (data) {
-                return ko.utils.unwrapObservable(HashCode.value(data));
+                return HashCode.value(ko.mapping.toJS(data));
             }
         }
     };
 
     // knockoutJS viewModel for this page
     function ViewModel(data) {
-        data = data || {};
         var self = this;
-        self = ko.mapping.fromJS(data, mapping);
+        self = ko.mapping.fromJS(data, viewModelMapping);
 
         self.enterChatMessage = function (d, e) {
             e.keyCode === 13 && self.sendChatMessage();
@@ -248,6 +263,16 @@
             e.keyCode === 13 && self.sendTag();
             return true;
         };
+
+        self.thumbnailSelected = function(card) {
+            ko.mapping.fromJS(card, {}, self.selectedCard);
+        };
+
+        self.formattedRemainingTime = ko.computed(function () {
+            var minutes = self.gameView.remainingTime() / 60;
+            var divisor = minutes % 1;
+            return sprintf("%02d:%02d", Math.round(minutes), Math.round(divisor * 60));
+        });
 
         self.sendChatMessage = function () {
             if (self.chatInput()) {
@@ -265,9 +290,8 @@
 
         self.sendTag = function () {
             if (self.tagsInput()) {
-                var selectedCard = $(".modal-body .modal-id").val();
                 var message = {
-                    value: ko.utils.unwrapObservable(self.tagsInput()) + ";" + selectedCard,
+                    value: ko.utils.unwrapObservable(self.tagsInput()) + ";" + ko.utils.unwrapObservable(self.selectedCard.token()),
                     type: 'TOPIC_SELECTED',
                     gameId: ko.utils.unwrapObservable(self.gameView.id())
                 };
@@ -287,9 +311,8 @@
         };
 
         self.selectHandCard = function () {
-            var selectedCard = $(".modal-body .modal-id").val();
             var message = {
-                value: selectedCard,
+                value: ko.utils.unwrapObservable(self.selectedCard.token()),
                 type: 'OWN_CARD_SELECTED',
                 gameId: ko.utils.unwrapObservable(self.gameView.id())
             };
@@ -298,9 +321,8 @@
         };
 
         self.selectTableCard = function () {
-            var selectedCard = $(".modal-body .modal-id").val();
             var message = {
-                value: selectedCard,
+                value: ko.utils.unwrapObservable(self.selectedCard.token()),
                 type: 'TABLE_CARD_SELECTED',
                 gameId: ko.utils.unwrapObservable(self.gameView.id())
             };
@@ -316,9 +338,15 @@
     var viewModel = new ViewModel({
         "userToken": "",
         "dealer": false,
+        "rightGuess": false,
         "hand": [{
             "token": "",
-            "source": ""
+            "source": "",
+            "metadata": {
+                "author": "",
+                "externalUrl": "",
+                "description": ""
+            }
         }],
         "gameView": {
             "id": "",
@@ -328,23 +356,44 @@
             "remainingTime": 0,
             "players": [{
                 "token": "",
-                "name": "admin",
+                "userId": "",
+                "name": "",
                 "readyForNextRound": false,
                 "dealer": false,
-                "inactive": false
+                "inactive": false,
+                "gameScore": 0,
+                "lastRoundScore": 0
             }],
             "table": [{
                 "token": "",
-                "source": ""
+                "source": "",
+                "metadata": {
+                    "author": "",
+                    "externalUrl": "",
+                    "description": ""
+                },
+                "playerSelections": [],
+                "dealersCard": false,
+                "selectedCard": false
             }]
         },
+        /* fields below are not part of model from backend */
         "chatHistory": [{
             "player": "",
             "message": "",
             "time": ""
         }],
         "chatInput": "",
-        "tagsInput": ""
+        "tagsInput": "",
+        "selectedCard": {
+            "token": "",
+            "source": "",
+            "metadata": {
+                "author": "",
+                "externalUrl": "",
+                "description": ""
+            }
+        }
     });
     ko.applyBindings(viewModel);
 
@@ -365,7 +414,7 @@
                 time: date.toLocaleTimeString()
             });
         } else { // model message
-            ko.mapping.fromJS(data, mapping, viewModel);
+            ko.mapping.fromJS(data, viewModelMapping, viewModel);
             // close loader on first data arrival from server
             if (!alreadyConnected) {
                 $.loader.close();
@@ -374,13 +423,22 @@
         }
     };
 
-    $(document).on("click", ".thumbnail .img-responsive", function () {
-        var id = $(this).attr('data-id');
-        var src = $(this).attr('src');
-        $(".modal-body .modal-id").val(id);
-        $(".modal-body #modal-id").text(id); // TODO: remove this
-        $(".modal-body .img-responsive").attr('src', src);
-    });
+    /* logger just for debugging purposes (use this to find out how often does the element update)
+     * Usage example: <span class="player" data-bind="logger: name, text: name"> */
+    ko.bindingHandlers.logger = {
+        update: function(element, valueAccessor, allBindings) {
+            //store a counter with this element
+            var count = ko.utils.domData.get(element, "_ko_logger") || 0,
+                    data = ko.toJS(valueAccessor() || allBindings());
+
+            ko.utils.domData.set(element, "_ko_logger", ++count);
+
+            if (window.console && console.log) {
+                console.log(count, element, data);
+            }
+        }
+    };
+
     /* ]]> */
 </script>
 </body>

@@ -197,6 +197,7 @@ public class Game {
 
     public void resetRound() {
         table = new ArrayList<>();
+        tablePublic = new ArrayList<>();
         tags = null;
     }
 

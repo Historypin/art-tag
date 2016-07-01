@@ -9,7 +9,6 @@ public class Player {
 
 	private String token;
 	private String name;
-    @JsonIgnore
 	private String userId;
     @JsonIgnore
 	private List<Card> hand = new ArrayList<>();

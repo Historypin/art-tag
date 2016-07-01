@@ -1,33 +1,10 @@
 package sk.eea.arttag.rest.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.glassfish.jersey.client.JerseyClient;
-import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import sk.eea.arttag.ArttagApp;
-import sk.eea.arttag.model.CulturalObject;
-import sk.eea.arttag.model.LocalizedString;
-import sk.eea.arttag.model.Tag;
-import sk.eea.arttag.repository.CulturalObjectRepository;
-import sk.eea.arttag.repository.TagRepository;
-import sk.eea.arttag.rest.api.ResultMessageDTO.Status;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +13,36 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.*;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.client.JerseyClient;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import sk.eea.arttag.ArttagApp;
+import sk.eea.arttag.model.CulturalObject;
+import sk.eea.arttag.model.LocalizedString;
+import sk.eea.arttag.model.Tag;
+import sk.eea.arttag.repository.CulturalObjectRepository;
+import sk.eea.arttag.repository.TagRepository;
+import sk.eea.arttag.rest.api.ResultMessageDTO.Status;
 
 /**
  * Integration test for RestServiceImpl class.
@@ -44,7 +50,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(ArttagApp.class)
-@WebIntegrationTest
+@WebIntegrationTest(value="server.port=9180")
 @ActiveProfiles("dev")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RestServiceIT {
@@ -72,7 +78,7 @@ public class RestServiceIT {
     public void test_AA_AddCulturalObject() {
         try {
             CulturalObjectDTO culturalObjectDTO = generateCO();
-            WebTarget target = client.target("http://localhost:8080").path("/api/cultural/add");
+            WebTarget target = client.target("http://localhost:9180").path("/api/cultural/add").path("/").path(String.valueOf(350l));
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                     .buildPost(
                             Entity.entity(objectMapper.writeValueAsString(culturalObjectDTO), MediaType.APPLICATION_JSON))
@@ -85,11 +91,11 @@ public class RestServiceIT {
                 Long id = Long.parseLong(result.getMessage().split(":", 2)[1].trim());
                 culturalObject = coRepository.findOne(id);
                 assertEquals(culturalObject.getAuthor(), culturalObjectDTO.getAuthor());
-                assertEquals(culturalObject.getBatchId(), culturalObjectDTO.getBatchId());
+                assertEquals(culturalObject.getBatchId(), Long.valueOf(350l));
                 assertEquals(culturalObject.getExternalId(), culturalObjectDTO.getExternalId());
                 assertEquals(culturalObject.getExternalUrl(), culturalObjectDTO.getExternalUrl());
                 assertEquals(culturalObject.getExternalSource(), culturalObjectDTO.getExternalSource());
-                assertEquals(culturalObject.getDescription().get(0).getValue(), culturalObjectDTO.getDescription().get("sk"));
+                assertEquals(culturalObject.getDescription().get(0).getValue(), culturalObjectDTO.getDescription().get("sk"));                
                 assertEquals(Boolean.FALSE, culturalObject.isActive());
             } else {
                 fail("No CO entity returned.");
@@ -107,7 +113,7 @@ public class RestServiceIT {
             tagDto.setCulturalObjectId(culturalObject.getId());
             tagDto.setLanguage("sk");
             tagDto.setValue("new tag");
-            WebTarget target = client.target("http://localhost:8080").path("/api/tag/add");
+            WebTarget target = client.target("http://localhost:9180").path("/api/tag/add");
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                     .buildPost(Entity.entity(objectMapper.writeValueAsString(tagDto), MediaType.APPLICATION_JSON))
                     .invoke();
@@ -139,7 +145,7 @@ public class RestServiceIT {
         addTags(culturalObject, 51);
         String untilDate = RestService.FORMATTER.format(Instant.now());
         try {
-            WebTarget target = client.target("http://localhost:8080").path("/api/tag/list")
+            WebTarget target = client.target("http://localhost:9180").path("/api/tag/list")
                     .queryParam("batchId", culturalObject.getBatchId())
                     .queryParam("from", fromDate)
                     .queryParam("untilDate", untilDate);
@@ -173,7 +179,7 @@ public class RestServiceIT {
         addTags(culturalObject, 51);
         String untilDate = RestService.FORMATTER.format(Instant.now());
         try {
-            WebTarget target = client.target("http://localhost:8080").path("/api/tag/list")
+            WebTarget target = client.target("http://localhost:9180").path("/api/tag/list")
                     .queryParam("batchId", culturalObject.getBatchId())
                     .queryParam("from", fromDate)
                     .queryParam("untilDate", untilDate);
@@ -183,7 +189,7 @@ public class RestServiceIT {
             }
             PageableTagsDTO tags = objectMapper.readValue(response.readEntity(String.class), PageableTagsDTO.class);
             assertNotNull(tags.getResumptionToken());
-            target = client.target("http://localhost:8080").path("/api/tag/listNext")
+            target = client.target("http://localhost:9180").path("/api/tag/listNext")
                     .queryParam("resumptionToken", tags.getResumptionToken());
             response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get();
             if (response.getStatus() != HttpStatus.OK.value()) {
@@ -211,7 +217,7 @@ public class RestServiceIT {
     @Test
     public void test_C_StartEnrichment() {
         try {
-            WebTarget target = client.target("http://localhost:8080").path("/api/batch/publish/" + culturalObject.getBatchId());
+            WebTarget target = client.target("http://localhost:9180").path("/api/batch/publish/" + culturalObject.getBatchId());
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get();
             if (response.getStatus() != HttpStatus.OK.value()) {
                 fail("Response is: " + response.getStatus());
@@ -241,7 +247,7 @@ public class RestServiceIT {
     @Test
     public void test_D_RemoveBatch() {
         try {
-            WebTarget target = client.target("http://localhost:8080").path("/api/batch/remove/").path(culturalObject.getBatchId().toString());
+            WebTarget target = client.target("http://localhost:9180").path("/api/batch/remove/").path(culturalObject.getBatchId().toString());
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                     .buildDelete().invoke();
             if (response.getStatus() != HttpStatus.OK.value()) {
@@ -267,10 +273,9 @@ public class RestServiceIT {
         HashMap<String, String> descriptions = new HashMap<>();
         descriptions.put("sk", "Test sk");
         culturalObject.setDescription(descriptions);
-        culturalObject.setBatchId(350L);
         culturalObject.setExternalId("externalId");
-        culturalObject.setExternalUrl("http://localhost:8080/");
-        culturalObject.setExternalSource("http://localhost:8080/img/test_image.jpeg");
+        culturalObject.setExternalUrl("http://localhost:9180/");
+        culturalObject.setExternalSource("http://localhost:9180/img/test_image.jpeg");
         return culturalObject;
     }
 

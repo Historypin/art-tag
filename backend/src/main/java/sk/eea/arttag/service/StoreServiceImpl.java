@@ -57,7 +57,8 @@ public class StoreServiceImpl implements StoreService {
      * @see sk.eea.arttag.service.StoreService#addCulturalObject(java.lang.Object)
      */
     @Override
-    public CulturalObject addCulturalObject(CulturalObject culturalObject) {
+    public CulturalObject addCulturalObject(Long batchId, CulturalObject culturalObject) {
+        culturalObject.setBatchId(batchId);
         return culturalObjectRepository.save(culturalObject);
     }
 

@@ -15,10 +15,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -69,18 +72,18 @@ public class RestService {
     }
 
     @ApiOperation(consumes = "application/json", httpMethod = "POST", produces = "application/json", value = "Used to add cultural object.")
-    @RequestMapping(value = "/api/cultural/add", method = RequestMethod.POST)
-    public ResponseEntity<String> addCulturalObject(@Valid @RequestBody CulturalObjectDTO culturalObjectDTO) throws Exception {
+    @RequestMapping(value = "/api/cultural/add/{batchId}", method = RequestMethod.POST)
+    public ResponseEntity<String> addCulturalObject(@PathVariable Long batchId, @Valid @RequestBody CulturalObjectDTO culturalObjectDTO) throws Exception {
         ResultMessageDTO result = new ResultMessageDTO();
         try {
-            CulturalObject object = storeService.addCulturalObject(CulturalObjectDTO.toCulturalObject(culturalObjectDTO));
+            CulturalObject object = storeService.addCulturalObject(batchId, CulturalObjectDTO.toCulturalObject(culturalObjectDTO));
             result.setStatus(Status.SUCCESS);
             result.setMessage("id: {0}", object.getId().toString());
             return new ResponseEntity<String>(mapper.writeValueAsString(result), HttpStatus.CREATED);
         } catch (Exception e) {
             LOG.error("Error adding cultural object", e);
             result.setStatus(Status.FAILED);
-            result.setMessage("Adding cultural object within batch: {0} with external ID: {1} has failed with message: {2}", culturalObjectDTO.getBatchId(),
+            result.setMessage("Adding cultural object within batch: {0} with external ID: {1} has failed with message: {2}", batchId,
                     culturalObjectDTO.getExternalId(), e.toString());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -169,5 +172,5 @@ public class RestService {
             return defaultDate;
         return Date.from(Instant.from(RestService.FORMATTER.parse(date)));
     }
-
+    
 }

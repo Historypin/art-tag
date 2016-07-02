@@ -36,7 +36,14 @@
 
 .text-bold {
     font-weight: bold;
+    font-style: italic;
 }
+
+figure figcaption {
+    text-align: center;
+}
+
+
 
 
 

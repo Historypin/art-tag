@@ -140,7 +140,7 @@
                                     </div>
                                 </div>
                                 <!-- TABLE CARD SELECTION -->
-                                <div class="form-group" data-bind="if: gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
+                                <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
                                     <label class="col-sm-2 control-label"></label>
                                     <div class="col-sm-10">
                                         <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
@@ -198,10 +198,24 @@
 <script type="text/html" id="card-thumbnail">
     <div class="col-lg-3 col-md-4 col-xs-6 thumb">
         <a class="thumbnail" href="#" data-bind="click: $root.thumbnailSelected">
-            <img class="img-responsive"
-                 data-toggle="modal"
-                 data-target="#imageModal"
-                 data-bind="attr: {'src': source}"/>
+            <figure>
+                <img class="img-responsive"
+                     data-toggle="modal"
+                     data-target="#imageModal"
+                     data-bind="attr: {'src': source}"/>
+
+                <div class="carousel-caption" data-bind="if: playerSelections().length > 0">
+                    <ul data-bind="foreach: playerSelections">
+                        <li data-bind="text: $data"></li>
+                    </ul>
+                </div>
+                <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
+                <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
+                <!-- /ko -->
+                <!-- ko if: cardSelectedBy() != null && dealersCard() -->
+                <figcaption>Riddler's card.</figcaption>
+                <!-- /ko -->
+            </figure>
         </a>
     </div>
 </script>
@@ -264,14 +278,14 @@
             return true;
         };
 
-        self.thumbnailSelected = function(card) {
+        self.thumbnailSelected = function (card) {
             ko.mapping.fromJS(card, {}, self.selectedCard);
         };
 
         self.formattedRemainingTime = ko.computed(function () {
-            var minutes = self.gameView.remainingTime() / 60;
+            var minutes = self.gameView.remainingTime() / 60.0;
             var divisor = minutes % 1;
-            return sprintf("%02d:%02d", Math.round(minutes), Math.round(divisor * 60));
+            return sprintf("%02d:%02d", Math.floor(minutes), Math.round(divisor * 60));
         });
 
         self.sendChatMessage = function () {
@@ -374,7 +388,7 @@
                 },
                 "playerSelections": [],
                 "dealersCard": false,
-                "selectedCard": false
+                "cardSelectedBy": false
             }]
         },
         /* fields below are not part of model from backend */
@@ -426,7 +440,7 @@
     /* logger just for debugging purposes (use this to find out how often does the element update)
      * Usage example: <span class="player" data-bind="logger: name, text: name"> */
     ko.bindingHandlers.logger = {
-        update: function(element, valueAccessor, allBindings) {
+        update: function (element, valueAccessor, allBindings) {
             //store a counter with this element
             var count = ko.utils.domData.get(element, "_ko_logger") || 0,
                     data = ko.toJS(valueAccessor() || allBindings());

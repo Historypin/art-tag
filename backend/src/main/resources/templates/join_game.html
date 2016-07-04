@@ -21,30 +21,9 @@
     <link href="../static/css/game_screen.css" th:href="@{/css/game_screen.css}" rel="stylesheet"/>
     <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
 </head>
-<body>
+<body style="background-image: url(/img/stock-16x9-186903581.jpg)">
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 col-lg-8">
-            <div class="row">
-                <div class="col-md-6 text-left"><h3 data-bind="text: gameView.tags"></h3></div>
-                <div class="col-md-6 text-right"><h3 data-bind="text: formattedRemainingTime"></h3></div>
-            </div>
-
-            <div class="row" data-bind="if: gameView.table().length > 0 ">
-                <div class="game-table col-md-12 col-lg-12">
-                    <legend>Table</legend>
-                    <div data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></div>
-                </div>
-            </div>
-
-            <div class="row" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
-                <div class="hand col-md-12 col-lg-12">
-                    <legend>Hand</legend>
-                    <div data-bind="template: { name: 'card-thumbnail', foreach: hand }"></div>
-                </div>
-            </div>
-        </div>
-
+    <div class="row no-float">
         <div class="col-md-4 col-lg-4">
             <div class="row">
                 <div class="players panel panel-default">
@@ -86,6 +65,38 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-8 col-lg-8">
+            <div class="row">
+                <div class="col-md-6 text-left"><h3 data-bind="text: gameView.tags"></h3></div>
+                <div class="col-md-6 text-right"><h3 data-bind="text: formattedRemainingTime"></h3></div>
+            </div>
+
+            <div class="row " data-bind="if: gameView.table().length > 0 ">
+                <div class="game-table col-md-12 col-lg-12">
+                    <legend>Table</legend>
+                    <div data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></div>
+                </div>
+            </div>
+
+            <div class="row pre-scrollable no-float"  data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12" style="height:100vh;">
+                    <legend>Hand</legend>
+                    <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="row lightslategray-background footer">
+        <div class="col-md-6 col-sm-6 col-xs-6 text-left ">
+            <img th:src="@{/img/eu_flag_cef.svg}" src="/img/eu_flag_cef.svg" style="padding: 30px 0px 0px 30px;max-width:300px;max-height:75%;"/>
+
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+            <img th:src="@{/img/madewith.png}" src="/img/madewith.png" style="padding: 20px 30px 0px 0px; max-width:150px;max-height:25%;"/>
+        </div>
     </div>
 
     <!-- Modal window with image preview, and user inputs -->
@@ -95,7 +106,9 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
+                            <!--<img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>-->
+                            <img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>
+
                         </div>
                     </div>
                     <div class="row">
@@ -196,14 +209,17 @@
 
 <!-- template for rendering card thumbnail in table and hand -->
 <script type="text/html" id="card-thumbnail">
-    <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+    <li class="c-champs__list-item">
         <a class="thumbnail" href="#" data-bind="click: $root.thumbnailSelected">
             <figure>
-                <img class="img-responsive"
+                <!--<img class="img-responsive"
                      data-toggle="modal"
                      data-target="#imageModal"
-                     data-bind="attr: {'src': source}"/>
+                     data-bind="attr: {'src': source}"/>-->
 
+                <img class="img-responsive"
+                     data-toggle="modal"
+                     data-target="#imageModal" src="http://dummyimage.com/600x400/000/fff.png"/>
                 <div class="carousel-caption" data-bind="if: playerSelections().length > 0">
                     <ul data-bind="foreach: playerSelections">
                         <li data-bind="text: $data"></li>
@@ -217,7 +233,7 @@
                 <!-- /ko -->
             </figure>
         </a>
-    </div>
+    </li>
 </script>
 
 <script type="text/javascript" th:inline="javascript">

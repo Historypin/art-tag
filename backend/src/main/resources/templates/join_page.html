@@ -91,17 +91,7 @@
                 <small><a th:href="@{/create_game}">INVITE YOUR FRIENDS</a></small>
             </div>
         </div>
-        <div class="row orange-background fill-height col-centered">
-            <div class="col-sm-3">
-                <img th:src="@{/img/en_cef.png}" src="/img/en_cef.png" style="max-width:100%;max-height:100%;"/>
-            </div>
-            <div class="col-sm-6">
-                asd
-            </div>
-            <div class="col-sm-3 col-centered">
-                <img th:src="@{/img/madewith.png}" src="/img/madewith.png"/>
-            </div>
-        </div>
+        <div th:replace="fragments/footer :: footer">&nbsp;</div>
     </div>
 </div>
 

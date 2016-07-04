@@ -89,15 +89,7 @@
 
     </div>
 
-    <div class="row lightslategray-background footer">
-        <div class="col-md-6 col-sm-6 col-xs-6 text-left ">
-            <img th:src="@{/img/eu_flag_cef.svg}" src="/img/eu_flag_cef.svg" style="padding: 30px 0px 0px 30px;max-width:300px;max-height:75%;"/>
-
-        </div>
-        <div class="col-md-6 col-sm-6 col-xs-6 text-right">
-            <img th:src="@{/img/madewith.png}" src="/img/madewith.png" style="padding: 20px 30px 0px 0px; max-width:150px;max-height:25%;"/>
-        </div>
-    </div>
+    <div th:replace="fragments/footer :: footer">&nbsp;</div>
 
     <!-- Modal window with image preview, and user inputs -->
     <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">

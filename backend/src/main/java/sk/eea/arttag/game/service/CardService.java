@@ -1,9 +1,6 @@
 package sk.eea.arttag.game.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +27,12 @@ public class CardService {
         for (int i = 0; i <= numberOfCards; i++) {
             final String cardToken = UUID.randomUUID().toString();
             final String img = String.format("%02d.jpeg", i);
-            final String cardSource = String.format("%s://%s/%s/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(),
-                    applicationProperties.getCulturalObjectsPublicPath(), img);
+            /*final String cardSource = String.format("%s://%s/%s/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(),
+                applicationProperties.getCulturalObjectsPublicPath(), img);*/
+
+            final String cardSource = String.format("http://dummyimage.com/%dx%d/000/fff.png", new Random().nextInt((1600 - 600) + 1), new Random().nextInt((1600 - 600) + 1));
+
+            //TODO: replace dummies
             deck.add(new Card(cardToken, cardSource, new CardMetadata("author", "externalUrl", "description")));
         }
         Collections.shuffle(deck);

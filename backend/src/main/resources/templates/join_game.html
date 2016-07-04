@@ -21,10 +21,10 @@
     <link href="../static/css/game_screen.css" th:href="@{/css/game_screen.css}" rel="stylesheet"/>
     <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
 </head>
-<body style="background-image: url(/img/stock-16x9-186903581.jpg)">
-<div class="container-fluid">
+<body style="background-image: url(/img/stock-16x9-186903581.jpg)" onresize="onSizeChange()" onload="onLoad()" >
+<div class="container-fluid" style="overflow: visible;">
     <div class="row no-float">
-        <div class="col-md-4 col-lg-4">
+        <div id="statusscreen" class="col-md-4 col-lg-4">
             <div class="row">
                 <div class="players panel panel-default">
                     <div class="panel-heading">
@@ -43,15 +43,6 @@
                 <div class="chat panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Chat</h3>
-                    </div>
-                    <div class="panel-body">
-                        <ul data-bind="foreach: chatHistory">
-                            <li data-bind="if: message">
-                                <p class="chat-body" data-bind="template: { name: 'chat-line'}, autoScroll: true"></p>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="panel-footer">
                         <div class="input-group">
                             <input type="text" class="form-control input-sm"
                                    data-bind="textInput : chatInput, event: {keypress: enterChatMessage}"
@@ -62,10 +53,20 @@
                         </span>
                         </div>
                     </div>
+                    <div class="panel-body">
+                        <ul data-bind="foreach: chatHistory" style="height: 25%;">
+                            <li data-bind="if: message">
+                                <p class="chat-body" data-bind="template: { name: 'chat-line'}, autoScroll: true"></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="panel-footer">
+
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-8 col-lg-8">
+        <div id="gamescreen" class="col-md-8 col-lg-8">
             <div class="row">
                 <div class="col-md-6 text-left"><h3 data-bind="text: gameView.tags"></h3></div>
                 <div class="col-md-6 text-right"><h3 data-bind="text: formattedRemainingTime"></h3></div>
@@ -74,12 +75,12 @@
             <div class="row " data-bind="if: gameView.table().length > 0 ">
                 <div class="game-table col-md-12 col-lg-12">
                     <legend>Table</legend>
-                    <div data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></div>
+                    <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></ul>
                 </div>
             </div>
 
-            <div class="row pre-scrollable no-float"  data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
-                <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12" style="height:100vh;">
+            <div class="row no-float orange-background"  data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12" >
                     <legend>Hand</legend>
                     <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
                 </div>
@@ -97,34 +98,34 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">
-                            <!--<img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>-->
-                            <img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>
+                        <div class="col-md-12 centeredimage">
+                            <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
+                            <!--<img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>-->
 
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Author</label>
-                                    <div class="col-sm-10">
-                                        <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Description</label>
-                                    <div class="col-sm-10">
-                                        <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Link</label>
-                                    <div class="col-sm-10">
-                                        <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
-                                    </div>
-                                </div>
-                                <!-- TAG INPUT -->
+                         </div>
+                     </div>
+                     <div class="row">
+                         <div class="col-md-12">
+                             <div class="form-horizontal">
+                                 <div class="form-group">
+                                     <label class="col-sm-2 control-label">Author</label>
+                                     <div class="col-sm-10">
+                                         <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
+                                     </div>
+                                 </div>
+                                 <div class="form-group">
+                                     <label class="col-sm-2 control-label">Description</label>
+                                     <div class="col-sm-10">
+                                         <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
+                                     </div>
+                                 </div>
+                                 <div class="form-group">
+                                     <label class="col-sm-2 control-label">Link</label>
+                                     <div class="col-sm-10">
+                                         <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
+                                     </div>
+                                 </div>
+                                 <!-- TAG INPUT -->
                                 <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
                                     <label class="col-sm-2 control-label">Topic</label>
                                     <div class="col-sm-10">
@@ -203,15 +204,18 @@
 <script type="text/html" id="card-thumbnail">
     <li class="c-champs__list-item">
         <a class="thumbnail" href="#" data-bind="click: $root.thumbnailSelected">
-            <figure>
+            <figure style="display: flex; justify-content: center; align-items: center;">
+                <div class="centeredimage" style="width:20ex; height:20ex; overflow:hidden;">
+                    <img class="img-responsive"
+                         data-toggle="modal"
+                         data-target="#imageModal"
+                         data-bind="attr: {'src': source}" style="max-width:20ex; max-height:20ex;"/>
+                </div>
+
+
                 <!--<img class="img-responsive"
                      data-toggle="modal"
-                     data-target="#imageModal"
-                     data-bind="attr: {'src': source}"/>-->
-
-                <img class="img-responsive"
-                     data-toggle="modal"
-                     data-target="#imageModal" src="http://dummyimage.com/600x400/000/fff.png"/>
+                     data-target="#imageModal" src="http://dummyimage.com/600x400/000/fff.png"/>-->
                 <div class="carousel-caption" data-bind="if: playerSelections().length > 0">
                     <ul data-bind="foreach: playerSelections">
                         <li data-bind="text: $data"></li>
@@ -460,6 +464,36 @@
             }
         }
     };
+
+    var onLoad = function()
+    {
+        var w = window.outerWidth;
+        if(w < 992)
+        {
+            $("#statusscreen").insertAfter("#gamescreen");
+            $("#footer").hide();
+        }
+        else if(w >= 992)
+        {
+            $("#gamescreen").insertAfter("#statusscreen");
+            $("#footer").show();
+        }
+    }
+
+    var onSizeChange = function()
+    {
+        var w = window.outerWidth;
+        if(w < 992)
+        {
+            $("#statusscreen").insertAfter("#gamescreen");
+            $("#footer").hide();
+        }
+        else if(w >= 992)
+        {
+            $("#gamescreen").insertAfter("#statusscreen");
+            $("#footer").show();
+        }
+    }
 
     /* ]]> */
 </script>

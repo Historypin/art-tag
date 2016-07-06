@@ -67,7 +67,7 @@ CREATE TABLE authorities (
     id bigint PRIMARY KEY NOT NULL,
     login character varying(255) NOT NULL,
     authority character varying(255) NOT NULL,
-    CONSTRAINT fk_authorities_users foreign key(login) references system_user(login)
+    CONSTRAINT fk_authorities_users foreign key(login) references system_user(login) ON DELETE CASCADE
 );
 
 ALTER TABLE authorities OWNER TO arttag;

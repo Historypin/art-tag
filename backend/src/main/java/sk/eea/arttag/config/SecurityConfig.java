@@ -66,7 +66,7 @@ public class SecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             http
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
+                .antMatchers("/", "/register.do").permitAll()
                 .antMatchers("/js/**", "/css/**", "/webjars/**", "/fonts/**", "/img/**", String.format("/%s/**", applicationProperties.getCulturalObjectsPublicPath())).permitAll()
                 .anyRequest().hasRole("USER")
                 .and()
@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .loginPage("/#signinmodal")
                 .loginProcessingUrl("/login.do")
                 .defaultSuccessUrl("/join_page")
-                .failureUrl("/?error#signinmodal")
+                .failureUrl("/?loginError#signinmodal")
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .and()

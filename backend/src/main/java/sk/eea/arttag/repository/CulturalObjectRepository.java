@@ -29,4 +29,5 @@ public interface CulturalObjectRepository extends JpaRepository<CulturalObject, 
 
     List<CulturalObject> findByBatchId(Long batchId);
 
+    CulturalObject findTop1ByOrderByLastSelectedAsc();
 }

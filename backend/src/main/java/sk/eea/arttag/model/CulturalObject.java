@@ -1,7 +1,18 @@
 package sk.eea.arttag.model;
 
-import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 /**
  * Entity storing data about cultural object.
@@ -23,6 +34,8 @@ public class CulturalObject {
     private String internalFileSystemPath;
     private String publicSource;
     private Long batchId;
+    private Date lastSelected;
+    private Integer numberOfSelections;
 
     private Boolean active = Boolean.FALSE;
 
@@ -121,5 +134,20 @@ public class CulturalObject {
         this.tags = tags;
     }
 
+    public Date getLastSelected() {
+        return lastSelected;
+    }
+
+    public void setLastSelected(Date lastSelected) {
+        this.lastSelected = lastSelected;
+    }
+
+    public Integer getNumberOfSelections() {
+        return numberOfSelections;
+    }
+
+    public void setNumberOfSelections(Integer numberOfSelections) {
+        this.numberOfSelections = numberOfSelections;
+    }
 
 }

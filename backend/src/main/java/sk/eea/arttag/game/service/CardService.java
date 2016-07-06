@@ -1,6 +1,10 @@
 package sk.eea.arttag.game.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,15 +14,25 @@ import org.springframework.stereotype.Component;
 import sk.eea.arttag.ApplicationProperties;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.CardMetadata;
+import sk.eea.arttag.model.CulturalObject;
+import sk.eea.arttag.repository.CulturalObjectRepository;
+import sk.eea.arttag.repository.TagRepository;
 
 @Component
 public class CardService {
+
+    @Autowired
+    private CulturalObjectRepository culturalObjectRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @Autowired
     private ApplicationProperties applicationProperties;
 
     private static final Logger LOG = LoggerFactory.getLogger(CardService.class);
 
+    //TODO: this will be replaced by the getCard method
     public List<Card> getCards(int numberOfCards) {
 
         List<Card> deck = new ArrayList<>();
@@ -58,4 +72,26 @@ public class CardService {
         }
         return true;
     }*/
+
+    //TODO: this will be the new version of getCards when the database is not empty
+    public List<Card> getCard(int numberOfCards) {
+
+        List<Card> cards = new ArrayList<>();
+        for (int i = 0; i < numberOfCards; i++) {
+            CulturalObject co = culturalObjectRepository.findTop1ByOrderByLastSelectedAsc();
+            if (co != null) {
+                cards.add(culturalObject2Card(co));
+            }
+        }
+        return cards;
+    }
+
+    private static Card culturalObject2Card(CulturalObject co) {
+        String token = String.valueOf(co.getId());
+        String source = null;
+        String descr = null;
+        CardMetadata metadata = new CardMetadata(co.getAuthor(), co.getExternalUrl(), descr);
+        Card c = new Card(token, source, metadata);
+        return c;
+    }
 }

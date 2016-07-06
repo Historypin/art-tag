@@ -60,6 +60,10 @@
                     <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
                     <div class="col-sm-9 lightslategray-background">
                         Name the game: <input type="text" name="fname" /><br />
+                        <small><a th:href="@{/join_game/1}">GAME 1</a></small>
+                        <br />
+                        <small><a th:href="@{/join_game/2}">GAME 2</a></small>
+                        <br />
                         <input type="submit" value="Join" />
 
                     </div>
@@ -70,7 +74,7 @@
             </div>
         </div>
     </div>
-    <div id='joinGameScreenLowerHalf' class="row">
+    <!--<div id='joinGameScreenLowerHalf' class="row">
         <div class="row">
             <div class='col-xs-6 centeredText'>
                 <h1 class="h1">Join the game</h1>
@@ -91,8 +95,9 @@
                 <small><a th:href="@{/create_game}">INVITE YOUR FRIENDS</a></small>
             </div>
         </div>
-        <div th:replace="fragments/footer :: footer">&nbsp;</div>
-    </div>
+
+    </div>-->
+    <div th:replace="fragments/footer :: footer">&nbsp;</div>
 </div>
 
 <script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>

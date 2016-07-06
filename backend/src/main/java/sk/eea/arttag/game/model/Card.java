@@ -25,7 +25,7 @@ public class Card {
         this.token = original.getToken();
         this.source = original.getSource();
         this.metadata = original.getMetadata();
-        this.playerSelections = original.getPlayerSelections();
+        this.playerSelections = new ArrayList<>();
         this.cardSelectedBy = null;
         this.dealersCard = false;
     }

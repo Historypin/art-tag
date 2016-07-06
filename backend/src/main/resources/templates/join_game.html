@@ -17,12 +17,12 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
           th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
 
+    <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
+    <link href="../static/css/animate.css" th:href="@{/css/animate.css}" rel="stylesheet"/>
     <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
     <link href="../static/css/game_screen.css" th:href="@{/css/game_screen.css}" rel="stylesheet"/>
-    <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
-    <link href="../static/css/lol.css" th:href="@{/css/lol.css}" rel="stylesheet"/>
 </head>
-<body style="background-image: url(/img/stock-16x9-186903581.jpg)" onresize="onSizeChange()" onload="onLoad()" >
+<body style="background-image: url(/img/stock-16x9-186903581.jpg)" onresize="onSizeChange()" onload="onLoad()">
 <div class="container-fluid" style="overflow: visible;">
     <div class="row no-float">
         <div id="statusscreen" class="col-md-4 col-lg-4">
@@ -80,96 +80,94 @@
                 </div>
             </div>
 
-            <!--<div class="row no-float orange-background"  data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
-                <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12" >
-                    <legend>Hand</legend>
-                    <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
-                </div>
-            </div>-->
-            <div class="o-page o-fullscreen">
-                <div id="content" class="o-fullscreen o-wrap" role="main">
-                    <div class="">
-                        <main class="o-client__body">
-                            <div class="o-client__block">
-                                <div class="o-wrap">
-                                    <header class="c-heading">
-                                        <legend>Hand</legend>
-                                    </header>
-            <div class="c-champs js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
-                <ul class="o-list-unstyled c-champs__list " data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
-            </div>
-                  </div>
-                                                   </div>
-                        </main>
+
+            <div class="row no-float orange-background" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                    <div class="o-page o-fullscreen">
+                        <div id="content" class="o-fullscreen o-wrap" role="main">
+                            <div class="">
+                                <main class="o-client__body">
+                                    <div class="o-client__block">
+                                        <div class="o-wrap">
+                                            <header class="c-heading">
+                                                <legend>Hand</legend>
+                                            </header>
+                                            <div class="c-champs js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                                                <ul class="o-list-unstyled c-champs__list "
+                                                    data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </main>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
+            <div th:replace="fragments/footer :: footer">&nbsp;</div>
 
+            <!-- Modal window with image preview, and user inputs -->
+            <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12 centeredimage">
+                                    <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
+                                    <!--<img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>-->
 
-    </div>
-
-    <div th:replace="fragments/footer :: footer">&nbsp;</div>
-
-    <!-- Modal window with image preview, and user inputs -->
-    <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12 centeredimage">
-                            <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
-                            <!--<img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>-->
-
-                         </div>
-                     </div>
-                     <div class="row">
-                         <div class="col-md-12">
-                             <div class="form-horizontal">
-                                 <div class="form-group">
-                                     <label class="col-sm-2 control-label">Author</label>
-                                     <div class="col-sm-10">
-                                         <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
-                                     </div>
-                                 </div>
-                                 <div class="form-group">
-                                     <label class="col-sm-2 control-label">Description</label>
-                                     <div class="col-sm-10">
-                                         <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
-                                     </div>
-                                 </div>
-                                 <div class="form-group">
-                                     <label class="col-sm-2 control-label">Link</label>
-                                     <div class="col-sm-10">
-                                         <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
-                                     </div>
-                                 </div>
-                                 <!-- TAG INPUT -->
-                                <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
-                                    <label class="col-sm-2 control-label">Topic</label>
-                                    <div class="col-sm-10">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control input-sm"
-                                                   data-bind="textInput: tagsInput, event: {keypress: enterTag}" placeholder="Write round topic here..."/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Author</label>
+                                            <div class="col-sm-10">
+                                                <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Description</label>
+                                            <div class="col-sm-10">
+                                                <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Link</label>
+                                            <div class="col-sm-10">
+                                                <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
+                                            </div>
+                                        </div>
+                                        <!-- TAG INPUT -->
+                                        <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
+                                            <label class="col-sm-2 control-label">Topic</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control input-sm"
+                                                           data-bind="textInput: tagsInput, event: {keypress: enterTag}"
+                                                           placeholder="Write round topic here..."/>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-warning btn-sm" data-bind="click: sendTag">Send</button>
                                             </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <!-- HAND CARD SELECTION -->
-                                <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED'">
-                                    <label class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-10">
-                                        <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
-                                    </div>
-                                </div>
-                                <!-- TABLE CARD SELECTION -->
-                                <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
-                                    <label class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-10">
-                                        <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
+                                        <!-- HAND CARD SELECTION -->
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED'">
+                                            <label class="col-sm-2 control-label"></label>
+                                            <div class="col-sm-10">
+                                                <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
+                                            </div>
+                                        </div>
+                                        <!-- TABLE CARD SELECTION -->
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
+                                            <label class="col-sm-2 control-label"></label>
+                                            <div class="col-sm-10">
+                                                <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -191,6 +189,7 @@
 <script src="../static/js/hashcode.js" th:src="@{/js/hashcode.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
 <script src="../static/js/loader.js" th:src="@{/js/loader.js}"></script>
+<script src="../static/js/bootstrap-notify.min.js" th:src="@{/js/bootstrap-notify.min.js}"></script>
 
 <!-- template for rendering template chat -->
 <script type="text/html" id="chat-line">
@@ -212,7 +211,8 @@
                title="User is ready for next round"></i>
             <!-- /ko -->
             <!-- ko if: inactive -->
-            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="User is inactive"></i>
+            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+               title="User is inactive"></i>
             <!-- /ko -->
         </td>
         <td><span class="total-score" data-bind="text: gameScore"></span></td>
@@ -222,15 +222,11 @@
 
 <!-- template for rendering card thumbnail in table and hand -->
 <script type="text/html" id="card-thumbnail">
-
-
     <li class="c-champs__list-item js-champion-hover " style="margin-right: 10px;">
-        <a href="#" data-bind="click: $root.thumbnailSelected" class="c-champs__list-link " >
+        <a href="#" data-bind="click: $root.thumbnailSelected" class="c-champs__list-link ">
                         <span class="o-square ">
-<img data-toggle="modal"
-     data-target="#imageModal"
-     data-bind="attr: {'src': source}" alt=" " width="219 " height="219 " class="o-square__img c-img-frame__img " />
-
+                            <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "
+                                 class="o-square__img c-img-frame__img "/>
                         </span>
         </a>
     </li>
@@ -242,9 +238,57 @@
     var contextPath = /*[[@{/}]]*/;
     var gameId = /*[[${gameId}]]*/;
     var thisUserId = /*[[${userId}]]*/;
+    var tutorialMessages = {
+        CREATED: {
+            riddler: /*[[#{tutorial.CREATED.riddler}]]*/,
+            others: /*[[#{tutorial.CREATED.others}]]*/
+        },
+        ROUND_STARTED: {
+            riddler: /*[[#{tutorial.ROUND_STARTED.riddler}]]*/,
+            others: /*[[#{tutorial.ROUND_STARTED.others}]]*/
+        },
+        ROUND_TOPIC_SELECTED: {
+            riddler: /*[[#{tutorial.ROUND_TOPIC_SELECTED.riddler}]]*/,
+            others: /*[[#{tutorial.ROUND_TOPIC_SELECTED.others}]]*/,
+            selected: /*[[#{tutorial.ROUND_TOPIC_SELECTED.selected}]]*/
+        },
+        ROUND_OWN_CARDS_SELECTED: {
+            riddler: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.riddler}]]*/,
+            others: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.others}]]*/
+        },
+        ROUND_FINISHED: {
+            riddler: /*[[#{tutorial.ROUND_FINISHED.riddler}]]*/,
+            others: /*[[#{tutorial.ROUND_FINISHED.others}]]*/
+        }
+    };
 
     var webSocket = new WebSocket(`ws://${hostname}${contextPath}ws/game?gameId=${gameId}`);
     var alreadyConnected = false;
+
+    // tutorial notification options
+    var notifySettings = {
+        placement: {
+            from: "bottom",
+            align: "center"
+        },
+        animate: {
+            enter: "animated fadeInUp",
+            exit: "animated fadeOutDown"
+        },
+        type: "info",
+        delay: 0,
+        template: '<div data-notify="container" class="col-xs-11 col-sm-6 alert alert-{0}" role="alert">' +
+        '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+        '<span data-notify="icon"></span> ' +
+        '<span data-notify="title">{1}</span> ' +
+        '<span data-notify="message">{2}</span>' +
+        '<div class="progress" data-notify="progressbar">' +
+        '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+        '</div>' +
+        '<a href="{3}" target="{4}" data-notify="url"></a>' +
+        '</div>'
+    };
+    var notify;
 
     // show loader on start
     $('body').loader();
@@ -470,35 +514,43 @@
         }
     };
 
-    var onLoad = function()
-    {
-        var w = window.outerWidth;
-        if(w < 992)
-        {
-            $("#statusscreen").insertAfter("#gamescreen");
-            $("#footer").hide();
-        }
-        else if(w >= 992)
-        {
-            $("#gamescreen").insertAfter("#statusscreen");
-            $("#footer").show();
-        }
-    }
+    viewModel.gameView.status.subscribe(function (newValue) {
+        console.log(newValue);
 
-    var onSizeChange = function()
-    {
+        if (notify) {
+            notify.close();
+        }
+
+        var playerType = (viewModel.dealer()) ? "riddler" : "others";
+
+        notify = $.notify({
+            message: tutorialMessages[newValue][playerType]
+        }, notifySettings);
+    });
+
+    var onLoad = function () {
         var w = window.outerWidth;
-        if(w < 992)
-        {
+        if (w < 992) {
             $("#statusscreen").insertAfter("#gamescreen");
             $("#footer").hide();
         }
-        else if(w >= 992)
-        {
+        else if (w >= 992) {
             $("#gamescreen").insertAfter("#statusscreen");
             $("#footer").show();
         }
-    }
+    };
+
+    var onSizeChange = function () {
+        var w = window.outerWidth;
+        if (w < 992) {
+            $("#statusscreen").insertAfter("#gamescreen");
+            $("#footer").hide();
+        }
+        else if (w >= 992) {
+            $("#gamescreen").insertAfter("#statusscreen");
+            $("#footer").show();
+        }
+    };
 
     /* ]]> */
 </script>

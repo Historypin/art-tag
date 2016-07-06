@@ -6,11 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class RoundSummary {
 
     private Game game;
     private Map<String, Integer> playerSummary = new HashMap<>();
     private List<CardRoundSummary> cardSummary = new ArrayList<>();
+
+    private static final Logger LOG = LoggerFactory.getLogger(RoundSummary.class);
 
     private RoundSummary(Game game) {
         this.game = game;
@@ -30,8 +35,11 @@ public class RoundSummary {
         Map<String, Integer> playerRoundSummaries = new HashMap<>();
         Card dealersCard = game.getPlayers().stream().filter(p -> p.isDealer()).findFirst().get().getOwnCardSelection();
         long numberOfPlayersSelectedTableCard = game.getPlayers().stream().filter(p -> p.getTableCardSelection() != null).count();
-        if (numberOfPlayersSelectedTableCard == 0) {
-            //TODO: invalid round
+        if (dealersCard == null || numberOfPlayersSelectedTableCard == 0) {
+            //INVALID ROUND
+            //either dealer failed to select topic OR nobody voted for table card
+            LOG.info("Invalid round, either dealer failed to select topic OR nobody voted for table card, game {}", game.getId());
+            return;
         }
         if (dealersCard.getPlayerSelections().size() == 0 || dealersCard.getPlayerSelections().size() == numberOfPlayersSelectedTableCard) {
             //all or no players selected dealers card

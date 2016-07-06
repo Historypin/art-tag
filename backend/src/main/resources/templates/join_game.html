@@ -80,77 +80,94 @@
                 </div>
             </div>
 
+
             <div class="row no-float orange-background" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
                 <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                    <legend>Hand</legend>
-                    <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
-
-    <div th:replace="fragments/footer :: footer">&nbsp;</div>
-
-    <!-- Modal window with image preview, and user inputs -->
-    <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12 centeredimage">
-                            <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
-                            <!--<img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>-->
-
+                    <div class="o-page o-fullscreen">
+                        <div id="content" class="o-fullscreen o-wrap" role="main">
+                            <div class="">
+                                <main class="o-client__body">
+                                    <div class="o-client__block">
+                                        <div class="o-wrap">
+                                            <header class="c-heading">
+                                                <legend>Hand</legend>
+                                            </header>
+                                            <div class="c-champs js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                                                <ul class="o-list-unstyled c-champs__list "
+                                                    data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </main>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Author</label>
-                                    <div class="col-sm-10">
-                                        <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
-                                    </div>
+                </div>
+            </div>
+
+            <div th:replace="fragments/footer :: footer">&nbsp;</div>
+
+            <!-- Modal window with image preview, and user inputs -->
+            <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12 centeredimage">
+                                    <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
+                                    <!--<img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>-->
+
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Description</label>
-                                    <div class="col-sm-10">
-                                        <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Link</label>
-                                    <div class="col-sm-10">
-                                        <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
-                                    </div>
-                                </div>
-                                <!-- TAG INPUT -->
-                                <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
-                                    <label class="col-sm-2 control-label">Topic</label>
-                                    <div class="col-sm-10">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control input-sm"
-                                                   data-bind="textInput: tagsInput, event: {keypress: enterTag}" placeholder="Write round topic here..."/>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Author</label>
+                                            <div class="col-sm-10">
+                                                <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Description</label>
+                                            <div class="col-sm-10">
+                                                <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Link</label>
+                                            <div class="col-sm-10">
+                                                <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
+                                            </div>
+                                        </div>
+                                        <!-- TAG INPUT -->
+                                        <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
+                                            <label class="col-sm-2 control-label">Topic</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control input-sm"
+                                                           data-bind="textInput: tagsInput, event: {keypress: enterTag}"
+                                                           placeholder="Write round topic here..."/>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-warning btn-sm" data-bind="click: sendTag">Send</button>
                                             </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <!-- HAND CARD SELECTION -->
-                                <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED'">
-                                    <label class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-10">
-                                        <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
-                                    </div>
-                                </div>
-                                <!-- TABLE CARD SELECTION -->
-                                <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
-                                    <label class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-10">
-                                        <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
+                                        <!-- HAND CARD SELECTION -->
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED'">
+                                            <label class="col-sm-2 control-label"></label>
+                                            <div class="col-sm-10">
+                                                <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
+                                            </div>
+                                        </div>
+                                        <!-- TABLE CARD SELECTION -->
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
+                                            <label class="col-sm-2 control-label"></label>
+                                            <div class="col-sm-10">
+                                                <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -194,7 +211,8 @@
                title="User is ready for next round"></i>
             <!-- /ko -->
             <!-- ko if: inactive -->
-            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="User is inactive"></i>
+            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+               title="User is inactive"></i>
             <!-- /ko -->
         </td>
         <td><span class="total-score" data-bind="text: gameScore"></span></td>
@@ -204,32 +222,12 @@
 
 <!-- template for rendering card thumbnail in table and hand -->
 <script type="text/html" id="card-thumbnail">
-    <li class="c-champs__list-item">
-        <a class="thumbnail" href="#" data-bind="click: $root.thumbnailSelected">
-            <figure style="display: flex; justify-content: center; align-items: center;">
-                <div class="centeredimage" style="width:20ex; height:20ex; overflow:hidden;">
-                    <img class="img-responsive"
-                         data-toggle="modal"
-                         data-target="#imageModal"
-                         data-bind="attr: {'src': source}" style="max-width:20ex; max-height:20ex;"/>
-                </div>
-
-
-                <!--<img class="img-responsive"
-                     data-toggle="modal"
-                     data-target="#imageModal" src="http://dummyimage.com/600x400/000/fff.png"/>-->
-                <div class="carousel-caption" data-bind="if: playerSelections().length > 0">
-                    <ul data-bind="foreach: playerSelections">
-                        <li data-bind="text: $data"></li>
-                    </ul>
-                </div>
-                <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
-                <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
-                <!-- /ko -->
-                <!-- ko if: cardSelectedBy() != null && dealersCard() -->
-                <figcaption>Riddler's card.</figcaption>
-                <!-- /ko -->
-            </figure>
+    <li class="c-champs__list-item js-champion-hover " style="margin-right: 10px;">
+        <a href="#" data-bind="click: $root.thumbnailSelected" class="c-champs__list-link ">
+                        <span class="o-square ">
+                            <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "
+                                 class="o-square__img c-img-frame__img "/>
+                        </span>
         </a>
     </li>
 </script>
@@ -310,6 +308,7 @@
     var viewModelMapping = {
         'hand': {
             key: function (data) {
+                console.log(JSON.stringify(data));
                 return ko.utils.unwrapObservable(data.token);
             }
         },
@@ -518,7 +517,7 @@
     viewModel.gameView.status.subscribe(function (newValue) {
         console.log(newValue);
 
-        if(notify) {
+        if (notify) {
             notify.close();
         }
 

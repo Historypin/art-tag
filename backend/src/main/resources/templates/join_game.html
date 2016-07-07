@@ -105,8 +105,6 @@
                 </div>
             </div>
 
-            <div th:replace="fragments/footer :: footer">&nbsp;</div>
-
             <!-- Modal window with image preview, and user inputs -->
             <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
@@ -155,14 +153,14 @@
                                             </div>
                                         </div>
                                         <!-- HAND CARD SELECTION -->
-                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED'">
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED' &amp;&amp; !$root.handCardAlreadySelected()">
                                             <label class="col-sm-2 control-label"></label>
                                             <div class="col-sm-10">
                                                 <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
                                             </div>
                                         </div>
                                         <!-- TABLE CARD SELECTION -->
-                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED' &amp;&amp; !$root.tableCardAlreadySelected()">
                                             <label class="col-sm-2 control-label"></label>
                                             <div class="col-sm-10">
                                                 <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
@@ -177,19 +175,26 @@
             </div>
         </div>
     </div>
+
+    <div th:replace="fragments/footer :: footer">&nbsp;</div>
 </div>
+
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"
         th:src="@{/webjars/knockout/3.4.0/knockout.js}"></script>
 <script th:src="@{/webjars/sprintf.js/1.0.0/sprintf.min.js}"></script>
-<script src="../static/js/knockout.mapping.js" th:src="@{/js/knockout.mapping.js}"></script>
-<script src="../static/js/md5.js" th:src="@{/js/md5.js}"></script>
-<script src="../static/js/hashcode.js" th:src="@{/js/hashcode.js}"></script>
+
+<script src="../static/js/utils/knockout.mapping.min.js" th:src="@{/js/utils/knockout.mapping.min.js}"></script>
+<script src="../static/js/utils/md5.min.js" th:src="@{/js/utils/md5.min.js}"></script>
+<script src="../static/js/utils/hashcode.min.js" th:src="@{/js/utils/hashcode.min.js}"></script>
+<script src="../static/js/utils/loader.min.js" th:src="@{/js/utils/loader.min.js}"></script>
+<script src="../static/js/utils/bootstrap-notify.min.js" th:src="@{/js/utils/bootstrap-notify.min.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
-<script src="../static/js/loader.js" th:src="@{/js/loader.js}"></script>
-<script src="../static/js/bootstrap-notify.min.js" th:src="@{/js/bootstrap-notify.min.js}"></script>
+
+<script src="../static/js/game/game_default_model.js" th:src="@{/js/game/game_default_model.js}"></script>
+<script src="../static/js/game/notify_defaults.js" th:src="@{/js/game/notify_defaults.js}"></script>
 
 <!-- template for rendering template chat -->
 <script type="text/html" id="chat-line">
@@ -224,10 +229,21 @@
 <script type="text/html" id="card-thumbnail">
     <li class="c-champs__list-item js-champion-hover " style="margin-right: 10px;">
         <a href="#" data-bind="click: $root.thumbnailSelected" class="c-champs__list-link ">
-                        <span class="o-square ">
-                            <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "
-                                 class="o-square__img c-img-frame__img "/>
-                        </span>
+            <span class="o-square ">
+                <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "
+                     class="o-square__img c-img-frame__img "/>
+                <div class="carousel-caption" data-bind="if: playerSelections().length > 0">
+                    <ul data-bind="foreach: playerSelections">
+                        <li data-bind="text: $data"></li>
+                    </ul>
+                </div>
+                <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
+                    <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
+                <!-- /ko -->
+                <!-- ko if: cardSelectedBy() != null && dealersCard() -->
+                    <figcaption>Riddler's card.</figcaption>
+                <!-- /ko -->
+            </span>
         </a>
     </li>
 </script>
@@ -254,7 +270,8 @@
         },
         ROUND_OWN_CARDS_SELECTED: {
             riddler: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.riddler}]]*/,
-            others: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.others}]]*/
+            others: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.others}]]*/,
+            selected: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.selected}]]*/
         },
         ROUND_FINISHED: {
             riddler: /*[[#{tutorial.ROUND_FINISHED.riddler}]]*/,
@@ -264,30 +281,6 @@
 
     var webSocket = new WebSocket(`ws://${hostname}${contextPath}ws/game?gameId=${gameId}`);
     var alreadyConnected = false;
-
-    // tutorial notification options
-    var notifySettings = {
-        placement: {
-            from: "bottom",
-            align: "center"
-        },
-        animate: {
-            enter: "animated fadeInUp",
-            exit: "animated fadeOutDown"
-        },
-        type: "info",
-        delay: 0,
-        template: '<div data-notify="container" class="col-xs-11 col-sm-6 alert alert-{0}" role="alert">' +
-        '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
-        '<span data-notify="icon"></span> ' +
-        '<span data-notify="title">{1}</span> ' +
-        '<span data-notify="message">{2}</span>' +
-        '<div class="progress" data-notify="progressbar">' +
-        '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-        '</div>' +
-        '<a href="{3}" target="{4}" data-notify="url"></a>' +
-        '</div>'
-    };
     var notify;
 
     // show loader on start
@@ -308,7 +301,6 @@
     var viewModelMapping = {
         'hand': {
             key: function (data) {
-                console.log(JSON.stringify(data));
                 return ko.utils.unwrapObservable(data.token);
             }
         },
@@ -347,6 +339,28 @@
             var minutes = self.gameView.remainingTime() / 60.0;
             var divisor = minutes % 1;
             return sprintf("%02d:%02d", Math.floor(minutes), Math.round(divisor * 60));
+        });
+
+        self.handCardAlreadySelected = ko.pureComputed(function () {
+            var player = self.gameView.players().find(function(pl) {
+                return thisUserId === pl.userId()
+            });
+            if(player) {
+                return player.ownCardSelected();
+            } else {
+                return false;
+            }
+        });
+
+        self.tableCardAlreadySelected = ko.pureComputed(function () {
+            var player = self.gameView.players().find(function(pl) {
+                return thisUserId === pl.userId()
+            });
+            if(player) {
+                return player.tableCardSelected();
+            } else {
+                return false;
+            }
         });
 
         self.sendChatMessage = function () {
@@ -393,6 +407,14 @@
             };
             webSocket.send(JSON.stringify(message));
             $('#imageModal').modal('hide');
+
+            if (notify) {
+                notify.close();
+            }
+
+            notify = $.notify({
+                message: tutorialMessages.ROUND_TOPIC_SELECTED.selected
+            }, notifyDefaults());
         };
 
         self.selectTableCard = function () {
@@ -403,73 +425,22 @@
             };
             webSocket.send(JSON.stringify(message));
             $('#imageModal').modal('hide');
+
+            if (notify) {
+                notify.close();
+            }
+
+            notify = $.notify({
+                message: tutorialMessages.ROUND_OWN_CARDS_SELECTED.selected
+            }, notifyDefaults());
         };
 
 
         return self;
     }
 
-    // viewModel prototype
-    var viewModel = new ViewModel({
-        "userToken": "",
-        "dealer": false,
-        "rightGuess": false,
-        "hand": [{
-            "token": "",
-            "source": "",
-            "metadata": {
-                "author": "",
-                "externalUrl": "",
-                "description": ""
-            }
-        }],
-        "gameView": {
-            "id": "",
-            "name": "",
-            "status": "",
-            "tags": "",
-            "remainingTime": 0,
-            "players": [{
-                "token": "",
-                "userId": "",
-                "name": "",
-                "readyForNextRound": false,
-                "dealer": false,
-                "inactive": false,
-                "gameScore": 0,
-                "lastRoundScore": 0
-            }],
-            "table": [{
-                "token": "",
-                "source": "",
-                "metadata": {
-                    "author": "",
-                    "externalUrl": "",
-                    "description": ""
-                },
-                "playerSelections": [],
-                "dealersCard": false,
-                "cardSelectedBy": false
-            }]
-        },
-        /* fields below are not part of model from backend */
-        "chatHistory": [{
-            "player": "",
-            "message": "",
-            "time": ""
-        }],
-        "chatInput": "",
-        "tagsInput": "",
-        "selectedCard": {
-            "token": "",
-            "source": "",
-            "metadata": {
-                "author": "",
-                "externalUrl": "",
-                "description": ""
-            }
-        }
-    });
+    // create model and apply the bindings
+    var viewModel = new ViewModel(getDefaultModel());
     ko.applyBindings(viewModel);
 
     // websocket on error handler
@@ -515,8 +486,6 @@
     };
 
     viewModel.gameView.status.subscribe(function (newValue) {
-        console.log(newValue);
-
         if (notify) {
             notify.close();
         }
@@ -525,7 +494,7 @@
 
         notify = $.notify({
             message: tutorialMessages[newValue][playerType]
-        }, notifySettings);
+        }, notifyDefaults());
     });
 
     var onLoad = function () {

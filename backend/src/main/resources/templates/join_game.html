@@ -414,7 +414,7 @@
 
             notify = $.notify({
                 message: tutorialMessages.ROUND_TOPIC_SELECTED.selected
-            }, notifyDefaults());
+            }, notifyDefaults);
         };
 
         self.selectTableCard = function () {
@@ -432,7 +432,7 @@
 
             notify = $.notify({
                 message: tutorialMessages.ROUND_OWN_CARDS_SELECTED.selected
-            }, notifyDefaults());
+            }, notifyDefaults);
         };
 
 
@@ -440,7 +440,7 @@
     }
 
     // create model and apply the bindings
-    var viewModel = new ViewModel(getDefaultModel());
+    var viewModel = new ViewModel(defaultModel);
     ko.applyBindings(viewModel);
 
     // websocket on error handler
@@ -494,7 +494,7 @@
 
         notify = $.notify({
             message: tutorialMessages[newValue][playerType]
-        }, notifyDefaults());
+        }, notifyDefaults);
     });
 
     var onLoad = function () {

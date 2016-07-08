@@ -28,7 +28,8 @@
     left: 0;
     right: 0;
     height:100px;
-    z-index: 0;
+    z-index: 100;
+    background-color: rgba(222, 222, 100, 0.5);
 }
 
 .centeredText
@@ -66,7 +67,7 @@
     height: 100vh;
     /*background-image: url("https://wallpaperscraft.com/image/owl_bird_predator_eyes_feathers_66601_1920x1080.jpg");/**/
     /*background-image: url(../img/stock-photo-artist-supplies-on-the-wooden-table-top-view_374497885.jpg);/**/
-    background-image: url(../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg);/**/
+    background-image: url(../img/stock-16x9-186903581.jpg);/**/
     background-repeat:no-repeat;
     background-size:cover;
 }
@@ -92,6 +93,7 @@
 .container-fluid {
     height: 100vh;
     overflow:hidden;
+    background: rgba(100, 100, 60, 0.3);
 }
 
 .modal {

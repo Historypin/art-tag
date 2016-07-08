@@ -16,6 +16,8 @@ public class Player {
     private Card ownCardSelection;
     @JsonIgnore
 	private Card tableCardSelection;
+    private boolean ownCardSelected = false;
+    private boolean tableCardSelected = false;
 	private boolean readyForNextRound;
 	private boolean dealer;
 	private boolean inactive;//disconnected
@@ -68,12 +70,14 @@ public class Player {
 	}
 	public void setOwnCardSelection(Card ownCardSelection) {
 		this.ownCardSelection = ownCardSelection;
+		this.ownCardSelected = ownCardSelection == null ? false : true;
 	}
 	public Card getTableCardSelection() {
 		return tableCardSelection;
 	}
 	public void setTableCardSelection(Card tableCardSelection) {
 		this.tableCardSelection = tableCardSelection;
+        this.tableCardSelected = tableCardSelection == null ? false : true;
 	}
 	public boolean isReadyForNextRound() {
 		return readyForNextRound;
@@ -99,8 +103,14 @@ public class Player {
 	public void setLastRoundScore(int lastRoundScore) {
 		this.lastRoundScore = lastRoundScore;
 	}
+	public boolean isOwnCardSelected() {
+        return ownCardSelected;
+    }
+    public boolean isTableCardSelected() {
+        return tableCardSelected;
+    }
 
-	@Override
+    @Override
 	public String toString() {
 		return "Player [token=" + token + ", name=" + name + ", userId=" + userId + ", hand=" + hand
 				+ ", ownCardSelection=" + ownCardSelection + ", tableCardSelection=" + tableCardSelection

@@ -187,6 +187,10 @@ public class Game {
         return privateGame;
     }
 
+    public void setPrivateGame(boolean privateGame) {
+        this.privateGame = privateGame;
+    }
+
     public String getCreatorUserId() {
         return creatorUserId;
     }

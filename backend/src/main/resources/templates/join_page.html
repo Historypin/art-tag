@@ -46,15 +46,15 @@
             <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
 
             <div class="col-sm-9 lightslategray-background">
-
-
-                Name the game: <input type="text" name="fname"/><br/>
-                <small><a th:href="@{/join_game/1}">GAME 1</a></small>
-                <br/>
-                <small><a th:href="@{/join_game/2}">GAME 2</a></small>
-                <br/>
-                <input type="submit" value="Join"/>
-
+                <table id="gamesTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Players #</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
@@ -66,5 +66,53 @@
         th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 <script src="../static/js/utils/datatables.min.js" th:src="@{/js/utils/datatables.min.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+    var table; // datatable
+    var joinGameUrl = /*[[@{/join_game}]]*/
+
+    function remapDatatables(data) {
+        for (var i = 0; i < data.columns.length; i++) {
+            column = data.columns[i];
+            column.searchRegex = column.search.regex;
+            column.searchValue = column.search.value;
+            delete(column.search);
+        }
+    }
+
+    $(document).ready(function () {
+        table = $("#gamesTable").DataTable({
+            'serverSide': true,
+            'processing': true,
+            'ajax': {
+                'url': /*[[@{/join_page/get.games}]]*/,
+                'data': function (data) {
+                    remapDatatables(data);
+                }
+            },
+            'language': {
+                search: 'Search by game name:'
+            },
+            'columns': [
+                {'data': 'name'},
+                {'data': 'numberOfPlayers'},
+                {
+                    'data': 'link',
+                    'orderable': false,
+                    'render': function ( data, type, row, meta ) {
+                        var output = "";
+                        if((row != null || row != undefined)) {
+                            // join button
+                            output = output.concat(`<a href="${joinGameUrl}/${row.gameId}">click to join game</a>`);
+                        }
+                        return output;
+                    }
+                }
+
+            ]
+        });
+    });
+    /* ]]> */
+</script>
 </body>
 </html>

@@ -72,7 +72,7 @@ public class BrowserTest {
                 element.sendKeys(password);
                 element.submit();
 
-                driver.findElement(By.linkText("GAME 1")).click();
+                driver.get("http://localhost:8080/join_game/1");
                 usernameHandleMap.put(username, driver.getWindowHandle());
             }
         }

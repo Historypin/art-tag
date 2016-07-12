@@ -3,9 +3,19 @@
     width: 100%;
 }
 
+.join-page, .score-page, .create-page {
+    background-size:cover;
+    background: url('../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg') no-repeat;
+}
+
 #joinGameScreenUpperHalf
 {
-    height: 70vh;
+    height: 15vh;
+    text-align: center;
+}
+
+#joinGameScreenUpperHalf .btn{
+    padding-top: 4vh;
 }
 
 #joinGameScreenLowerHalf

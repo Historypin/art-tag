@@ -121,6 +121,8 @@ public class Player {
 	public void roundReset() {
 		this.ownCardSelection = null;
 		this.tableCardSelection = null;
+		this.ownCardSelected = false;
+		this.tableCardSelected = false;
 		this.readyForNextRound = false;
 		this.dealer = false;
 		this.lastRoundScore = 0;

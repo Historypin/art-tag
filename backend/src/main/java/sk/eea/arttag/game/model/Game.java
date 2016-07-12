@@ -14,26 +14,23 @@ public class Game {
 
     private static final Logger LOG = LoggerFactory.getLogger(Game.class);
 
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
     private Date created;
+
+    private final int minPlayers;
+    private final int maxPlayers;
+    private final boolean privateGame;
+    private final GameTimeout gameTimeout;
+
     private GameStatus status;
-    //	private Map<String, Player> players = new HashMap<>();
-    //	private Map<String, Player> players = Collections.synchronizedMap(new LinkedHashMap<>());
     private List<Player> players = new LinkedList<>();
     private Date endOfRound;
     private String tags;
     private List<Card> deck = new ArrayList<>();
     private List<Card> table = new ArrayList<>();
     private List<Card> tablePublic = new ArrayList<>();
-    private int minPlayers;
-    private int maxPlayers;
-    private boolean privateGame = false;
     private String creatorUserId;
-    private GameTimeout gameTimeout;
-
-    public Game() {
-    }
 
     public Game(String id, String name, int minPlayers, int maxPlayers, boolean privateGame, String creatorUserId, GameTimeout gameTimeout) {
         this.id = id;
@@ -51,16 +48,8 @@ public class Game {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Date getCreated() {
@@ -79,12 +68,6 @@ public class Game {
         this.status = status;
     }
 
-    /*	public Map<String, Player> getPlayers() {
-    		return players;
-    	}
-    	public void setPlayers(Map<String, Player> players) {
-    		this.players = players;
-    	}*/
     public List<Player> getPlayers() {
         return players;
     }
@@ -96,10 +79,6 @@ public class Game {
     public void addPlayer(Player player) {
         this.players.add(player);
     }
-
-    /*	public void removePlayer(Player player) {
-    		this.players.remove(player);
-    	}*/
 
     public Date getEndOfRound() {
         return endOfRound;
@@ -132,26 +111,10 @@ public class Game {
     public List<Card> getTable() {
         return table;
     }
+
     public List<Card> getTablePublic() {
         return tablePublic;
     }
-
-    /*	public List<Card> generateTableForPlayer(Player player) {
-    	    List<Card> tableForPlayer = new ArrayList<>();
-    	    getTable().forEach(c -> {
-    	        Card clone = new Card(c);
-    	        //mark my card
-    	        if (player.getUserId().equals(c.getCardSelectedBy())) {
-    	            clone.setCardSelectedBy(player.getUserId());
-    	        }
-    	        //if round has finished, mark dealers card
-    	        if (player.isDealer() && GameStatus.ROUND_FINISHED == getStatus()) {
-    	            clone.setDealersCard(true);
-    	        }
-    	        tableForPlayer.add(c);
-    	    });
-    	    return tableForPlayer;
-    	}*/
 
     public void generateTable() {
         LOG.debug("Generate table for game {}, status {}", id, status);
@@ -171,6 +134,7 @@ public class Game {
     public void setTable(List<Card> table) {
         this.table = table;
     }
+
     public void setTablePublic(List<Card> tablePublic) {
         this.tablePublic = tablePublic;
     }
@@ -185,10 +149,6 @@ public class Game {
 
     public boolean isPrivateGame() {
         return privateGame;
-    }
-
-    public void setPrivateGame(boolean privateGame) {
-        this.privateGame = privateGame;
     }
 
     public String getCreatorUserId() {
@@ -207,7 +167,7 @@ public class Game {
 
     public Player findPlayerByUserId(String userId) {
         /*		List<Player> players = getPlayers().values().stream()
-        				.filter(p -> userId.equalsIgnoreCase(p.getUserId()))
+                        .filter(p -> userId.equalsIgnoreCase(p.getUserId()))
         				.collect(Collectors.toList());*/
         List<Player> players = getPlayers().stream().filter(p -> userId.equalsIgnoreCase(p.getUserId())).collect(Collectors.toList());
         return players.size() > 0 ? players.get(0) : null;

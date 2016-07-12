@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-@EnableConfigurationProperties(ApplicationProperties.class)
+@EnableConfigurationProperties(value = {ApplicationProperties.class, GameProperties.class})
 public class ArttagApp extends SpringBootServletInitializer {
 
 

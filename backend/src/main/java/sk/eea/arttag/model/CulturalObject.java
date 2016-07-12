@@ -34,8 +34,8 @@ public class CulturalObject {
     private String internalFileSystemPath;
     private String publicSource;
     private Long batchId;
-    private Date lastSelected;
-    private Integer numberOfSelections;
+    private Date lastSelected = new Date();
+    private Integer numberOfSelections = 0;
 
     private Boolean active = Boolean.FALSE;
 

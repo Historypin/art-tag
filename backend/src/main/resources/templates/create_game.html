@@ -44,20 +44,120 @@
             <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
 
             <div class="col-sm-9 lightslategray-background">
-                create new game
+                <form class="form-horizontal" action="#" th:action="@{/create_game}" th:object="${createGameForm}" method="post" accept-charset="UTF-8">
+                    <fieldset>
+                        <!-- Name -->
+                        <div class="form-group" th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+                            <label class="col-md-4 control-label" for="name">Game name</label>
+                            <div class="col-md-4">
+                                <input id="name" name="name" th:field="*{name}"
+                                       placeholder="" class="form-control"
+                                       th:disabled="${createGameForm.joinGameLink} != null"
+                                       type="text" />
+                                <span class="help-block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">name error</span>
+                            </div>
+                        </div>
 
-                <!--
-                    meno hry + radio button public/private game, ak private tak sa vygeneruje link pre vstup do hry, ak public tak submit button prihlasuje priamo do hry
-                -->
+                        <!-- Public/private game -->
+                        <div class="form-group" th:if="${createGameForm.joinGameLink} == null">
+                            <label class="col-md-4 control-label" for="radios">Game type</label>
+                            <div class="col-md-4">
+                                <div class="radio">
+                                    <label for="radios-0">
+                                        <input name="radios" th:field="*{privateGame}" id="radios-0" value="false" type="radio"/>
+                                        Public game
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label for="radios-1">
+                                        <input name="radios" th:field="*{privateGame}" id="radios-1" value="true" type="radio"/>
+                                        Private game
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Create Button -->
+                        <div class="form-group" th:if="${createGameForm.joinGameLink} == null">
+                            <label class="col-md-4 control-label" for="createGameButton"></label>
+                            <div class="col-md-4">
+                                <button id="createGameButton" class="btn btn-primary" type="submit">Create game</button>
+                            </div>
+                        </div>
+
+                        <!-- Show game link -->
+                        <div class="form-group" th:if="${createGameForm.joinGameLink} != null">
+                            <label class="control-label col-md-4" for="joinGameLink">Join link</label>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="joinGameLink" th:value="${createGameForm.joinGameLink}"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default btn-copy-clipboard" data-clipboard-target="#joinGameLink" type="button"><i
+                                                class="fa fa-clipboard" aria-hidden="true"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Join Button -->
+                        <div class="form-group" th:if="${createGameForm.joinGameLink} != null">
+                            <label class="col-md-4 control-label" for="joinGameButton"></label>
+                            <div class="col-md-4">
+                                <a id="joinGameButton" th:href="${createGameForm.joinGameLink}" class="btn btn-success">Join game</a>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
             </div>
         </div>
     </div>
+    <div th:replace="fragments/footer :: footer">&nbsp;</div>
 </div>
-<div th:replace="fragments/footer :: footer">&nbsp;</div>
 
 <script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.12/clipboard.min.js"
+        th:src="@{/js/utils/clipboard.min.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
+
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    $(document).ready(function () {
+
+        // Tooltip
+        $('.btn-copy-clipboard').tooltip({
+            trigger: 'click',
+            placement: 'bottom'
+        });
+
+        function setTooltip(btn, message) {
+            $(btn).tooltip('hide')
+                    .attr('data-original-title', message)
+                    .tooltip('show');
+        }
+
+        function hideTooltip(btn) {
+            setTimeout(function () {
+                $(btn).tooltip('hide');
+            }, 2000);
+        }
+
+        // Clipboard
+        var clipboard = new Clipboard('.btn-copy-clipboard');
+
+        clipboard.on('success', function (e) {
+            setTooltip(e.trigger, 'Copied!');
+            hideTooltip(e.trigger);
+        });
+
+        clipboard.on('error', function (e) {
+            setTooltip(e.trigger, 'Failed!');
+            hideTooltip(e.trigger);
+        });
+    });
+    /* ]]> */
+</script>
 </body>
 </html>

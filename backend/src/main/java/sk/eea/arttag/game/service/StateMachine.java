@@ -1,25 +1,15 @@
 package sk.eea.arttag.game.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import sk.eea.arttag.game.model.Card;
-import sk.eea.arttag.game.model.Game;
-import sk.eea.arttag.game.model.GameEvent;
-import sk.eea.arttag.game.model.GameException;
+import sk.eea.arttag.GameProperties;
+import sk.eea.arttag.game.model.*;
 import sk.eea.arttag.game.model.GameException.GameExceptionType;
-import sk.eea.arttag.game.model.GameStatus;
-import sk.eea.arttag.game.model.Player;
-import sk.eea.arttag.game.model.RoundSummary;
-import sk.eea.arttag.game.model.UserInput;
+
+import java.util.Date;
+import java.util.Iterator;
 
 @Component
 public class StateMachine {
@@ -28,6 +18,9 @@ public class StateMachine {
 
     @Autowired
     private GameService gameService;
+
+    @Autowired
+    private GameProperties gameProperties;
 
     public void triggerEvent(Game game, GameEvent event, UserInput userInput, String userToken, Player player) throws GameException {
 
@@ -210,7 +203,7 @@ public class StateMachine {
             }
         }
 
-        dealCards(game, GameService.HAND_SIZE);
+        dealCards(game, gameProperties.getHandSize());
         //obsolete
         /*		boolean playerWithNoCardsExists = game.getPlayers().stream()
         				.anyMatch(p -> p.getHand().size() < 1);*/
@@ -224,7 +217,7 @@ public class StateMachine {
         // evaluate number of players in game, possibly we can start the game
         if (game.getMinPlayers() <= game.getPlayers().size()) {
             //			dealCards(game, GameService.HAND_SIZE);
-            game.setDeck(gameService.getInitialDeck(GameService.INITIAL_DECK_SIZE));
+            game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize()));
             startRound(game);
         } else {
             throw new GameException(GameExceptionType.MIN_NUMBER_OF_PLAYERS_NOT_REACHED);

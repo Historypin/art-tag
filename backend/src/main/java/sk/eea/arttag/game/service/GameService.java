@@ -1,9 +1,7 @@
 package sk.eea.arttag.game.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
@@ -13,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import sk.eea.arttag.ApplicationProperties;
+import sk.eea.arttag.GameProperties;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
@@ -27,29 +26,26 @@ import sk.eea.arttag.game.model.UserInputType;
 @Component
 public class GameService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
+
+    /**
+     *  Collection containing all games.
+     *  Key: game id.
+     *  Value: game instance.
+     */
+    private static final Map<String, Game> GAMES = new ConcurrentHashMap<>();
+
     @Autowired
     private ApplicationProperties applicationProperties;
+
+    @Autowired
+    private GameProperties gameProperties;
+
     @Autowired
     private StateMachine stateMachine;
+
     @Autowired
     private CardService cardService;
-
-    private Map<String, Game> games = new HashMap<>();
-    private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
-    public static final int HAND_SIZE = 5;
-    public static final int INITIAL_DECK_SIZE = 100;
-    public static final int GAME_MIN_PLAYERS = 1;
-    public static final int GAME_MAX_PLAYERS = 3;
-
-    @PostConstruct
-    public void init() throws GameException {
-        create("1", "game1", "admin");
-        create("2", "game2", "admin");
-    }
-
-    public Map<String, Game> getGames() {
-        return games;
-    }
 
     public List<GamePlayerView> getGameViews() {
         List<GamePlayerView> views = new ArrayList<>();
@@ -67,17 +63,36 @@ public class GameService {
         return views;
     }
 
-    public Game getGame(String token) {
-        LOG.debug("SERVICE:getGame() token: {}", token);
-        return games.get(0);
+    public Game create(String name, String creatorUserId) throws GameException {
+        return this.create(name, creatorUserId, false);
     }
 
-    //TODO:
-    public void create(String id, String name, String creatorUserId) throws GameException {
-        LOG.debug("CREATE");
-        GameTimeout gameTimeout = new GameTimeout(600, 600, 600, 600, 600);
-        Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false, creatorUserId, gameTimeout);
+    public Game create(String name, String creatorUserId, boolean privateGame) throws GameException {
+        final GameTimeout gameTimeout = new GameTimeout(
+                gameProperties.getTimeoutGameCreated(),
+                gameProperties.getTimeoutRoundStarted(),
+                gameProperties.getTimeoutTopicSelected(),
+                gameProperties.getTimeoutOwnCardsSelected(),
+                gameProperties.getTimeoutRoundFinished()
+        );
+
+        if(!privateGame) { // watch for duplicates in non-private games
+            boolean nameIsAlreadyInUse = GAMES.values().parallelStream().anyMatch(game -> name.equals(game.getName()));
+            if(nameIsAlreadyInUse) {
+                throw new GameException(GameException.GameExceptionType.GAME_NAME_ALREADY_IN_USE);
+            }
+        }
+
+        // probability of UUID collision seems implausible, so lets hope for the best
+        final UUID uuid = UUID.randomUUID();
+
+        Game game = new Game(uuid.toString(), name, gameProperties.getMaximumGamePlayers(), gameProperties.getMaximumGamePlayers(), privateGame, creatorUserId, gameTimeout);
+        GAMES.put(uuid.toString(), game);
+
         stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);
+
+        LOG.debug("Created new game: {}", game);
+        return game;
     }
 
     //TODO:
@@ -107,7 +122,7 @@ public class GameService {
             LOG.debug("one of (gameId, input, input.type, input.value) null");
             return;
         }
-        Game game = this.games.get(gameId);
+        Game game = GAMES.get(gameId);
         if (game == null) {
             //ignore
             LOG.debug("Game null");
@@ -126,9 +141,9 @@ public class GameService {
         //evaluate possible events a user can trigger
         GameEvent gameEvent = UserInputType.TOPIC_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED
                 : (UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED
-                        : (UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED
-                                : (UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND
-                                        : (UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null))));
+                : (UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED
+                : (UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND
+                : (UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null))));
         stateMachine.triggerEvent(game, gameEvent, input, userToken, null);
         //		updateGameAfterUserInput(game, input, userToken);
     }
@@ -140,5 +155,9 @@ public class GameService {
     public List<Card> getInitialDeck(int numberOfCards) {
         LOG.debug("INITIAL_DECK");
         return cardService.getCards(numberOfCards);
+    }
+
+    public Map<String, Game> getGames() {
+        return GAMES;
     }
 }

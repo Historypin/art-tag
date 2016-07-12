@@ -29,7 +29,7 @@
     right: 0;
     height:100px;
     z-index: 100;
-    background-color: rgba(222, 222, 100, 0.5);
+    background-color: rgba(11, 55, 99, 0.1);
 }
 
 .centeredText
@@ -146,9 +146,9 @@
 
 .modal-content
 {
-    -webkit-border-radius: 20px !important;
-    -moz-border-radius: 20px !important;
-    border-radius: 20px !important;
+    -webkit-border-radius: 10px !important;
+    -moz-border-radius: 10px !important;
+    border-radius: 10px !important;
 }
 
 body
@@ -173,5 +173,9 @@ ul
     list-style-type: none;
 }
 
+.shadow
+{
+    box-shadow: 2px 3px 14px #000;
+}
 .lightslategray-background {background-color:lightslategray;}
 .orange-background {background-color:orange;}

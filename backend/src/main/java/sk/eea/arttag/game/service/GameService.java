@@ -48,6 +48,16 @@ public class GameService {
     @Autowired
     private CardService cardService;
 
+    @PostConstruct
+    public void init()
+    {
+        try {
+            this.create("lalahopapluha", "admin");
+        } catch (GameException e) {
+            LOG.error("Error at default game creation", e);
+        }
+    }
+
     public List<GamePlayerView> getGameViews() {
         List<GamePlayerView> views = new ArrayList<>();
         for (Game game : getGames().values()) {

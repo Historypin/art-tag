@@ -116,15 +116,15 @@ public class WebSocketGameController extends TextWebSocketHandler {
         for (GamePlayerView view : gamePlayerViews) {
             //LOG.debug(view.toString());
             String txt = objectMapper.writeValueAsString(view);
-            LOG.debug(txt);
+            //LOG.debug(txt);
             final TextMessage message = new TextMessage(txt);
-            LOG.debug("Clients: {}", clients.size());
+            //LOG.debug("Clients: {}", clients.size());
             final WebSocketSession webSocketSession = clients.get(view.getUserToken());
             if (webSocketSession != null) {
-                LOG.debug("Sending message");
+                //LOG.debug("Sending message");
                 webSocketSession.sendMessage(message);
             } else {
-                LOG.debug("No session");
+                //LOG.debug("No session");
             }
         }
     }

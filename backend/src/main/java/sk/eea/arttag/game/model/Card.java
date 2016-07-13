@@ -6,6 +6,7 @@ import java.util.List;
 public class Card {
 
     private String token;
+    private Long culturalObjectId;
     private String source;
     private CardMetadata metadata;
     private List<String> playerSelections = new ArrayList<>();
@@ -15,14 +16,16 @@ public class Card {
     public Card() {
     }
 
-    public Card(String token, String source, CardMetadata metadata) {
+    public Card(String token, Long culturalObjectId, String source, CardMetadata metadata) {
         this.token = token;
+        this.culturalObjectId = culturalObjectId;
         this.source = source;
         this.metadata = metadata;
     }
 
     public Card(Card original) {
         this.token = original.getToken();
+        this.culturalObjectId = original.getCulturalObjectId();
         this.source = original.getSource();
         this.metadata = original.getMetadata();
         this.playerSelections = new ArrayList<>();
@@ -32,6 +35,9 @@ public class Card {
 
     public String getToken() {
         return token;
+    }
+    public Long getCulturalObjectId() {
+        return culturalObjectId;
     }
     public String getSource() {
         return source;
@@ -60,8 +66,8 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Card [token=" + token + ", source=" + source + ", playerSelections=" + playerSelections + ", cardSelectedBy=" + cardSelectedBy
-                + ", dealersCard=" + dealersCard + "]";
+        return "Card [token=" + token + ", culturalObjectId=" + culturalObjectId + ", source=" + source + ", playerSelections=" + playerSelections
+                + ", cardSelectedBy=" + cardSelectedBy + ", dealersCard=" + dealersCard + "]";
     }
 
     @Override

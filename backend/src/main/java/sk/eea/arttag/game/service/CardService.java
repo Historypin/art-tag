@@ -30,6 +30,7 @@ public class CardService {
     @Autowired
     private ApplicationProperties applicationProperties;
 
+    public static final String CARD_DESCRIPTION_DEFAULT_LANGUAGE = "en";
     private static final Logger LOG = LoggerFactory.getLogger(CardService.class);
 
     //TODO: this will be replaced by the getCard method
@@ -40,6 +41,7 @@ public class CardService {
         //TODO call CardService.getCards()
         for (int i = 0; i <= numberOfCards; i++) {
             final String cardToken = UUID.randomUUID().toString();
+            final Long culturalObjectId = 1L;
             final String img = String.format("%02d.jpeg", i);
             /*final String cardSource = String.format("%s://%s/%s/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(),
                 applicationProperties.getCulturalObjectsPublicPath(), img);*/
@@ -47,7 +49,7 @@ public class CardService {
             final String cardSource = String.format("http://dummyimage.com/%dx%d/000/fff.png", new Random().nextInt((1600 - 600) + 1), new Random().nextInt((1600 - 600) + 1));
 
             //TODO: replace dummies
-            deck.add(new Card(cardToken, cardSource, new CardMetadata("author", "externalUrl", "description")));
+            deck.add(new Card(cardToken, culturalObjectId, cardSource, new CardMetadata("author", "externalUrl", "description")));
         }
         Collections.shuffle(deck);
         return deck;
@@ -74,24 +76,25 @@ public class CardService {
     }*/
 
     //TODO: this will be the new version of getCards when the database is not empty
-    public List<Card> getCard(int numberOfCards) {
+    public List<Card> getCard(int numberOfCards, String language) {
 
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < numberOfCards; i++) {
             CulturalObject co = culturalObjectRepository.findTop1ByOrderByLastSelectedAsc();
             if (co != null) {
-                cards.add(culturalObject2Card(co));
+                cards.add(culturalObject2Card(co, language));
             }
         }
         return cards;
     }
 
-    private static Card culturalObject2Card(CulturalObject co) {
-        String token = String.valueOf(co.getId());
+    private static Card culturalObject2Card(CulturalObject co, String language) {
+        String token = UUID.randomUUID().toString();
+        Long culturalObjectId = co.getId();
         String source = null;
-        String descr = null;
+        String descr = co.getDescriptionByLanguage(language, CARD_DESCRIPTION_DEFAULT_LANGUAGE);
         CardMetadata metadata = new CardMetadata(co.getAuthor(), co.getExternalUrl(), descr);
-        Card c = new Card(token, source, metadata);
+        Card c = new Card(token, culturalObjectId, source, metadata);
         return c;
     }
 }

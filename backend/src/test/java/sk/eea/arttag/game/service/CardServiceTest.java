@@ -39,7 +39,7 @@ public class CardServiceTest {
 
         System.out.println(repository.count());
 
-        List<Card> c2 = cardService.getCard(1);
+        List<Card> c2 = cardService.getCard(1, "en");
         Assert.assertEquals(1, c2.size());
         System.out.println(c2);
     }

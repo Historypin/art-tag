@@ -1,6 +1,7 @@
 package sk.eea.arttag;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,6 +12,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@Ignore
 public class BrowserTest {
 
     private static final String GAME_URL = "http://localhost:8080";

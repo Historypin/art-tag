@@ -12,8 +12,8 @@ function stop_tomcat() {
     done
 
     echo "Clearing webapps..."
-    sudo rm -rfv ${TOMCAT_WEBAPPS_DIR}/console
-    sudo rm -fv ${TOMCAT_WEBAPPS_DIR}/console.war
+    sudo rm -rfv ${TOMCAT_WEBAPPS_DIR}/arttag
+    sudo rm -fv ${TOMCAT_WEBAPPS_DIR}/arttag.war
 }
 
 function start_tomcat() {

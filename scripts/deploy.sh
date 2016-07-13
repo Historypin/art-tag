@@ -24,8 +24,8 @@ function start_tomcat() {
     status="NOT OK"
     count=0
     count_by=5
-    while [[ (${status} != OK)  && (${count} -lt ${TIMEOUT_LIMIT}) ]]; do
-        status=`curl --silent --max-time 1 --header "content-type: application/json" ${ARTTAG_STATUS_CHECK}`
+    while [[ !("${status}" =~ "arttag")   && (${count} -lt ${TIMEOUT_LIMIT}) ]]; do
+        status=`curl --silent --max-time 1 ${ARTTAG_STATUS_CHECK}`
         echo "Will wait for tomcat to start in " `expr ${TIMEOUT_LIMIT} - ${count}` " s..."
         sleep ${count_by}
         let count=${count}+${count_by};

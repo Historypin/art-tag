@@ -1,10 +1,6 @@
 package sk.eea.arttag.game.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,12 +74,22 @@ public class CardService {
 
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < numberOfCards; i++) {
-            CulturalObject co = culturalObjectRepository.findTop1ByOrderByLastSelectedAsc();
+            CulturalObject co = culturalObjectRepository.findTopByOrderByLastSelectedAsc();
             if (co != null) {
                 cards.add(culturalObject2Card(co));
             }
         }
         return cards;
+    }
+
+    public synchronized CulturalObject getNextCulturalObject() {
+        CulturalObject co = culturalObjectRepository.findTopByOrderByLastSelectedAsc();
+        if (co != null) {
+            co.setLastSelected(new Date());
+            co.setNumberOfSelections(co.getNumberOfSelections() + 1);
+            co = culturalObjectRepository.save(co);
+        }
+        return co;
     }
 
     private static Card culturalObject2Card(CulturalObject co) {

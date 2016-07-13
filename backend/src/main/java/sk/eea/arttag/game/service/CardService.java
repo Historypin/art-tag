@@ -1,6 +1,11 @@
 package sk.eea.arttag.game.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +15,10 @@ import org.springframework.stereotype.Component;
 import sk.eea.arttag.ApplicationProperties;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.CardMetadata;
+import sk.eea.arttag.game.model.CardRoundSummary;
 import sk.eea.arttag.model.CulturalObject;
+import sk.eea.arttag.model.LocalizedString;
+import sk.eea.arttag.model.Tag;
 import sk.eea.arttag.repository.CulturalObjectRepository;
 import sk.eea.arttag.repository.TagRepository;
 
@@ -84,6 +92,25 @@ public class CardService {
         return cards;
     }
 
+    public void save(List<CardRoundSummary> cardSummary, String tags, String lang) {
+        cardSummary.forEach(s -> {
+            CulturalObject co = culturalObjectRepository.findOne(s.getCulturalObjectId());
+            if (co != null) {
+                Tag tag = new Tag() {{
+                    setCreated(new Date());
+                    setCulturalObject(co);
+                    setHitScore(new Long(s.getScore()));
+                    LocalizedString ls = new LocalizedString() {{
+                        setLanguage(lang);
+                        setValue(tags);
+                    }};
+                    setValue(ls);
+                }};
+                tagRepository.save(tag);
+            }
+        });
+    }
+
     public synchronized CulturalObject getNextCulturalObject() {
         CulturalObject co = culturalObjectRepository.findTopByOrderByLastSelectedAsc();
         if (co != null) {
@@ -94,7 +121,6 @@ public class CardService {
         return co;
     }
 
-
     private static Card culturalObject2Card(CulturalObject co, String language) {
         String token = UUID.randomUUID().toString();
         Long culturalObjectId = co.getId();
@@ -103,4 +129,5 @@ public class CardService {
         CardMetadata metadata = new CardMetadata(co.getAuthor(), co.getExternalUrl(), descr);
         return new Card(token, culturalObjectId, source, metadata);
     }
+
 }

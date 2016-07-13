@@ -2,18 +2,17 @@ package sk.eea.arttag.game.model;
 
 public class CardRoundSummary {
 
-    private String cardToken;
+    private Long culturalObjectId;
     private int score;
 
-    public CardRoundSummary(String cardToken, int score) {
-        this.cardToken = cardToken;
+    public CardRoundSummary(Long culturalObjectId, int score) {
+        this.culturalObjectId = culturalObjectId;
         this.score = score;
     }
 
-    public String getCardToken() {
-        return cardToken;
+    public Long getCulturalObjectId() {
+        return culturalObjectId;
     }
-
     public int getScore() {
         return score;
     }

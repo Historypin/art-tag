@@ -78,7 +78,7 @@ public class RoundSummary {
             }
 
             //CARD SUMMARY
-            cardSummary.add(new CardRoundSummary(c.getToken(), cardScore));
+            cardSummary.add(new CardRoundSummary(c.getCulturalObjectId(), cardScore));
         });
         //PLAYER SUMMARY
         playerSummary = playerRoundSummaries;

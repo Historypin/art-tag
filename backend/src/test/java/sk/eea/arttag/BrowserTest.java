@@ -2,6 +2,7 @@ package sk.eea.arttag;
 
 import org.apache.tomcat.jni.Directory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+@Ignore
 public class BrowserTest {
 
     private static final String GAME_URL = "http://localhost:8080";

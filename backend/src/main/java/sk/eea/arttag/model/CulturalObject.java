@@ -2,6 +2,7 @@ package sk.eea.arttag.model;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -148,6 +149,22 @@ public class CulturalObject {
 
     public void setNumberOfSelections(Integer numberOfSelections) {
         this.numberOfSelections = numberOfSelections;
+    }
+
+    public String getDescriptionByLanguage(String lang, String defaultLang) {
+        String description = null;
+        Optional<LocalizedString> optional = getDescription().stream().filter(s -> lang.equalsIgnoreCase(s.getLanguage())).findAny();
+        if (optional.isPresent()) {
+            description = optional.get().getValue();
+        } else {
+            Optional<LocalizedString> optionalDef = getDescription().stream().filter(s -> defaultLang.equalsIgnoreCase(s.getLanguage())).findAny();
+            if (optionalDef.isPresent()) {
+                description = optional.get().getValue();
+            } else {
+                //failed to find description for either language or default language
+            }
+        }
+        return description;
     }
 
 }

@@ -84,7 +84,7 @@ public class CardService {
 
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < numberOfCards; i++) {
-            CulturalObject co = culturalObjectRepository.findTop1ByOrderByLastSelectedAsc();
+            CulturalObject co = culturalObjectRepository.findTopByOrderByLastSelectedAsc();
             if (co != null) {
                 cards.add(culturalObject2Card(co, language));
             }
@@ -111,14 +111,23 @@ public class CardService {
         });
     }
 
+    public synchronized CulturalObject getNextCulturalObject() {
+        CulturalObject co = culturalObjectRepository.findTopByOrderByLastSelectedAsc();
+        if (co != null) {
+            co.setLastSelected(new Date());
+            co.setNumberOfSelections(co.getNumberOfSelections() + 1);
+            co = culturalObjectRepository.save(co);
+        }
+        return co;
+    }
+
     private static Card culturalObject2Card(CulturalObject co, String language) {
         String token = UUID.randomUUID().toString();
         Long culturalObjectId = co.getId();
         String source = null;
         String descr = co.getDescriptionByLanguage(language, CARD_DESCRIPTION_DEFAULT_LANGUAGE);
         CardMetadata metadata = new CardMetadata(co.getAuthor(), co.getExternalUrl(), descr);
-        Card c = new Card(token, culturalObjectId, source, metadata);
-        return c;
+        return new Card(token, culturalObjectId, source, metadata);
     }
 
 }

@@ -34,7 +34,5 @@ public interface CulturalObjectRepository extends JpaRepository<CulturalObject, 
 
     List<CulturalObject> findByBatchId(Long batchId);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @QueryHints({@QueryHint(name = "javax.persistence.query.timeout", value ="5000")})
-    CulturalObject findTop1ByOrderByLastSelectedAsc();
+    CulturalObject findTopByOrderByLastSelectedAsc();
 }

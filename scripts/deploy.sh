@@ -2,7 +2,7 @@
 
 TIMEOUT_LIMIT=100
 TOMCAT_WEBAPPS_DIR="/var/lib/tomcat8/webapps"
-CONSOLE_STATUS_CHECK="localhost:8080/arttag/"
+ARTTAG_STATUS_CHECK="localhost:8080/arttag/"
 
 function stop_tomcat() {
     echo "Shutting down tomcat..."
@@ -25,7 +25,7 @@ function start_tomcat() {
     count=0
     count_by=5
     while [[ (${status} != OK)  && (${count} -lt ${TIMEOUT_LIMIT}) ]]; do
-        status=`curl --silent --max-time 1 --header "content-type: application/json" ${CONSOLE_STATUS_CHECK}`
+        status=`curl --silent --max-time 1 --header "content-type: application/json" ${ARTTAG_STATUS_CHECK}`
         echo "Will wait for tomcat to start in " `expr ${TIMEOUT_LIMIT} - ${count}` " s..."
         sleep ${count_by}
         let count=${count}+${count_by};
@@ -40,8 +40,8 @@ function start_tomcat() {
 }
 
 function deploy_console() {
-    echo "Deploying console..."
-    cp -v "console.war" -t ${TOMCAT_WEBAPPS_DIR}
+    echo "Deploying arttag..."
+    cp -v "arttag.war" -t ${TOMCAT_WEBAPPS_DIR}
 }
 
 stop_tomcat

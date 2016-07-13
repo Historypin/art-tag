@@ -4,6 +4,7 @@ target/
 .project
 .settings
 .DS_Store
+backend/chromedriver
 
 # IDEA files
 /.idea/

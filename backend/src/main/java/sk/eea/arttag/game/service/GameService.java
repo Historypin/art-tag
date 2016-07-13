@@ -16,6 +16,7 @@ import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
 import sk.eea.arttag.game.model.GameException;
+import sk.eea.arttag.game.model.GameException.GameExceptionType;
 import sk.eea.arttag.game.model.GamePlayerView;
 import sk.eea.arttag.game.model.GameTimeout;
 import sk.eea.arttag.game.model.Player;
@@ -95,11 +96,19 @@ public class GameService {
         return game;
     }
 
+    public Game getGame(String gameId) throws GameException {
+        Game game = getGames().get(gameId);
+        if (game == null) {
+            throw new GameException(GameExceptionType.GAME_NOT_FOUND);
+        }
+        return game;
+    }
+
     //TODO:
     public void addPlayer(String userToken, String userId, String gameId) throws GameException {
+        Game game = getGame(gameId);
         LOG.debug("ADD_PLAYER");
         Player player = new Player(userToken, userId, userId);
-        Game game = getGames().get(gameId);
         stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken, player);
     }
 

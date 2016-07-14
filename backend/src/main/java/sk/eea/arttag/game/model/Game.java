@@ -219,4 +219,8 @@ public class Game {
             p.setGameScore(p.getGameScore() + score);
         });
     }
+
+    public long getNumberOfActivePlayers() {
+        return players.stream().filter(p -> !p.isInactive()).count();
+    }
 }

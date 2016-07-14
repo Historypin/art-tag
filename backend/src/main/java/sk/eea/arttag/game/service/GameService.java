@@ -1,6 +1,10 @@
 package sk.eea.arttag.game.service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +23,7 @@ import sk.eea.arttag.game.model.GameEvent;
 import sk.eea.arttag.game.model.GameException;
 import sk.eea.arttag.game.model.GameException.GameExceptionType;
 import sk.eea.arttag.game.model.GamePlayerView;
+import sk.eea.arttag.game.model.GameStatus;
 import sk.eea.arttag.game.model.GameTimeout;
 import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.game.model.RoundSummary;
@@ -53,9 +58,8 @@ public class GameService {
     private Environment environment;
 
     @PostConstruct
-    public void init()
-    {
-        if(environment.acceptsProfiles("dev")) {
+    public void init() {
+        if (environment.acceptsProfiles("dev")) {
             try {
                 this.create("lalahopapluha", "admin");
             } catch (GameException e) {
@@ -72,12 +76,33 @@ public class GameService {
                 try {
                     stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
                 } catch (GameException e) {
-                    LOG.info("Game exception", e);
+                    LOG.info("Game exception, game: {}, reason: {}", game.getId(), e.getMessage());
                     //TODO: display the message to a player/players
                 }
             }
             views.addAll(game.createGameViews());
         }
+
+        for (Iterator<Map.Entry<String, Game>> it = getGames().entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, Game> entry = it.next();
+            Game game = entry.getValue();
+
+            boolean gameTimeout = game.getRemainingTime() < 0;
+            if (gameTimeout) {
+                try {
+                    stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
+                } catch (GameException e) {
+                    LOG.info("Game exception, game: {}, reason: {}", game.getId(), e.getMessage());
+                    //TODO: display the message to a player/players
+                }
+            }
+            views.addAll(game.createGameViews());
+
+            if (GameStatus.FINISHED == game.getStatus()) {
+                it.remove();
+            }
+        }
+
         return views;
     }
 
@@ -86,17 +111,12 @@ public class GameService {
     }
 
     public Game create(String name, String creatorUserId, boolean privateGame) throws GameException {
-        final GameTimeout gameTimeout = new GameTimeout(
-                gameProperties.getTimeoutGameCreated(),
-                gameProperties.getTimeoutRoundStarted(),
-                gameProperties.getTimeoutTopicSelected(),
-                gameProperties.getTimeoutOwnCardsSelected(),
-                gameProperties.getTimeoutRoundFinished()
-        );
+        final GameTimeout gameTimeout = new GameTimeout(gameProperties.getTimeoutGameCreated(), gameProperties.getTimeoutRoundStarted(),
+                gameProperties.getTimeoutTopicSelected(), gameProperties.getTimeoutOwnCardsSelected(), gameProperties.getTimeoutRoundFinished());
 
-        if(!privateGame) { // watch for duplicates in non-private games
+        if (!privateGame) { // watch for duplicates in non-private games
             boolean nameIsAlreadyInUse = GAMES.values().parallelStream().anyMatch(game -> name.equals(game.getName()));
-            if(nameIsAlreadyInUse) {
+            if (nameIsAlreadyInUse) {
                 throw new GameException(GameException.GameExceptionType.GAME_NAME_ALREADY_IN_USE);
             }
         }
@@ -104,7 +124,8 @@ public class GameService {
         // probability of UUID collision seems implausible, so lets hope for the best
         final UUID uuid = UUID.randomUUID();
 
-        Game game = new Game(uuid.toString(), name, gameProperties.getMinimumGamePlayers(), gameProperties.getMaximumGamePlayers(), privateGame, creatorUserId, gameTimeout);
+        Game game = new Game(uuid.toString(), name, gameProperties.getMinimumGamePlayers(), gameProperties.getMaximumGamePlayers(), privateGame, creatorUserId,
+                gameTimeout);
         GAMES.put(uuid.toString(), game);
 
         stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);
@@ -167,15 +188,27 @@ public class GameService {
         //evaluate possible events a user can trigger
         GameEvent gameEvent = UserInputType.TOPIC_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED
                 : (UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED
-                : (UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED
-                : (UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND
-                : (UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null))));
+                        : (UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED
+                                : (UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND
+                                        : (UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null))));
         stateMachine.triggerEvent(game, gameEvent, input, userToken, null);
         //		updateGameAfterUserInput(game, input, userToken);
     }
 
+    public void processGameSummary(Game game) {
+
+        //calculate winner, update players with gamesPlayed, gamesWon
+        cardService.updatePlayersAfterGameFinished(game);
+    }
+
     public void processRoundSummary(RoundSummary summary) {
-        cardService.save(summary.getCardSummary(), summary.getGame().getTags(), CardService.CARD_DESCRIPTION_DEFAULT_LANGUAGE);
+        if (summary == null) {
+            return;
+        }
+        //update tags
+        cardService.saveTags(summary.getCardSummary(), summary.getGame().getTags(), CardService.CARD_DESCRIPTION_DEFAULT_LANGUAGE);
+        //update players with round score, 
+        cardService.updatePlayersAfterRoundFinished(summary.getPlayerSummary());
     }
 
     public List<Card> getInitialDeck(int numberOfCards) {

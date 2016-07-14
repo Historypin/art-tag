@@ -13,6 +13,8 @@ public class ApplicationProperties {
 
     private String hostnamePrefix;
 
+    private String contextPath;
+
     private Integer maxDescriptionSize;
 
     private String culturalObjectsPublicPath;
@@ -65,5 +67,13 @@ public class ApplicationProperties {
 
     public void setCulturalObjectsFileSystemPath(String culturalObjectsFileSystemPath) {
         this.culturalObjectsFileSystemPath = culturalObjectsFileSystemPath;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 }

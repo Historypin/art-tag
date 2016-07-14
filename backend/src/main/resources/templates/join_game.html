@@ -19,7 +19,7 @@
 
 
     <link href="../static/css/normalize.css" th:href="@{/css/normalize.css}" rel="stylesheet"/>
-    <link href="../static/css/lol.css" th:href="@{/css/lol.css}" rel="stylesheet"/>
+    <link href="../static/css/game_screen_sizablediv.css" th:href="@{/css/game_screen_sizablediv.css}" rel="stylesheet"/>
     <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
     <link href="../static/css/animate.css" th:href="@{/css/animate.css}" rel="stylesheet"/>
     <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
@@ -233,7 +233,7 @@
 <!-- template for rendering card thumbnail in table and hand -->
 <script type="text/html" id="card-thumbnail">
     <li class="c-cards__list-item js-champion-hover " style="margin-right: 10px;">
-        <a href="#" data-bind="click: $root.thumbnailSelected" class="c-champs__list-link ">
+        <a href="#" data-bind="click: $root.thumbnailSelected" class="c-cards__list-link ">
             <span class="o-square ">
                 <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "
                      class="o-square__img c-img-frame__img "/>

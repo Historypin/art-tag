@@ -9,7 +9,8 @@ public class GameException extends Exception {
 		MAX_NUMBER_OF_PLAYERS_REACHED,
 		MIN_NUMBER_OF_PLAYERS_NOT_REACHED,
 		CANNOT_ACTIVATE_PLAYER_FAILED_TO_SELECT_OWN_CARD,
-		GAME_NAME_ALREADY_IN_USE
+		GAME_NAME_ALREADY_IN_USE,
+		GAME_NOT_FOUND
 	}
 
 	public GameException(GameExceptionType type) {

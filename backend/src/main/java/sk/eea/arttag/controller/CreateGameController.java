@@ -52,7 +52,7 @@ public class CreateGameController {
             return String.format("redirect:join_game/%s", game.getId());
         }
 
-        final String joinGameLink = String.format("%s://%s/join_game/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(), game.getId());
+        final String joinGameLink = String.format("%s://%s%s/join_game/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(), applicationProperties.getContextPath(), game.getId());
         createGameForm.setJoinGameLink(joinGameLink);
         return "create_game";
     }

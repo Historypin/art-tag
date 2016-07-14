@@ -6,6 +6,7 @@ package sk.eea.arttag.rest.api;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.IllegalFormatCodePointException;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -128,14 +129,21 @@ public class RestService {
     public ResponseEntity<String> listTags(@QueryParam("from") String from, @QueryParam("until") String until, @QueryParam("batchId") Long batchId)
             throws Exception {
         try {
+            if (batchId == null) {
+                throw new IllegalArgumentException("batchId parameter needs to be provided!");
+            }
+
             Date fromDate = parseDate(from, Date.from(Instant.EPOCH));
             Date untilDate = parseDate(until, Date.from(Instant.now()));
 
             PageableTagsDTO pageableTags = storeService.listTags(fromDate, untilDate, batchId);
-            return new ResponseEntity<String>(mapper.writeValueAsString(pageableTags), HttpStatus.OK);
+            return new ResponseEntity<>(mapper.writeValueAsString(pageableTags), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            LOG.error("Error listing batch", e);
+            return new ResponseEntity<>(mapper.writeValueAsString(new ErrorResponseDTO(e.getMessage())), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            LOG.error("Error removing batch", e);
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error listing batch", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

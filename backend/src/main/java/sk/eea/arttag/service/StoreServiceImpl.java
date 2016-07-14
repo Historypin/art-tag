@@ -137,7 +137,8 @@ public class StoreServiceImpl implements StoreService {
                     co.setInternalFileSystemPath(
                             Paths.get(applicationProperties.getCulturalObjectsFileSystemPath()).resolve(relativePath).toAbsolutePath().toString());
 
-                    final String source = String.format("%s://%s/%s/%s/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(),
+                    final String source = String.format("%s://%s%s/%s/%s/%s", applicationProperties.getHostnamePrefix(), applicationProperties.getHostname(),
+                            applicationProperties.getContextPath(),
                             applicationProperties.getCulturalObjectsPublicPath(), batchId, targetFileName);
                     co.setPublicSource(source);
                 }

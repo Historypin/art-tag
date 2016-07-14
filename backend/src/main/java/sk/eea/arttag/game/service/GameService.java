@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import sk.eea.arttag.ApplicationProperties;
@@ -16,6 +17,7 @@ import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
 import sk.eea.arttag.game.model.GameException;
+import sk.eea.arttag.game.model.GameException.GameExceptionType;
 import sk.eea.arttag.game.model.GamePlayerView;
 import sk.eea.arttag.game.model.GameTimeout;
 import sk.eea.arttag.game.model.Player;
@@ -47,13 +49,18 @@ public class GameService {
     @Autowired
     private CardService cardService;
 
+    @Autowired
+    private Environment environment;
+
     @PostConstruct
     public void init()
     {
-        try {
-            this.create("lalahopapluha", "admin");
-        } catch (GameException e) {
-            LOG.error("Error at default game creation", e);
+        if(environment.acceptsProfiles("dev")) {
+            try {
+                this.create("lalahopapluha", "admin");
+            } catch (GameException e) {
+                LOG.error("Error at default game creation", e);
+            }
         }
     }
 
@@ -105,11 +112,19 @@ public class GameService {
         return game;
     }
 
+    public Game getGame(String gameId) throws GameException {
+        Game game = getGames().get(gameId);
+        if (game == null) {
+            throw new GameException(GameExceptionType.GAME_NOT_FOUND);
+        }
+        return game;
+    }
+
     //TODO:
     public void addPlayer(String userToken, String userId, String gameId) throws GameException {
+        Game game = getGame(gameId);
         LOG.debug("ADD_PLAYER");
         Player player = new Player(userToken, userId, userId);
-        Game game = getGames().get(gameId);
         stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken, player);
     }
 
@@ -159,7 +174,7 @@ public class GameService {
     }
 
     public void processRoundSummary(RoundSummary summary) {
-
+        cardService.save(summary.getCardSummary(), summary.getGame().getTags(), CardService.CARD_DESCRIPTION_DEFAULT_LANGUAGE);
     }
 
     public List<Card> getInitialDeck(int numberOfCards) {

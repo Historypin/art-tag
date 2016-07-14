@@ -6,6 +6,27 @@
     list-style: none;
 }
 
+@media (min-height: 380px) {
+    .hand {
+        max-height: 40vh;
+    }
+}
+@media (min-height: 480px) {
+    .hand {
+        max-height: 50vh;
+    }
+}
+@media (min-height: 768px) {
+    .hand {
+        max-height: 90vh;
+    }
+}
+
+.gamecard {
+    max-width:20ex;
+    max-height:20ex;
+}
+
 .players ul {
     list-style: none;
     margin: 0;

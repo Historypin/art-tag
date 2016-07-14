@@ -1,22 +1,23 @@
 package sk.eea.arttag.game.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import sk.eea.arttag.ApplicationProperties;
+import sk.eea.arttag.GameProperties;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
 import sk.eea.arttag.game.model.GameException;
+import sk.eea.arttag.game.model.GameException.GameExceptionType;
 import sk.eea.arttag.game.model.GamePlayerView;
 import sk.eea.arttag.game.model.GameTimeout;
 import sk.eea.arttag.game.model.Player;
@@ -27,28 +28,40 @@ import sk.eea.arttag.game.model.UserInputType;
 @Component
 public class GameService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
+
+    /**
+     *  Collection containing all games.
+     *  Key: game id.
+     *  Value: game instance.
+     */
+    private static final Map<String, Game> GAMES = new ConcurrentHashMap<>();
+
     @Autowired
     private ApplicationProperties applicationProperties;
+
+    @Autowired
+    private GameProperties gameProperties;
+
     @Autowired
     private StateMachine stateMachine;
+
     @Autowired
     private CardService cardService;
 
-    private Map<String, Game> games = new HashMap<>();
-    private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
-    public static final int HAND_SIZE = 5;
-    public static final int INITIAL_DECK_SIZE = 100;
-    public static final int GAME_MIN_PLAYERS = 1;
-    public static final int GAME_MAX_PLAYERS = 3;
+    @Autowired
+    private Environment environment;
 
     @PostConstruct
-    public void init() throws GameException {
-        create("1", "game1", "admin");
-        create("2", "game2", "admin");
-    }
-
-    public Map<String, Game> getGames() {
-        return games;
+    public void init()
+    {
+        if(environment.acceptsProfiles("dev")) {
+            try {
+                this.create("lalahopapluha", "admin");
+            } catch (GameException e) {
+                LOG.error("Error at default game creation", e);
+            }
+        }
     }
 
     public List<GamePlayerView> getGameViews() {
@@ -59,6 +72,7 @@ public class GameService {
                 try {
                     stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
                 } catch (GameException e) {
+                    LOG.info("Game exception", e);
                     //TODO: display the message to a player/players
                 }
             }
@@ -67,24 +81,51 @@ public class GameService {
         return views;
     }
 
-    public Game getGame(String token) {
-        LOG.debug("SERVICE:getGame() token: {}", token);
-        return games.get(0);
+    public Game create(String name, String creatorUserId) throws GameException {
+        return this.create(name, creatorUserId, false);
     }
 
-    //TODO:
-    public void create(String id, String name, String creatorUserId) throws GameException {
-        LOG.debug("CREATE");
-        GameTimeout gameTimeout = new GameTimeout(600, 600, 600, 600, 600);
-        Game game = new Game(id, name, GAME_MIN_PLAYERS, GAME_MAX_PLAYERS, false, creatorUserId, gameTimeout);
+    public Game create(String name, String creatorUserId, boolean privateGame) throws GameException {
+        final GameTimeout gameTimeout = new GameTimeout(
+                gameProperties.getTimeoutGameCreated(),
+                gameProperties.getTimeoutRoundStarted(),
+                gameProperties.getTimeoutTopicSelected(),
+                gameProperties.getTimeoutOwnCardsSelected(),
+                gameProperties.getTimeoutRoundFinished()
+        );
+
+        if(!privateGame) { // watch for duplicates in non-private games
+            boolean nameIsAlreadyInUse = GAMES.values().parallelStream().anyMatch(game -> name.equals(game.getName()));
+            if(nameIsAlreadyInUse) {
+                throw new GameException(GameException.GameExceptionType.GAME_NAME_ALREADY_IN_USE);
+            }
+        }
+
+        // probability of UUID collision seems implausible, so lets hope for the best
+        final UUID uuid = UUID.randomUUID();
+
+        Game game = new Game(uuid.toString(), name, gameProperties.getMinimumGamePlayers(), gameProperties.getMaximumGamePlayers(), privateGame, creatorUserId, gameTimeout);
+        GAMES.put(uuid.toString(), game);
+
         stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);
+
+        LOG.debug("Created new game: {}", game);
+        return game;
+    }
+
+    public Game getGame(String gameId) throws GameException {
+        Game game = getGames().get(gameId);
+        if (game == null) {
+            throw new GameException(GameExceptionType.GAME_NOT_FOUND);
+        }
+        return game;
     }
 
     //TODO:
     public void addPlayer(String userToken, String userId, String gameId) throws GameException {
+        Game game = getGame(gameId);
         LOG.debug("ADD_PLAYER");
         Player player = new Player(userToken, userId, userId);
-        Game game = getGames().get(gameId);
         stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken, player);
     }
 
@@ -107,7 +148,7 @@ public class GameService {
             LOG.debug("one of (gameId, input, input.type, input.value) null");
             return;
         }
-        Game game = this.games.get(gameId);
+        Game game = GAMES.get(gameId);
         if (game == null) {
             //ignore
             LOG.debug("Game null");
@@ -126,19 +167,23 @@ public class GameService {
         //evaluate possible events a user can trigger
         GameEvent gameEvent = UserInputType.TOPIC_SELECTED == input.getType() ? GameEvent.TAGS_SELECTED
                 : (UserInputType.OWN_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_OWN_CARD_SELECTED
-                        : (UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED
-                                : (UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND
-                                        : (UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null))));
+                : (UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED
+                : (UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND
+                : (UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null))));
         stateMachine.triggerEvent(game, gameEvent, input, userToken, null);
         //		updateGameAfterUserInput(game, input, userToken);
     }
 
     public void processRoundSummary(RoundSummary summary) {
-
+        cardService.save(summary.getCardSummary(), summary.getGame().getTags(), CardService.CARD_DESCRIPTION_DEFAULT_LANGUAGE);
     }
 
     public List<Card> getInitialDeck(int numberOfCards) {
         LOG.debug("INITIAL_DECK");
         return cardService.getCards(numberOfCards);
+    }
+
+    public Map<String, Game> getGames() {
+        return GAMES;
     }
 }

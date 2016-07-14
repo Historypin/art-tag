@@ -1,7 +1,19 @@
 package sk.eea.arttag.model;
 
-import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 /**
  * Entity storing data about cultural object.
@@ -23,6 +35,8 @@ public class CulturalObject {
     private String internalFileSystemPath;
     private String publicSource;
     private Long batchId;
+    private Date lastSelected = new Date();
+    private Integer numberOfSelections = 0;
 
     private Boolean active = Boolean.FALSE;
 
@@ -121,5 +135,36 @@ public class CulturalObject {
         this.tags = tags;
     }
 
+    public Date getLastSelected() {
+        return lastSelected;
+    }
+
+    public void setLastSelected(Date lastSelected) {
+        this.lastSelected = lastSelected;
+    }
+
+    public Integer getNumberOfSelections() {
+        return numberOfSelections;
+    }
+
+    public void setNumberOfSelections(Integer numberOfSelections) {
+        this.numberOfSelections = numberOfSelections;
+    }
+
+    public String getDescriptionByLanguage(String lang, String defaultLang) {
+        String description = null;
+        Optional<LocalizedString> optional = getDescription().stream().filter(s -> lang.equalsIgnoreCase(s.getLanguage())).findAny();
+        if (optional.isPresent()) {
+            description = optional.get().getValue();
+        } else {
+            Optional<LocalizedString> optionalDef = getDescription().stream().filter(s -> defaultLang.equalsIgnoreCase(s.getLanguage())).findAny();
+            if (optionalDef.isPresent()) {
+                description = optional.get().getValue();
+            } else {
+                //failed to find description for either language or default language
+            }
+        }
+        return description;
+    }
 
 }

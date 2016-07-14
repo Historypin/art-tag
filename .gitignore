@@ -3,6 +3,8 @@ target/
 .classpath
 .project
 .settings
+.DS_Store
+*/chromedriver
 
 # IDEA files
 /.idea/

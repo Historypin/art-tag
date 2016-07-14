@@ -17,11 +17,17 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
           th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
 
+
+    <link href="../static/css/normalize.css" th:href="@{/css/normalize.css}" rel="stylesheet"/>
+    <link href="../static/css/game_screen_sizablediv.css" th:href="@{/css/game_screen_sizablediv.css}" rel="stylesheet"/>
+    <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
+    <link href="../static/css/animate.css" th:href="@{/css/animate.css}" rel="stylesheet"/>
     <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
     <link href="../static/css/game_screen.css" th:href="@{/css/game_screen.css}" rel="stylesheet"/>
-    <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
+
+
 </head>
-<body style="background-image: url(/img/stock-16x9-186903581.jpg)" onresize="onSizeChange()" onload="onLoad()" >
+<body style="background-image: url(/img/stock-16x9-186903581.jpg);background-size: cover;" onresize="onSizeChange()" onload="onLoad()">
 <div class="container-fluid" style="overflow: visible;">
     <div class="row no-float">
         <div id="statusscreen" class="col-md-4 col-lg-4">
@@ -78,78 +84,89 @@
                     <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></ul>
                 </div>
             </div>
-
-            <div class="row no-float orange-background"  data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
-                <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12" >
-                    <legend>Hand</legend>
-                    <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
+            <div class="row no-float" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                    <div class="o-fullscreen">
+                        <div id="content" class="o-fullscreen o-wrap" role="main">
+                                <main class="o-client__body">
+                                    <div class="o-client__block">
+                                        <div class="o-wrap">
+                                            <header class="c-heading">
+                                                <legend align="right">Hand</legend>
+                                            </header>
+                                            <div class="c-cards js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                                                <ul class="o-list-unstyled c-cards__list "
+                                                    data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </main>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
+            <!-- Modal window with image preview, and user inputs -->
+            <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12 centeredimage">
+                                    <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
+                                    <!--<img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>-->
 
-    </div>
-
-    <div th:replace="fragments/footer :: footer">&nbsp;</div>
-
-    <!-- Modal window with image preview, and user inputs -->
-    <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12 centeredimage">
-                            <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
-                            <!--<img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>-->
-
-                         </div>
-                     </div>
-                     <div class="row">
-                         <div class="col-md-12">
-                             <div class="form-horizontal">
-                                 <div class="form-group">
-                                     <label class="col-sm-2 control-label">Author</label>
-                                     <div class="col-sm-10">
-                                         <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
-                                     </div>
-                                 </div>
-                                 <div class="form-group">
-                                     <label class="col-sm-2 control-label">Description</label>
-                                     <div class="col-sm-10">
-                                         <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
-                                     </div>
-                                 </div>
-                                 <div class="form-group">
-                                     <label class="col-sm-2 control-label">Link</label>
-                                     <div class="col-sm-10">
-                                         <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
-                                     </div>
-                                 </div>
-                                 <!-- TAG INPUT -->
-                                <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
-                                    <label class="col-sm-2 control-label">Topic</label>
-                                    <div class="col-sm-10">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control input-sm"
-                                                   data-bind="textInput: tagsInput, event: {keypress: enterTag}" placeholder="Write round topic here..."/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-horizontal">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Author</label>
+                                            <div class="col-sm-10">
+                                                <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Description</label>
+                                            <div class="col-sm-10">
+                                                <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">Link</label>
+                                            <div class="col-sm-10">
+                                                <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
+                                            </div>
+                                        </div>
+                                        <!-- TAG INPUT -->
+                                        <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
+                                            <label class="col-sm-2 control-label">Topic</label>
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control input-sm"
+                                                           data-bind="textInput: tagsInput, event: {keypress: enterTag}"
+                                                           placeholder="Write round topic here..."/>
                                             <span class="input-group-btn">
                                                 <button class="btn btn-warning btn-sm" data-bind="click: sendTag">Send</button>
                                             </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <!-- HAND CARD SELECTION -->
-                                <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED'">
-                                    <label class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-10">
-                                        <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
-                                    </div>
-                                </div>
-                                <!-- TABLE CARD SELECTION -->
-                                <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED'">
-                                    <label class="col-sm-2 control-label"></label>
-                                    <div class="col-sm-10">
-                                        <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
+                                        <!-- HAND CARD SELECTION -->
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED' &amp;&amp; !$root.handCardAlreadySelected()">
+                                            <label class="col-sm-2 control-label"></label>
+                                            <div class="col-sm-10">
+                                                <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
+                                            </div>
+                                        </div>
+                                        <!-- TABLE CARD SELECTION -->
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED' &amp;&amp; !$root.tableCardAlreadySelected()">
+                                            <label class="col-sm-2 control-label"></label>
+                                            <div class="col-sm-10">
+                                                <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -159,18 +176,26 @@
             </div>
         </div>
     </div>
+
+    <div th:replace="fragments/footer :: footer">&nbsp;</div>
 </div>
+
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"
         th:src="@{/webjars/knockout/3.4.0/knockout.js}"></script>
 <script th:src="@{/webjars/sprintf.js/1.0.0/sprintf.min.js}"></script>
-<script src="../static/js/knockout.mapping.js" th:src="@{/js/knockout.mapping.js}"></script>
-<script src="../static/js/md5.js" th:src="@{/js/md5.js}"></script>
-<script src="../static/js/hashcode.js" th:src="@{/js/hashcode.js}"></script>
+
+<script src="../static/js/utils/knockout.mapping.min.js" th:src="@{/js/utils/knockout.mapping.min.js}"></script>
+<script src="../static/js/utils/md5.min.js" th:src="@{/js/utils/md5.min.js}"></script>
+<script src="../static/js/utils/hashcode.min.js" th:src="@{/js/utils/hashcode.min.js}"></script>
+<script src="../static/js/utils/loader.min.js" th:src="@{/js/utils/loader.min.js}"></script>
+<script src="../static/js/utils/bootstrap-notify.min.js" th:src="@{/js/utils/bootstrap-notify.min.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
-<script src="../static/js/loader.js" th:src="@{/js/loader.js}"></script>
+
+<script src="../static/js/game/game_default_model.js" th:src="@{/js/game/game_default_model.js}"></script>
+<script src="../static/js/game/notify_defaults.js" th:src="@{/js/game/notify_defaults.js}"></script>
 
 <!-- template for rendering template chat -->
 <script type="text/html" id="chat-line">
@@ -192,7 +217,8 @@
                title="User is ready for next round"></i>
             <!-- /ko -->
             <!-- ko if: inactive -->
-            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="User is inactive"></i>
+            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+               title="User is inactive"></i>
             <!-- /ko -->
         </td>
         <td><span class="total-score" data-bind="text: gameScore"></span></td>
@@ -202,32 +228,23 @@
 
 <!-- template for rendering card thumbnail in table and hand -->
 <script type="text/html" id="card-thumbnail">
-    <li class="c-champs__list-item">
-        <a class="thumbnail" href="#" data-bind="click: $root.thumbnailSelected">
-            <figure style="display: flex; justify-content: center; align-items: center;">
-                <div class="centeredimage" style="width:20ex; height:20ex; overflow:hidden;">
-                    <img class="img-responsive"
-                         data-toggle="modal"
-                         data-target="#imageModal"
-                         data-bind="attr: {'src': source}" style="max-width:20ex; max-height:20ex;"/>
-                </div>
-
-
-                <!--<img class="img-responsive"
-                     data-toggle="modal"
-                     data-target="#imageModal" src="http://dummyimage.com/600x400/000/fff.png"/>-->
+    <li class="c-cards__list-item js-champion-hover " style="margin-right: 10px;">
+        <a href="#" data-bind="click: $root.thumbnailSelected" class="c-cards__list-link ">
+            <span class="o-square ">
+                <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "
+                     class="o-square__img c-img-frame__img "/>
                 <div class="carousel-caption" data-bind="if: playerSelections().length > 0">
                     <ul data-bind="foreach: playerSelections">
                         <li data-bind="text: $data"></li>
                     </ul>
                 </div>
                 <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
-                <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
+                    <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
                 <!-- /ko -->
                 <!-- ko if: cardSelectedBy() != null && dealersCard() -->
-                <figcaption>Riddler's card.</figcaption>
+                    <figcaption>Riddler's card.</figcaption>
                 <!-- /ko -->
-            </figure>
+            </span>
         </a>
     </li>
 </script>
@@ -235,12 +252,37 @@
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     var hostname = /*[[${@environment.getProperty('application.hostname')}]]*/;
-    var contextPath = /*[[@{/}]]*/;
+    var contextPath = /*[[${@environment.getProperty('application.context-path')}]]*/;
     var gameId = /*[[${gameId}]]*/;
     var thisUserId = /*[[${userId}]]*/;
+    var tutorialMessages = {
+        CREATED: {
+            riddler: /*[[#{tutorial.CREATED.riddler}]]*/,
+            others: /*[[#{tutorial.CREATED.others}]]*/
+        },
+        ROUND_STARTED: {
+            riddler: /*[[#{tutorial.ROUND_STARTED.riddler}]]*/,
+            others: /*[[#{tutorial.ROUND_STARTED.others}]]*/
+        },
+        ROUND_TOPIC_SELECTED: {
+            riddler: /*[[#{tutorial.ROUND_TOPIC_SELECTED.riddler}]]*/,
+            others: /*[[#{tutorial.ROUND_TOPIC_SELECTED.others}]]*/,
+            selected: /*[[#{tutorial.ROUND_TOPIC_SELECTED.selected}]]*/
+        },
+        ROUND_OWN_CARDS_SELECTED: {
+            riddler: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.riddler}]]*/,
+            others: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.others}]]*/,
+            selected: /*[[#{tutorial.ROUND_OWN_CARDS_SELECTED.selected}]]*/
+        },
+        ROUND_FINISHED: {
+            riddler: /*[[#{tutorial.ROUND_FINISHED.riddler}]]*/,
+            others: /*[[#{tutorial.ROUND_FINISHED.others}]]*/
+        }
+    };
 
-    var webSocket = new WebSocket(`ws://${hostname}${contextPath}ws/game?gameId=${gameId}`);
+    var webSocket = new WebSocket(`ws://${hostname}${contextPath}/ws/game?gameId=${gameId}`);
     var alreadyConnected = false;
+    var notify;
 
     // show loader on start
     $('body').loader();
@@ -300,6 +342,28 @@
             return sprintf("%02d:%02d", Math.floor(minutes), Math.round(divisor * 60));
         });
 
+        self.handCardAlreadySelected = ko.pureComputed(function () {
+            var player = self.gameView.players().find(function(pl) {
+                return thisUserId === pl.userId()
+            });
+            if(player) {
+                return player.ownCardSelected();
+            } else {
+                return false;
+            }
+        });
+
+        self.tableCardAlreadySelected = ko.pureComputed(function () {
+            var player = self.gameView.players().find(function(pl) {
+                return thisUserId === pl.userId()
+            });
+            if(player) {
+                return player.tableCardSelected();
+            } else {
+                return false;
+            }
+        });
+
         self.sendChatMessage = function () {
             if (self.chatInput()) {
                 var message = {
@@ -344,6 +408,14 @@
             };
             webSocket.send(JSON.stringify(message));
             $('#imageModal').modal('hide');
+
+            if (notify) {
+                notify.close();
+            }
+
+            notify = $.notify({
+                message: tutorialMessages.ROUND_TOPIC_SELECTED.selected
+            }, notifyDefaults);
         };
 
         self.selectTableCard = function () {
@@ -354,73 +426,22 @@
             };
             webSocket.send(JSON.stringify(message));
             $('#imageModal').modal('hide');
+
+            if (notify) {
+                notify.close();
+            }
+
+            notify = $.notify({
+                message: tutorialMessages.ROUND_OWN_CARDS_SELECTED.selected
+            }, notifyDefaults);
         };
 
 
         return self;
     }
 
-    // viewModel prototype
-    var viewModel = new ViewModel({
-        "userToken": "",
-        "dealer": false,
-        "rightGuess": false,
-        "hand": [{
-            "token": "",
-            "source": "",
-            "metadata": {
-                "author": "",
-                "externalUrl": "",
-                "description": ""
-            }
-        }],
-        "gameView": {
-            "id": "",
-            "name": "",
-            "status": "",
-            "tags": "",
-            "remainingTime": 0,
-            "players": [{
-                "token": "",
-                "userId": "",
-                "name": "",
-                "readyForNextRound": false,
-                "dealer": false,
-                "inactive": false,
-                "gameScore": 0,
-                "lastRoundScore": 0
-            }],
-            "table": [{
-                "token": "",
-                "source": "",
-                "metadata": {
-                    "author": "",
-                    "externalUrl": "",
-                    "description": ""
-                },
-                "playerSelections": [],
-                "dealersCard": false,
-                "cardSelectedBy": false
-            }]
-        },
-        /* fields below are not part of model from backend */
-        "chatHistory": [{
-            "player": "",
-            "message": "",
-            "time": ""
-        }],
-        "chatInput": "",
-        "tagsInput": "",
-        "selectedCard": {
-            "token": "",
-            "source": "",
-            "metadata": {
-                "author": "",
-                "externalUrl": "",
-                "description": ""
-            }
-        }
-    });
+    // create model and apply the bindings
+    var viewModel = new ViewModel(defaultModel);
     ko.applyBindings(viewModel);
 
     // websocket on error handler
@@ -465,35 +486,41 @@
         }
     };
 
-    var onLoad = function()
-    {
-        var w = window.outerWidth;
-        if(w < 992)
-        {
-            $("#statusscreen").insertAfter("#gamescreen");
-            $("#footer").hide();
+    viewModel.gameView.status.subscribe(function (newValue) {
+        if (notify) {
+            notify.close();
         }
-        else if(w >= 992)
-        {
-            $("#gamescreen").insertAfter("#statusscreen");
-            $("#footer").show();
-        }
-    }
 
-    var onSizeChange = function()
-    {
+        var playerType = (viewModel.dealer()) ? "riddler" : "others";
+
+        notify = $.notify({
+            message: tutorialMessages[newValue][playerType]
+        }, notifyDefaults);
+    });
+
+    var onLoad = function () {
         var w = window.outerWidth;
-        if(w < 992)
-        {
+        if (w < 992) {
             $("#statusscreen").insertAfter("#gamescreen");
             $("#footer").hide();
         }
-        else if(w >= 992)
-        {
+        else if (w >= 992) {
             $("#gamescreen").insertAfter("#statusscreen");
             $("#footer").show();
         }
-    }
+    };
+
+    var onSizeChange = function () {
+        var w = window.outerWidth;
+        if (w < 992) {
+            $("#statusscreen").insertAfter("#gamescreen");
+            $("#footer").hide();
+        }
+        else if (w >= 992) {
+            $("#gamescreen").insertAfter("#statusscreen");
+            $("#footer").show();
+        }
+    };
 
     /* ]]> */
 </script>

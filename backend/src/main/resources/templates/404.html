@@ -27,9 +27,9 @@
 <body>
 <div class="container-fluid">
 	<div class="clipped">
-    	<img src="../static/img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg" class="img-responsive" alt="Responsive image">
+    	<img src="../static/img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg" class="img-responsive" alt="Responsive image"/>
     </div>
-    
+	<span th:if="${errorMessage != null}" th:text="${errorMessage}"></span>    
 </div>
 
 <script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>

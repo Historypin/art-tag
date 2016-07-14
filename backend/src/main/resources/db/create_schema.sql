@@ -28,7 +28,9 @@ CREATE TABLE cultural_object (
     external_url text,
     external_source text,
     internal_file_system_path character varying(255),
-    public_source text
+    public_source text,
+    last_selected timestamp without time zone,
+    number_of_selections integer DEFAULT 0
 );
 
 ALTER TABLE cultural_object OWNER TO arttag;

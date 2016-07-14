@@ -12,7 +12,7 @@ function stop_tomcat() {
     done
 
     echo "Clearing webapps..."
-    rm -rfv ${TOMCAT_WEBAPPS_DIR}/arttag
+    sudo rm -rfv ${TOMCAT_WEBAPPS_DIR}/arttag
     rm -fv ${TOMCAT_WEBAPPS_DIR}/arttag.war
 }
 

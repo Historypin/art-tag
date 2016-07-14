@@ -3,6 +3,7 @@ package sk.eea.arttag.rest.api;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import sk.eea.arttag.model.LocalizedString;
 import sk.eea.arttag.model.Tag;
 
 public class TagDTO {
@@ -16,6 +17,8 @@ public class TagDTO {
 	private Long culturalObjectId;
 	
 	private String culturalObjectExternalId;
+	private String culturalObjectDescription;
+	private String culturalObjectExternalUrl;
 	
 	public Long getId() {
 		return id;
@@ -48,6 +51,9 @@ public class TagDTO {
 		tagDto.setValue(tag.getValue().getValue());
 		tagDto.setCulturalObjectId(tag.getCulturalObject().getId());
 		tagDto.setCulturalObjectExternalId(tag.getCulturalObject().getExternalId());
+		LocalizedString description = tag.getCulturalObject().getDescription().get(0);
+        tagDto.setCulturalObjectDescription(description != null ? description.getValue():null);
+        tagDto.setCulturalObjectExternalUrl(tag.getCulturalObject().getExternalUrl());
 		return tagDto;
 	}
     public String getCulturalObjectExternalId() {
@@ -55,5 +61,17 @@ public class TagDTO {
     }
     public void setCulturalObjectExternalId(String culturalObjectExternalId) {
         this.culturalObjectExternalId = culturalObjectExternalId;
+    }
+    public String getCulturalObjectDescription() {
+        return culturalObjectDescription;
+    }
+    public void setCulturalObjectDescription(String culturalObjectDescription) {
+        this.culturalObjectDescription = culturalObjectDescription;
+    }
+    public String getCulturalObjectExternalUrl() {
+        return culturalObjectExternalUrl;
+    }
+    public void setCulturalObjectExternalUrl(String culturalObjectExternalUrl) {
+        this.culturalObjectExternalUrl = culturalObjectExternalUrl;
     }
 }

@@ -86,7 +86,7 @@
             </div>
 
 
-            <div class="row no-float orange-background" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+            <div class="row no-float" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
                 <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12">
                     <div class="o-page o-fullscreen">
                         <div id="content" class="o-fullscreen o-wrap" role="main">
@@ -97,8 +97,8 @@
                                             <header class="c-heading">
                                                 <legend>Hand</legend>
                                             </header>
-                                            <div class="c-champs js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
-                                                <ul class="o-list-unstyled c-champs__list "
+                                            <div class="c-cards js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                                                <ul class="o-list-unstyled c-cards__list "
                                                     data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
                                             </div>
                                         </div>
@@ -232,7 +232,7 @@
 
 <!-- template for rendering card thumbnail in table and hand -->
 <script type="text/html" id="card-thumbnail">
-    <li class="c-champs__list-item js-champion-hover " style="margin-right: 10px;">
+    <li class="c-cards__list-item js-champion-hover " style="margin-right: 10px;">
         <a href="#" data-bind="click: $root.thumbnailSelected" class="c-champs__list-link ">
             <span class="o-square ">
                 <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "

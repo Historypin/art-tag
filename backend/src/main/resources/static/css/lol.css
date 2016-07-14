@@ -221,12 +221,12 @@ html {
     }
 }
 
-.c-champs__list-link {
+.c-cards__list-link {
     display: block
 }
 
 @media (min-width:768px) {
-    .c-champs__list-link {
+    .c-cards__list-link {
         will-change: filter, transform;
         -webkit-transition: .3s;
         transition: .3s
@@ -234,7 +234,7 @@ html {
 }
 
 @media (min-width:768px) {
-    .c-cards__list-item.is-unfocused .c-champs__list-link {
+    .c-cards__list-item.is-unfocused .c-cards__list-link {
         -webkit-filter: brightness(40%) saturate(50%);
         filter: brightness(40%) saturate(50%);
         -webkit-transform: translate3d(0, 0, -50px);
@@ -243,24 +243,24 @@ html {
 }
 
 @media (min-width:768px) {
-    .no-cssfilters .c-cards__list-item.is-unfocused .c-champs__list-link {
+    .no-cssfilters .c-cards__list-item.is-unfocused .c-cards__list-link {
         opacity: .5
     }
 }
 
-.c-champs__list-link:active,
-.c-champs__list-link:focus,
-.c-champs__list-link:hover {
+.c-cards__list-link:active,
+.c-cards__list-link:focus,
+.c-cards__list-link:hover {
     text-decoration: none
 }
 
-.c-champs__list-frame {
+.c-cards__list-frame {
     margin-bottom: 10px;
     box-shadow: 0 0 .9375em rgba(0, 0, 0, .3), 0 0 1.125em rgba(0, 0, 0, .3);
     position: relative
 }
 
-.c-champs__list-frame:before {
+.c-cards__list-frame:before {
     content: '';
     display: block;
     box-shadow: inset 0 0 4.375em #000, inset 0 0 2em rgba(0, 0, 0, .5);
@@ -272,48 +272,9 @@ html {
     z-index: 1
 }
 
-.c-champs__list-title {
+.c-cards__list-title {
     margin: 0;
     line-height: 1;
     -webkit-transition: opacity .1s;
     transition: opacity .1s
-}
-
-.c-champs__role {
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 1
-}
-
-@media (min-width:768px) {
-    .c-champs__role {
-        width: 30px;
-        height: 30px;
-        line-height: 30px
-    }
-}
-
-.c-champs__role:before {
-    content: '';
-    display: block;
-    -webkit-clip-path: polygon(-10% -10%, 110% -10%, 110% 110%);
-    clip-path: polygon(-10% -10%, 110% -10%, 110% 110%);
-    border-right: 40px solid #000;
-    border-bottom: 40px solid transparent;
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: -1
-}
-
-@media (min-width:768px) {
-    .c-champs__role:before {
-        border-right: 60px solid #000;
-        border-bottom: 60px solid transparent
-    }
 }

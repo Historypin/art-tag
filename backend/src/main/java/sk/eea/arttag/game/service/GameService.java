@@ -174,7 +174,7 @@ public class GameService {
     }
 
     public void processRoundSummary(RoundSummary summary) {
-
+        cardService.save(summary.getCardSummary(), summary.getGame().getTags(), CardService.CARD_DESCRIPTION_DEFAULT_LANGUAGE);
     }
 
     public List<Card> getInitialDeck(int numberOfCards) {

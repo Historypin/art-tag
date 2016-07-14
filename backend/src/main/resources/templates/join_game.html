@@ -256,7 +256,7 @@
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     var hostname = /*[[${@environment.getProperty('application.hostname')}]]*/;
-    var contextPath = /*[[@{/}]]*/;
+    var contextPath = /*[[${@environment.getProperty('application.contextPath')}]]*/;
     var gameId = /*[[${gameId}]]*/;
     var thisUserId = /*[[${userId}]]*/;
     var tutorialMessages = {
@@ -284,7 +284,7 @@
         }
     };
 
-    var webSocket = new WebSocket(`ws://${hostname}${contextPath}ws/game?gameId=${gameId}`);
+    var webSocket = new WebSocket(`ws://${hostname}${contextPath}/ws/game?gameId=${gameId}`);
     var alreadyConnected = false;
     var notify;
 

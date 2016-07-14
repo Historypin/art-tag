@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import sk.eea.arttag.ApplicationProperties;
@@ -48,13 +49,18 @@ public class GameService {
     @Autowired
     private CardService cardService;
 
+    @Autowired
+    private Environment environment;
+
     @PostConstruct
     public void init()
     {
-        try {
-            this.create("lalahopapluha", "admin");
-        } catch (GameException e) {
-            LOG.error("Error at default game creation", e);
+        if(environment.acceptsProfiles("dev")) {
+            try {
+                this.create("lalahopapluha", "admin");
+            } catch (GameException e) {
+                LOG.error("Error at default game creation", e);
+            }
         }
     }
 

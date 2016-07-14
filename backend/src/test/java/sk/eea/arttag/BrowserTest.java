@@ -196,6 +196,8 @@ public class BrowserTest {
 
                 //driver.get("http://localhost:8080/join_game/1");
                 final WebElement joinelement = driver.findElement(By.linkText("click to join game"));
+
+                Thread.sleep(1000);
                 joinelement.click();
                 usernameHandleMap.put(username, driver.getWindowHandle());
             }

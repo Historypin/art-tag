@@ -72,6 +72,7 @@ public class GameService {
                 try {
                     stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
                 } catch (GameException e) {
+                    LOG.info("Game exception", e);
                     //TODO: display the message to a player/players
                 }
             }
@@ -103,7 +104,7 @@ public class GameService {
         // probability of UUID collision seems implausible, so lets hope for the best
         final UUID uuid = UUID.randomUUID();
 
-        Game game = new Game(uuid.toString(), name, gameProperties.getMaximumGamePlayers(), gameProperties.getMaximumGamePlayers(), privateGame, creatorUserId, gameTimeout);
+        Game game = new Game(uuid.toString(), name, gameProperties.getMinimumGamePlayers(), gameProperties.getMaximumGamePlayers(), privateGame, creatorUserId, gameTimeout);
         GAMES.put(uuid.toString(), game);
 
         stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);

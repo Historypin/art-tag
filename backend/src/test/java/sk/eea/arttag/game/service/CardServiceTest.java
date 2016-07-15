@@ -12,9 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import sk.eea.arttag.ArttagApp;
+import sk.eea.arttag.TestApp;
 import sk.eea.arttag.model.CulturalObject;
 import sk.eea.arttag.repository.CulturalObjectRepository;
 
@@ -28,8 +27,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.number.IsCloseTo.closeTo;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(ArttagApp.class)
-@ActiveProfiles("dev")
+@SpringApplicationConfiguration(TestApp.class)
 @IntegrationTest
 public class CardServiceTest {
 

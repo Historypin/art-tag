@@ -1,23 +1,7 @@
 package sk.eea.arttag.rest.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.logging.Logger;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.glassfish.jersey.client.JerseyClient;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -27,16 +11,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import sk.eea.arttag.ArttagApp;
+import sk.eea.arttag.TestApp;
 import sk.eea.arttag.model.CulturalObject;
 import sk.eea.arttag.model.LocalizedString;
 import sk.eea.arttag.model.Tag;
@@ -44,14 +23,27 @@ import sk.eea.arttag.repository.CulturalObjectRepository;
 import sk.eea.arttag.repository.TagRepository;
 import sk.eea.arttag.rest.api.ResultMessageDTO.Status;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
+
 /**
  * Integration test for RestServiceImpl class.
  * Integration test consists of basic CRUD operations. Because of that we need to assure the execution order of the test methods.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(ArttagApp.class)
-@WebIntegrationTest(value="server.port=9180")
-@ActiveProfiles("dev")
+@SpringApplicationConfiguration(TestApp.class)
+@WebIntegrationTest({"server.port=9180"})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RestServiceIT {
 
@@ -232,8 +224,7 @@ public class RestServiceIT {
                 assertTrue(Files.exists(internalFile));
 
                 // clean up
-                Files.deleteIfExists(internalFile);
-                Files.deleteIfExists(internalFile.getParent());
+                FileUtils.deleteDirectory(internalFile.getParent().toFile());
             } else {
                 fail("Not processed correctly: " + result.getMessage());
             }

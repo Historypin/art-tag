@@ -1,8 +1,8 @@
 application.version=1
 
 application.hostname-prefix=http
-application.hostname=efad.dev.in.eea.sk
-application.context-path=/arttag
+application.hostname=localhost:8080
+application.context-path=/
 
 application.cultural-objects-public-path=objects
 application.cultural-objects-file-system-path = /opt/td/arttag/
@@ -11,5 +11,7 @@ application.max-description-size = 250
 
 spring.thymeleaf.cache = false
 spring.devtools.restart.exclude=static/**, templates/**
+
+game.create-default-game=true
 
 logging.file=/opt/td/logs/arttag.log

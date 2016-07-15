@@ -168,7 +168,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <jvmArguments>-Dspring.profiles.active=dev</jvmArguments>
+                    <jvmArguments>-Dworking.directory=/opt/td</jvmArguments>
                 </configuration>
             </plugin>
             <plugin>

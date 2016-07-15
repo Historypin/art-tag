@@ -25,6 +25,8 @@ public class GameProperties {
 
     private Integer timeoutRoundFinished;
 
+    private Boolean createDefaultGame = false;
+
     public Integer getHandSize() {
         return handSize;
     }
@@ -95,5 +97,13 @@ public class GameProperties {
 
     public void setTimeoutRoundFinished(Integer timeoutRoundFinished) {
         this.timeoutRoundFinished = timeoutRoundFinished;
+    }
+
+    public Boolean getCreateDefaultGame() {
+        return createDefaultGame;
+    }
+
+    public void setCreateDefaultGame(Boolean createDefaultGame) {
+        this.createDefaultGame = createDefaultGame;
     }
 }

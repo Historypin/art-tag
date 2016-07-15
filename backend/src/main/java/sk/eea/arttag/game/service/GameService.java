@@ -55,8 +55,9 @@ public class GameService {
     @PostConstruct
     public void init()
     {
-        if(environment.acceptsProfiles("dev")) {
+        if(gameProperties.getCreateDefaultGame()) {
             try {
+                LOG.debug("Creating default game");
                 this.create("lalahopapluha", "admin");
             } catch (GameException e) {
                 LOG.error("Error at default game creation", e);

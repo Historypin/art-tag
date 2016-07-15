@@ -21,11 +21,12 @@ application.cultural-objects-file-system-path = /opt/td/arttag/
 
 application.max-description-size = 250
 
-
-
 spring.thymeleaf.cache = false
 spring.devtools.restart.exclude=static/**, templates/**
 
 game.create-default-game=true
 
-logging.file=/opt/td/logs/arttag.log
+root.logging.level = INFO
+arttag.logging.level = DEBUG
+LOG_FILE=/opt/td/logs/arttag.log
+

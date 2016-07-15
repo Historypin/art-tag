@@ -49,7 +49,9 @@ public class StateMachine {
                     Player p = game.findPlayerByUserId(userInput.getPlayerName());
                     if (p != null && game.getCreatorUserId().equalsIgnoreCase(userInput.getPlayerName())) {
                         // try to start a game
-                        startGame(game);
+                        if (game.getMinPlayers() <= game.getNumberOfActivePlayers()) {
+                            startGame(game);
+                        }
                     }
 
                 } else if (GameEvent.TIMEOUT == event) {
@@ -141,10 +143,10 @@ public class StateMachine {
                 } else if (GameEvent.TIMEOUT == event) {
                     // start the game? or discard game due to minimal number of
                     // players not reached? or start a new timer?
-                    // deactivate players who failed press continue
+                    // deactivate players who failed to press continue
                     game.getPlayers().stream().filter(p -> !p.isReadyForNextRound()).forEach(p -> p.setInactive(true));
 
-                    startRound(game);
+                    startRound(game, false);
 
                 } else if (GameEvent.PLAYER_READY_FOR_NEXT_ROUND == event) {
 
@@ -154,7 +156,7 @@ public class StateMachine {
 
                     boolean notYetAllPlayersSelected = game.getPlayers().stream().anyMatch(p -> !p.isReadyForNextRound());
                     if (!notYetAllPlayersSelected) {
-                        startRound(game);
+                        startRound(game, false);
                     }
                 }
                 break;
@@ -167,7 +169,18 @@ public class StateMachine {
         }
     }
 
-    private void nextRound(Game game) {
+    private void nextRound(Game game, boolean isNewGame) throws GameException {
+
+        // evaluate number of players in game, possibly we can start the game
+        if (game.getMinPlayers() <= game.getNumberOfActivePlayers()) {
+            //OK
+        } else {
+            throw new GameException(GameExceptionType.MIN_NUMBER_OF_PLAYERS_NOT_REACHED);
+        }
+
+        if (isNewGame) {
+            game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize()));
+        }
 
         game.resetRound();
 
@@ -214,18 +227,26 @@ public class StateMachine {
     }
 
     private void startGame(Game game) throws GameException {
-        // evaluate number of players in game, possibly we can start the game
+/*        // evaluate number of players in game, possibly we can start the game
         if (game.getMinPlayers() <= game.getPlayers().size()) {
             //			dealCards(game, GameService.HAND_SIZE);
             game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize()));
             startRound(game);
         } else {
             throw new GameException(GameExceptionType.MIN_NUMBER_OF_PLAYERS_NOT_REACHED);
-        }
+        }*/
+        startRound(game, true);
     }
 
-    private void startRound(Game game) {
-        nextRound(game);
+    private void startRound(Game game, boolean isNewGame) throws GameException {
+        try {
+            nextRound(game, isNewGame);
+        } catch (GameException e) {
+            gameService.processGameSummary(game);
+            game.setStatus(GameStatus.FINISHED);
+            game.setEndOfRound(timeout(10));
+            throw e;
+        }
         game.setStatus(GameStatus.ROUND_STARTED);
         game.setEndOfRound(timeout(game.getGameTimeout().getTimeoutRoundStarted()));
     }
@@ -285,10 +306,9 @@ public class StateMachine {
                 throw new GameException(GameExceptionType.GAME_ALREADY_STARTED);
             }
         }
-        ;
 
         // try to start the game after max number of players reached
-        if (game.getMaxPlayers() == game.getPlayers().size()) {
+        if (game.getMaxPlayers() == game.getNumberOfActivePlayers()) {
             startGame(game);
         }
     }

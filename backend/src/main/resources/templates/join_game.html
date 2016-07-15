@@ -27,7 +27,7 @@
 
 
 </head>
-<body style="background-image: url(/img/stock-16x9-186903581.jpg)" onresize="onSizeChange()" onload="onLoad()">
+<body style="background-image: url(/img/stock-16x9-186903581.jpg);background-size: cover;" onresize="onSizeChange()" onload="onLoad()">
 <div class="container-fluid" style="overflow: visible;">
     <div class="row no-float">
         <div id="statusscreen" class="col-md-4 col-lg-4">
@@ -84,18 +84,15 @@
                     <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></ul>
                 </div>
             </div>
-
-
             <div class="row no-float" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
                 <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                    <div class="o-page o-fullscreen">
+                    <div class="o-fullscreen">
                         <div id="content" class="o-fullscreen o-wrap" role="main">
-                            <div class="">
                                 <main class="o-client__body">
                                     <div class="o-client__block">
                                         <div class="o-wrap">
                                             <header class="c-heading">
-                                                <legend>Hand</legend>
+                                                <legend align="right">Hand</legend>
                                             </header>
                                             <div class="c-cards js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
                                                 <ul class="o-list-unstyled c-cards__list "
@@ -104,7 +101,6 @@
                                         </div>
                                     </div>
                                 </main>
-                            </div>
                         </div>
                     </div>
                 </div>

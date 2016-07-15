@@ -15,7 +15,7 @@
 
     <name>backend</name>
     <description>Backend part of Tagapp.</description>
-
+	
     <dependencies>
         <!-- Spring dependencies -->
         <dependency>
@@ -162,6 +162,7 @@
     </dependencies>
 
     <build>
+    	<finalName>arttag-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

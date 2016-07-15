@@ -2,8 +2,11 @@ package sk.eea.arttag.game.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -16,11 +19,16 @@ import sk.eea.arttag.ApplicationProperties;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.CardMetadata;
 import sk.eea.arttag.game.model.CardRoundSummary;
+import sk.eea.arttag.game.model.Game;
+import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.model.CulturalObject;
 import sk.eea.arttag.model.LocalizedString;
+import sk.eea.arttag.model.Score;
 import sk.eea.arttag.model.Tag;
+import sk.eea.arttag.model.User;
 import sk.eea.arttag.repository.CulturalObjectRepository;
 import sk.eea.arttag.repository.TagRepository;
+import sk.eea.arttag.repository.UserRepository;
 
 @Component
 public class CardService {
@@ -30,6 +38,9 @@ public class CardService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -92,7 +103,8 @@ public class CardService {
         return cards;
     }
 
-    public void save(List<CardRoundSummary> cardSummary, String tags, String lang) {
+    public void saveTags(List<CardRoundSummary> cardSummary, String tags, String lang) {
+        LOG.debug("Saving tags");
         cardSummary.forEach(s -> {
             CulturalObject co = culturalObjectRepository.findOne(s.getCulturalObjectId());
             if (co != null) {
@@ -106,7 +118,57 @@ public class CardService {
                     }};
                     setValue(ls);
                 }};
+                LOG.debug("Saving tag: {}", tags);
                 tagRepository.save(tag);
+            }
+        });
+    }
+
+    public void updatePlayersAfterRoundFinished(Map<String, Integer> playerSummary) {
+        LOG.debug("Updating players after round finished");
+        playerSummary.forEach((k, v) -> {
+            if (v == null || v == 0) {
+                //ignore
+            } else {
+                User user = userRepository.findOne(k);
+                if (user != null) {
+                    Score score = user.getPersonalScore();
+                    if (score == null) {
+                        score = new Score();
+                    }
+                    score.setTotalScore(score.getTotalScore() == null ? v : score.getTotalScore() + v);
+                    LOG.debug("Updating user: {}", user.getLogin());
+                    userRepository.save(user);
+                }
+            }
+        });
+    }
+
+    public void updatePlayersAfterGameFinished(Game game) {
+        LOG.info("Updating players after game finished");
+        Optional<Player> optional = game.getPlayers().stream().max(Comparator.comparing(Player::getGameScore));
+        if (!optional.isPresent()) {
+            return;
+        }
+        int max = optional.get().getGameScore();
+        if (max == 0) {
+            //ignore
+            return;
+        }
+
+        game.getPlayers().forEach(p -> {
+            User user = userRepository.findOne(p.getUserId());
+            if (user != null) {
+                Score score = user.getPersonalScore();
+                if (score == null) {
+                    score = new Score();
+                }
+                score.setGamesPlayed(score.getGamesPlayed() == null ? 1 : score.getGamesPlayed() + 1);
+                if (max == p.getGameScore()) {
+                    score.setGamesWon(score.getGamesWon() == null ? 1 : score.getGamesWon() + 1);
+                }
+                LOG.debug("Updating user: {}", user.getLogin());
+                userRepository.save(user);
             }
         });
     }

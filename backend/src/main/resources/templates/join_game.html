@@ -75,7 +75,7 @@
         <div id="gamescreen" class="col-md-8 col-lg-8">
             <div class="row">
                 <div class="col-md-6 text-left"><h3 data-bind="text: gameView.tags"></h3></div>
-                <div class="col-md-6 text-right"><h3 data-bind="text: formattedRemainingTime"></h3></div>
+                <div class="col-md-6 text-right"><h3 id="formattedRemainingTime"></h3></div>
             </div>
 
             <div class="row " data-bind="if: gameView.table().length > 0 ">
@@ -250,6 +250,33 @@
 </script>
 
 <script type="text/javascript" th:inline="javascript">
+function formatTimer(seconds) {
+    var minutes = seconds / 60.0;
+    var divisor = minutes % 1;
+    return sprintf("%02d:%02d", Math.floor(minutes), Math.round(divisor * 60));
+}
+
+function startCountdown(endOfRoundTS, oldCountdownTimerHandle) {
+    clearInterval(oldCountdownTimerHandle);
+    var handle = setInterval(function () {
+        var currentTS = new Date().getTime();
+        var diff = (endOfRoundTS - currentTS) / 1000;
+        var fmt = formatTimer(diff);
+        console.log(fmt);
+        var formattedRemainingTime = document.getElementById('formattedRemainingTime');
+        formattedRemainingTime.innerHTML = fmt;
+    }, 1000);
+    return handle;
+}
+
+function stopCountdown(oldCountdownTimerHandle) {
+    clearInterval(oldCountdownTimerHandle);
+    var formattedRemainingTime = document.getElementById('formattedRemainingTime');
+    formattedRemainingTime.innerHTML = '';
+} 
+</script>
+
+<script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     var hostname = /*[[${@environment.getProperty('application.hostname')}]]*/;
     var contextPath = /*[[${@environment.getProperty('application.context-path')}]]*/;
@@ -283,6 +310,7 @@
     var webSocket = new WebSocket(`ws://${hostname}${contextPath}/ws/game?gameId=${gameId}`);
     var alreadyConnected = false;
     var notify;
+    var countdownTimerHandle;
 
     // show loader on start
     $('body').loader();
@@ -446,7 +474,14 @@
 
     // websocket on error handler
     webSocket.onerror = function (event) {
+        console.log('WS received an error');
         alert(event.data);
+    };
+
+    webSocket.onclose = function (event) {
+        console.log('WS connection closed by server');
+        stopCountdown(countdownTimerHandle);
+        alert('WS connection closed by server, Game finished');
     };
 
     // websocket on message handler
@@ -466,6 +501,7 @@
             if (!alreadyConnected) {
                 $.loader.close();
             }
+            countdownTimerHandle = startCountdown(data.gameView.endOfRound, countdownTimerHandle);
             alreadyConnected = true;
         }
     };

@@ -5,5 +5,5 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <logger name="root" level="${root.logging.level}"/>
-    <logger name="sk.eea.td" level="${arttag.logging.level}"/>
+    <logger name="sk.eea.arttag" level="${arttag.logging.level}"/>
 </configuration>

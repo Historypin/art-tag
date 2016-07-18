@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+INITIAL_PAUSE=150
 TIMEOUT_LIMIT=300
 TOMCAT_WEBAPPS_DIR="/var/lib/tomcat8/webapps"
 ARTTAG_STATUS_CHECK="localhost:8080/arttag/"
@@ -20,14 +21,16 @@ function start_tomcat() {
     echo "Starting tomcat..."
     sudo systemctl start tomcat8
 
+    sleep ${INITIAL_PAUSE}
+
     export http_proxy=''; # disable proxy for session
     status="NOT OK"
-    count=0
+    count=${INITIAL_PAUSE}
     count_by=5
     while [[ !("${status}" =~ "arttag")   && (${count} -lt ${TIMEOUT_LIMIT}) ]]; do
         status=`curl --silent --max-time 1 ${ARTTAG_STATUS_CHECK}`
         echo "Will wait for tomcat to start in " `expr ${TIMEOUT_LIMIT} - ${count}` " s..."
-        sleep ${count_by}
+        sleep ${count_by};
         let count=${count}+${count_by};
     done
 

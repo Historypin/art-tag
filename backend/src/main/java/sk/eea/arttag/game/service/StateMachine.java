@@ -40,10 +40,10 @@ public class StateMachine {
                 break;
 
             case CREATED:
-                if (GameEvent.PLAYER_JOINED == event) {
+/*                if (GameEvent.PLAYER_JOINED == event) {
                     joinGame(game, player);
 
-                } else if (GameEvent.ROUND_STARTED == event) {
+                } else */if (GameEvent.ROUND_STARTED == event) {
                     // PLAYER STARTED A GAME (user input)
                     // verify event sender is game creator
                     Player p = game.findPlayerByUserId(userInput.getPlayerName());
@@ -63,10 +63,10 @@ public class StateMachine {
                 break;
 
             case ROUND_STARTED:
-                if (GameEvent.PLAYER_JOINED == event) {
+/*                if (GameEvent.PLAYER_JOINED == event) {
                     joinGame(game, player);
 
-                } else if (GameEvent.TAGS_SELECTED == event) {
+                } else */if (GameEvent.TAGS_SELECTED == event) {
                     processUserInput(game, userInput, userToken);
                     //verify tags set correctly
                     if (game.getTags() != null) {
@@ -81,10 +81,10 @@ public class StateMachine {
                 break;
 
             case ROUND_TOPIC_SELECTED:
-                if (GameEvent.PLAYER_JOINED == event) {
+/*                if (GameEvent.PLAYER_JOINED == event) {
                     joinGame(game, player);
 
-                } else if (GameEvent.PLAYER_OWN_CARD_SELECTED == event) {
+                } else */if (GameEvent.PLAYER_OWN_CARD_SELECTED == event) {
                     processUserInput(game, userInput, userToken);
                     // check if all players already selected own card (ignoring inactive players)
                     boolean notYetAllPlayersSelected = game.getPlayers().stream().anyMatch(p -> !p.isInactive() && p.getOwnCardSelection() == null);
@@ -105,10 +105,10 @@ public class StateMachine {
                 break;
 
             case ROUND_OWN_CARDS_SELECTED:
-                if (GameEvent.PLAYER_JOINED == event) {
+/*                if (GameEvent.PLAYER_JOINED == event) {
                     joinGame(game, player);
 
-                } else if (GameEvent.PLAYER_TABLE_CARD_SELECTED == event) {
+                } else */if (GameEvent.PLAYER_TABLE_CARD_SELECTED == event) {
                     processUserInput(game, userInput, userToken);
                     // check if all players already selected own card (ignoring inactive)
                     boolean notYetAllPlayersSelected = game.getPlayers().stream()
@@ -137,10 +137,10 @@ public class StateMachine {
                 				game.setStatus(GameStatus.ROUND_STARTED);
                 
                 			} else */
-                if (GameEvent.PLAYER_JOINED == event) {
+/*                if (GameEvent.PLAYER_JOINED == event) {
                     joinGame(game, player);
 
-                } else if (GameEvent.TIMEOUT == event) {
+                } else */if (GameEvent.TIMEOUT == event) {
                     // start the game? or discard game due to minimal number of
                     // players not reached? or start a new timer?
                     // deactivate players who failed to press continue
@@ -167,6 +167,13 @@ public class StateMachine {
             default:
                 break;
         }
+
+        if (GameEvent.PLAYER_JOINED == event) {
+            joinGame(game, player);
+        } else if (GameEvent.PLAYER_JOINED == event) {
+        }
+
+        gameService.gameUpdated(game);
     }
 
     private void nextRound(Game game, boolean isNewGame) throws GameException {
@@ -235,7 +242,9 @@ public class StateMachine {
         } else {
             throw new GameException(GameExceptionType.MIN_NUMBER_OF_PLAYERS_NOT_REACHED);
         }*/
-        startRound(game, true);
+        if (GameStatus.CREATED == game.getStatus()) {
+            startRound(game, true);
+        }
     }
 
     private void startRound(Game game, boolean isNewGame) throws GameException {
@@ -244,7 +253,6 @@ public class StateMachine {
         } catch (GameException e) {
             gameService.processGameSummary(game);
             game.setStatus(GameStatus.FINISHED);
-            game.setEndOfRound(timeout(10));
             throw e;
         }
         game.setStatus(GameStatus.ROUND_STARTED);

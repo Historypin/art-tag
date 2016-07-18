@@ -56,11 +56,12 @@ public class WebSocketGameController extends TextWebSocketHandler {
         }
 
         try {
-            gameService.addPlayer(session.getId(), principal.getName(), gameId);
             clients.put(session.getId(), session);
+            gameService.addPlayer(session.getId(), principal.getName(), gameId);
             LOG.info("Player: {} has connected", session.getPrincipal().getName());
         } catch (GameException e) {
             LOG.info("Failed to add player to game: {}", e.getMessage());
+            clients.remove(session.getId());
             sendError(session.getId());
         }
     }
@@ -101,14 +102,35 @@ public class WebSocketGameController extends TextWebSocketHandler {
     }
 
     @Scheduled(fixedRate = 1000)
-    public void trigger() {
+    public void triggerGameTimeout() {
+        gameService.getGames().values().stream().filter(g -> g.getRemainingTime() <= 0).forEach(g -> gameService.triggerGameTimeout(g));
+    }
+
+    public void trigger(List<GamePlayerView> views) {
         try {
-            List<GamePlayerView> games = gameService.getGameViews();
-            sendMessages(games);
+            sendMessages(views);
         } catch (IOException | EncodeException e) {
             LOG.error("fuckup", e);
         } catch (RuntimeException re) {
             LOG.error("horrible fuckup", re);
+        }
+    }
+
+    public void triggerClose(List<String> userTokens) {
+        for (String userToken : userTokens) {
+            WebSocketSession webSocketSession = clients.get(userToken);
+            if (webSocketSession != null) {
+                LOG.debug("Closing WS session for client {}", userToken);
+                try {
+                    webSocketSession.close(CloseStatus.NORMAL);
+                } catch (IOException e) {
+                    LOG.debug("Failed to close session for client {}", userToken);
+                } finally {
+                    clients.remove(userToken);
+                }
+            } else {
+                LOG.debug("No session.");
+            }
         }
     }
 

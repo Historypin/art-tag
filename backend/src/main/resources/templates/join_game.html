@@ -27,51 +27,10 @@
 
 
 </head>
-<body style="background-image: url(/img/stock-16x9-186903581.jpg);background-size: cover;" onresize="onSizeChange()" onload="onLoad()">
+<body style="background-image: url(/img/stock-16x9-186903581.jpg);background-size: cover;">
 <div class="container-fluid" style="overflow: visible;">
     <div class="row no-float">
-        <div id="statusscreen" class="col-md-4 col-lg-4">
-            <div class="row">
-                <div class="players panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Players</h3>
-                    </div>
-                    <div class="panel-body">
-                        <table class="table" data-bind="template: { name: 'player-row', foreach: gameView.players }">
-                        </table>
-                        <div data-bind="if: gameView.status() === 'ROUND_FINISHED'">
-                            <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="chat panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Chat</h3>
-                        <div class="input-group">
-                            <input type="text" class="form-control input-sm"
-                                   data-bind="textInput : chatInput, event: {keypress: enterChatMessage}"
-                                   placeholder="Type your message here..."/>
-                        <span class="input-group-btn">
-                            <button class="btn btn-warning btn-sm" data-bind="click: sendChatMessage">
-                                Send</button>
-                        </span>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <ul data-bind="foreach: chatHistory" style="height: 25%;">
-                            <li data-bind="if: message">
-                                <p class="chat-body" data-bind="template: { name: 'chat-line'}, autoScroll: true"></p>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="panel-footer">
 
-                    </div>
-                </div>
-            </div>
-        </div>
         <div id="gamescreen" class="col-md-8 col-lg-8">
             <div class="row">
                 <div class="col-md-6 text-left"><h3 data-bind="text: gameView.tags"></h3></div>
@@ -171,6 +130,48 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="statusscreen" class="col-md-4 col-lg-4">
+            <div class="row">
+                <div class="players panel panel-default transparent">
+                    <div class="panel-heading transparent">
+                        <h3 class="panel-title">Players</h3>
+                    </div>
+                    <div class="panel-body transparent">
+                        <table class="table" data-bind="template: { name: 'player-row', foreach: gameView.players }">
+                        </table>
+                        <div data-bind="if: gameView.status() === 'ROUND_FINISHED'">
+                            <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="chat panel panel-default transparent">
+                    <div class="panel-heading transparent">
+                        <h3 class="panel-title">Chat</h3>
+                        <div class="input-group">
+                            <input type="text" class="form-control input-sm"
+                                   data-bind="textInput : chatInput, event: {keypress: enterChatMessage}"
+                                   placeholder="Type your message here..."/>
+                            <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" data-bind="click: sendChatMessage">
+                                Send</button>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <ul data-bind="foreach: chatHistory" style="height: 25%;">
+                            <li data-bind="if: message">
+                                <p class="chat-body" data-bind="template: { name: 'chat-line'}, autoScroll: true"></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="panel-footer">
+
                     </div>
                 </div>
             </div>
@@ -534,7 +535,7 @@ function stopCountdown(oldCountdownTimerHandle) {
         }, notifyDefaults);
     });
 
-    var onLoad = function () {
+    /*var onLoad = function () {
         var w = window.outerWidth;
         if (w < 992) {
             $("#statusscreen").insertAfter("#gamescreen");
@@ -556,7 +557,7 @@ function stopCountdown(oldCountdownTimerHandle) {
             $("#gamescreen").insertAfter("#statusscreen");
             $("#footer").show();
         }
-    };
+    };*/
 
     /* ]]> */
 </script>

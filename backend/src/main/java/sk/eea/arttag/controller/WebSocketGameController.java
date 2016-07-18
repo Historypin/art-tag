@@ -32,15 +32,11 @@ public class WebSocketGameController extends TextWebSocketHandler {
 
     private static final Map<String, WebSocketSession> clients = Collections.synchronizedMap(new HashMap<String, WebSocketSession>());
 
-    private static GameService gameService;
-
-    private static ObjectMapper objectMapper;
+    @Autowired
+    private GameService gameService;
 
     @Autowired
-    public WebSocketGameController(GameService gameService, ObjectMapper objectMapper) {
-        WebSocketGameController.gameService = gameService;
-        WebSocketGameController.objectMapper = objectMapper;
-    }
+    private ObjectMapper objectMapper;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -134,7 +130,7 @@ public class WebSocketGameController extends TextWebSocketHandler {
         }
     }
 
-    private static void sendMessages(List<GamePlayerView> gamePlayerViews) throws IOException, EncodeException {
+    private void sendMessages(List<GamePlayerView> gamePlayerViews) throws IOException, EncodeException {
         for (GamePlayerView view : gamePlayerViews) {
             String txt = objectMapper.writeValueAsString(view);
             LOG.debug("Serialized view: {}", txt);

@@ -142,7 +142,7 @@ html {
 
 @media (min-width:480px) {
     .c-cards__list {
-        margin: 0 -5px
+        margin: 0 auto;
     }
     .c-cards__list:after,
     .c-cards__list:before {

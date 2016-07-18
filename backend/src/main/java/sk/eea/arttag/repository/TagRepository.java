@@ -23,4 +23,5 @@ public interface TagRepository  extends JpaRepository<Tag, Long>{
     @Query(value="select count(tag.id) from tag as tag left join cultural_object as co on co.id = tag.co_id where tag.created >= :fromDate and tag.created < :untilDate and co.batch_id = :batchId", nativeQuery=true)
     Integer countTagsForEnrichment(@Param("fromDate")Date fromDate, @Param("untilDate")Date untilDate, @Param("batchId")Long batchId);
 
+    List<Tag> findAllByCulturalObjectId(@Param("culturalObjectId") long culturalObjectId);
 }

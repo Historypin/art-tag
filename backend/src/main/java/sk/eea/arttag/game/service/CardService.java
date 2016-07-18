@@ -108,16 +108,16 @@ public class CardService {
         cardSummary.forEach(s -> {
             CulturalObject co = culturalObjectRepository.findOne(s.getCulturalObjectId());
             if (co != null) {
-                Tag tag = new Tag() {{
-                    setCreated(new Date());
-                    setCulturalObject(co);
-                    setHitScore(new Long(s.getScore()));
-                    LocalizedString ls = new LocalizedString() {{
-                        setLanguage(lang);
-                        setValue(tags);
-                    }};
-                    setValue(ls);
-                }};
+
+                Tag tag = new Tag();
+                tag.setCreated(new Date());
+                tag.setCulturalObject(co);
+                tag.setHitScore(new Long(s.getScore()));
+                LocalizedString ls = new LocalizedString();
+                ls.setLanguage(lang);
+                ls.setValue(tags);
+                tag.setValue(ls);
+
                 LOG.debug("Saving tag: {}", tags);
                 tagRepository.save(tag);
             }
@@ -137,6 +137,7 @@ public class CardService {
                         score = new Score();
                     }
                     score.setTotalScore(score.getTotalScore() == null ? v : score.getTotalScore() + v);
+                    user.setPersonalScore(score);
                     LOG.debug("Updating user: {}", user.getLogin());
                     userRepository.save(user);
                 }
@@ -148,11 +149,13 @@ public class CardService {
         LOG.info("Updating players after game finished");
         Optional<Player> optional = game.getPlayers().stream().max(Comparator.comparing(Player::getGameScore));
         if (!optional.isPresent()) {
+            LOG.debug("No player found for game {}", game.getId());
             return;
         }
         int max = optional.get().getGameScore();
         if (max == 0) {
             //ignore
+            LOG.debug("Max score is 0 for game {}", game.getId());
             return;
         }
 
@@ -167,6 +170,7 @@ public class CardService {
                 if (max == p.getGameScore()) {
                     score.setGamesWon(score.getGamesWon() == null ? 1 : score.getGamesWon() + 1);
                 }
+                user.setPersonalScore(score);
                 LOG.debug("Updating user: {}", user.getLogin());
                 userRepository.save(user);
             }

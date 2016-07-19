@@ -55,7 +55,7 @@ public class CardServiceSimpleTest {
         List<CardRoundSummary> cardSummary = new ArrayList<>();
         CardRoundSummary s = new CardRoundSummary(co.getId(), 10);
         cardSummary.add(s);
-        cardService.saveTags(cardSummary, TAGS, LANG);
+        cardService.saveTags(cardSummary, TAGS, 15, LANG);
 
         CulturalObject co2 = culturalObjectRepository.findOne(co.getId());
         List<Tag> tags1 = co2.getTags();

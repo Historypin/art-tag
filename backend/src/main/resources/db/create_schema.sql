@@ -80,7 +80,7 @@ CREATE TABLE tag (
     id bigint NOT NULL,
     created timestamp without time zone,
     co_id bigint,
-    hit_score bigint,
+    hit_score real,
     value bigint
 );
 

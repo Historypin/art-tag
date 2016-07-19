@@ -21,7 +21,7 @@ public class Tag {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@SequenceGenerator(name= "hibernate_sequence")
 	private Long id;
-	private Long hitScore;
+	private Float hitScore;
 	private Date created;
 
 	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -37,10 +37,10 @@ public class Tag {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Long getHitScore() {
+	public Float getHitScore() {
 		return hitScore;
 	}
-	public void setHitScore(Long hitScore) {
+	public void setHitScore(Float hitScore) {
 		this.hitScore = hitScore;
 	}
 	public LocalizedString getValue() {

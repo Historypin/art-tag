@@ -59,7 +59,7 @@ public class TagRepositoryTest {
             Tag tag = new Tag();
             tag.setCreated(new Date());
             tag.setCulturalObject(co2);
-            tag.setHitScore(1L);
+            tag.setHitScore(1f);
             LocalizedString ls = new LocalizedString();
             ls.setLanguage("en");
             ls.setValue("blah");

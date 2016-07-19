@@ -45,16 +45,6 @@ public class TagRepositoryTest {
 
         CulturalObject co2 = culturalObjectRepository.findOne(newCoId);
         if (co != null) {
-/*            Tag tag = new Tag() {{
-                setCreated(new Date());
-                setCulturalObject(co2);
-                setHitScore(1L);
-                LocalizedString ls = new LocalizedString() {{
-                    setLanguage("en");
-                    setValue("blah");
-                }};
-                setValue(ls);
-            }};*/
 
             Tag tag = new Tag();
             tag.setCreated(new Date());

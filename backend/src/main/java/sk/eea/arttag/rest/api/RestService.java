@@ -166,7 +166,7 @@ public class RestService {
         try {
             storeService.publish(batchId);
             result.setStatus(Status.SUCCESS);
-            return new ResponseEntity<>(mapper.writeValueAsString(result), HttpStatus.OK);
+            return new ResponseEntity<>(mapper.writeValueAsString(result), HttpStatus.ACCEPTED);
         } catch (Exception e) {
             LOG.error("Error publishing batch", e);
             result.setStatus(Status.FAILED);

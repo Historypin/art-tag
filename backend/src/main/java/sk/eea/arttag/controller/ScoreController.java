@@ -45,6 +45,9 @@ public class ScoreController {
     private static Comparator<User> BY_GAMES_WON = (e1, e2) -> (int) ((e1.getPersonalScore() == null ? 0 : e1.getPersonalScore().getGamesWon())
             - (e2.getPersonalScore() == null ? 0 : e2.getPersonalScore().getGamesWon()));
 
+    private static Comparator<User> BY_TOTAL_SCORE = (e1, e2) -> (int) ((e1.getPersonalScore() == null ? 0 : e1.getPersonalScore().getTotalScore())
+            - (e2.getPersonalScore() == null ? 0 : e2.getPersonalScore().getTotalScore()));
+
     @ResponseBody
     @RequestMapping(value = "/score/get.score", method = RequestMethod.GET)
     public DataTablesOutput<ScoreRow> getScore(@Valid DataTablesInput input) {
@@ -86,6 +89,13 @@ public class ScoreController {
                         Collections.sort(records, BY_GAMES_WON);
                     } else {
                         Collections.sort(records, Collections.reverseOrder(BY_GAMES_WON));
+                    }
+                    break;
+                case "3":
+                    if ("asc".equals(orderMap.get(DataTablesInput.OrderCriteria.dir))) {
+                        Collections.sort(records, BY_TOTAL_SCORE);
+                    } else {
+                        Collections.sort(records, Collections.reverseOrder(BY_TOTAL_SCORE));
                     }
                     break;
             }

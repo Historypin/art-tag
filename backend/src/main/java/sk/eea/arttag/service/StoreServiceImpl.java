@@ -54,6 +54,9 @@ public class StoreServiceImpl implements StoreService {
     @Value("${working.dir}")
     private String workingDir;
 
+    @Value("${game.tag-threshold}")
+    private Float tagThreshold;
+
     /* (non-Javadoc)
      * @see sk.eea.arttag.service.StoreService#addCulturalObject(java.lang.Object)
      */
@@ -73,20 +76,14 @@ public class StoreServiceImpl implements StoreService {
         LocalizedString tagValue = new LocalizedString(tagDto.getLanguage(), tagDto.getValue());
         Long culturalObjectId = tagDto.getCulturalObjectId();
         CulturalObject co = culturalObjectRepository.findOne(culturalObjectId);
-        Tag tag = tagRepository.findByValueAndCulturalObjectId(tagDto.getLanguage(), tagDto.getValue(), co);
         if (co == null) {
             throw new ObjectNotFoundException();
         }
-        if (tag != null) {
-            tag.setHitScore(tag.getHitScore() + 1);
-            tagRepository.save(tag);
-        } else {
-            tag = new Tag();
-            tag.setValue(tagValue);
-            tag.setCulturalObject(co);
-            tag.setHitScore(0L);
-            tagRepository.save(tag);
-        }
+        Tag tag = new Tag();
+        tag.setValue(tagValue);
+        tag.setCulturalObject(co);
+        tag.setHitScore(1f);
+        tagRepository.save(tag);
         return TagDTO.toDto(tag);
     }
 
@@ -94,8 +91,8 @@ public class StoreServiceImpl implements StoreService {
     public PageableTagsDTO listTags(Date fromDate, Date untilDate, Long batchId) {
         if (fromDate == null || untilDate == null)
             throw new NullPointerException();
-        Integer total = tagRepository.countTagsForEnrichment(fromDate, untilDate, batchId);
-        List<Tag> tags = tagRepository.findTagsForEnrichment(fromDate, untilDate, batchId, 0, DEFAULT_PAGE_SIZE);
+        Integer total = tagRepository.countTagsForEnrichment(fromDate, untilDate, batchId, tagThreshold);
+        List<Tag> tags = tagRepository.findTagsForEnrichment(fromDate, untilDate, batchId, tagThreshold, 0, DEFAULT_PAGE_SIZE);
         List<TagDTO> tagList = new ArrayList<>();
         tags.stream().forEach(tag -> tagList.add(TagDTO.toDto(tag)));
         String token = (total.compareTo(DEFAULT_PAGE_SIZE) > 0) ?
@@ -107,9 +104,9 @@ public class StoreServiceImpl implements StoreService {
     public PageableTagsDTO listTags(String resumptionToken) throws TokenExpiredException {
         TokenAttr attr = parseToken(resumptionToken);
         Integer total = tagRepository
-                .countTagsForEnrichment(attr.getFromDate(), attr.getUntilDate(), attr.getBatchId());
+                .countTagsForEnrichment(attr.getFromDate(), attr.getUntilDate(), attr.getBatchId(), tagThreshold);
         List<Tag> tags = tagRepository
-                .findTagsForEnrichment(attr.fromDate, attr.untilDate, attr.batchId, attr.getCursor(), DEFAULT_PAGE_SIZE);
+                .findTagsForEnrichment(attr.fromDate, attr.untilDate, attr.batchId, tagThreshold, attr.getCursor(), DEFAULT_PAGE_SIZE);
         List<TagDTO> tagList = new ArrayList<TagDTO>();
         tags.forEach(tag -> tagList.add(TagDTO.toDto(tag)));
         String token = (total.compareTo(attr.getCursor() + tags.size()) > 0) ? generateToken(

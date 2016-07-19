@@ -208,7 +208,7 @@ public class GameService {
             return;
         }
         //update tags
-        cardService.saveTags(summary.getCardSummary(), summary.getGame().getTags(), CardService.CARD_DESCRIPTION_DEFAULT_LANGUAGE);
+        cardService.saveTags(summary.getCardSummary(), summary.getGame().getTags(), summary.getPlayerSummary().size(), CardService.CARD_DESCRIPTION_DEFAULT_LANGUAGE);
         //update players with round score, 
         cardService.updatePlayersAfterRoundFinished(summary.getPlayerSummary());
     }

@@ -275,7 +275,7 @@ public class RestServiceIT {
             Tag tag = new Tag();
             tag.setCreated(new Date());
             tag.setCulturalObject(co);
-            tag.setHitScore(1l);
+            tag.setHitScore(1f);
             tag.setValue(new LocalizedString("sk", "tag" + i));
             tagRepository.save(tag);
         }

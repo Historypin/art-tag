@@ -103,15 +103,19 @@ public class CardService {
         return cards;
     }
 
-    public void saveTags(List<CardRoundSummary> cardSummary, String tags, String lang) {
+    public void saveTags(List<CardRoundSummary> cardSummary, String tags, int playersCount, String lang) {
         LOG.debug("Saving tags");
         cardSummary.forEach(s -> {
+            int maxScore = playersCount - 1;
+            if (s.getScore() == 0 || s.getScore() == maxScore) {
+                return;
+            }
             CulturalObject co = culturalObjectRepository.findOne(s.getCulturalObjectId());
             if (co != null) {
                 Tag tag = new Tag() {{
                     setCreated(new Date());
                     setCulturalObject(co);
-                    setHitScore(new Long(s.getScore()));
+                    setHitScore((float) s.getScore() / maxScore);
                     LocalizedString ls = new LocalizedString() {{
                         setLanguage(lang);
                         setValue(tags);

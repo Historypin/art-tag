@@ -5,7 +5,8 @@
 
 .join-page, .score-page, .create-page {
     background-size:cover;
-    background: url('../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg') no-repeat;
+    background-image: url(../img/stock-16x9-186903581.jpg);
+/*     background: url('../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg') no-repeat; */
 }
 
 #joinGameScreenUpperHalf
@@ -16,6 +17,7 @@
 
 #joinGameScreenUpperHalf .btn{
     padding-top: 4vh;
+    height:25vh;
 }
 
 #joinGameScreenLowerHalf
@@ -109,11 +111,20 @@
 .navigation
 {
     height: 50vh;
+        background: rgba(30, 30, 30, 0.5)
+}
 }
 
 .transparent
 {
     background: rgba(255, 255, 255, .0);
+}
+
+.form-centered
+{
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .panel
@@ -192,7 +203,7 @@
 body
 {
     height: 100%;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 30px 'Playfair Display', sans-serif;
 }
 
 html
@@ -211,9 +222,45 @@ ul
     list-style-type: none;
 }
 
+.outlined
+{
+    color: white;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+h1 small
+{
+    text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
+}
+
+
+
+.playfair-font
+{
+    color: #ffffff;
+    text-shadow: 2px 2px 8px #000;
+    font: 15px 'Playfair Display', sans-serif;
+
+}
+
+.pagination>li:first-child>a, .pagination>li:first-child>span
+{
+    color: #444444;
+    text-shadow: 0px 0px 0px #000;
+    font: 15px 'Playfair Display', sans-serif;
+
+}
+
+.pagination>li:last-child>a, .pagination>li:last-child>span
+{
+    color: #444444;
+    text-shadow: 0px 0px 0px #000;
+    font: 15px 'Playfair Display', sans-serif;
+}
+
 .shadow
 {
     box-shadow: 2px 3px 14px #000;
 }
-.lightslategray-background {background-color:lightslategray;}
+.lightslategray-background {background-color:lightslategray;display: table;}
 .orange-background {background-color:orange;}

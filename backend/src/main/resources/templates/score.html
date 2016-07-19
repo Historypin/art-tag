@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Index page</title>
 
-    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'/>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
 
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Playfair+Display" />
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
@@ -29,8 +30,8 @@
             <a href="#" class="btn"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></a>
         </div>
         <div class='col-sm-8'>
-            <div class='centeredText orange-background'>
-                <h1>ARTTAG
+            <div class='centeredText'>
+                <h1 class="outlined">ARTTAG
                     <br/>
                     <small>THE ART OF FUN</small>
                 </h1>
@@ -42,11 +43,11 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-offset-2 col-sm-8">
+        <div class="playfair-font col-sm-offset-2 col-sm-8">
             <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
 
-            <div class="col-sm-9 lightslategray-background">
-                <table id="scoreTable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            <div class="navigation col-sm-9">
+                <table id="scoreTable" class="table table-bordered" cellspacing="0" width="100%">
                     <thead>
                     <tr>
                         <th>Name</th>

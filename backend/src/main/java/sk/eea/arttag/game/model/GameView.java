@@ -1,13 +1,11 @@
 package sk.eea.arttag.game.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class GameView {
 
@@ -16,9 +14,8 @@ public class GameView {
     @JsonIgnore
 	private Date created;
 	private GameStatus status;
-//    @JsonIgnore
-//    private Date endOfRound;
-    private long endOfRound;
+    @JsonIgnore
+    private Date endOfRound;
 	private String tags;
 	private int remainingTime;
 	private List<Player> players = new LinkedList<>();
@@ -59,11 +56,11 @@ public class GameView {
 		this.status = status;
 	}
 
-	public long getEndOfRound() {
+	public Date getEndOfRound() {
 		return endOfRound;
 	}
 
-	public void setEndOfRound(long endOfRound) {
+	public void setEndOfRound(Date endOfRound) {
 		this.endOfRound = endOfRound;
 	}
 
@@ -83,13 +80,6 @@ public class GameView {
 		this.remainingTime = remainingTime;
 	}
 
-/*	public Map<String, Player> getPlayers() {
-		return players;
-	}
-
-	public void setPlayers(Map<String, Player> players) {
-		this.players = players;
-	}*/
 	public List<Player> getPlayers() {
 		return players;
 	}

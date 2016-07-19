@@ -24,16 +24,6 @@
     background-color: rgb(217, 242, 236);
 }
 
-#gamescreen
-{
-    width: 70%;
-}
-
-#statusscreen
-{
-    width:30%;
-}
-
 .centeredimage
 {
     display: flex;
@@ -116,23 +106,18 @@
     background: rgba(100, 100, 60, 0.3);
 }
 
+.navigation
+{
+    height: 50vh;
+}
+
 .transparent
 {
     background: rgba(255, 255, 255, .0);
 }
 
-/* .panel
+.panel
 {
-    width:100%;
-} */
-
-#gamescreen
-{
-    width:70%;
-}
-#statusscreen
-{
-    width:30%;
 }
 
 .panel-default>.panel-heading {
@@ -141,10 +126,7 @@
     /*border-color: #ddd;*/
 }
 
-.panel .transparent
-{
-     background: rgba(255, 255, 255, .0);
-}
+
 
 .panel-footer
 {

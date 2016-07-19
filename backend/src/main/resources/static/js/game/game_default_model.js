@@ -17,6 +17,7 @@ var defaultModel = {
         "status": "",
         "tags": "",
         "remainingTime": 0,
+        "endOfRound": 0,
         "players": [{
             "token": "",
             "userId": "",

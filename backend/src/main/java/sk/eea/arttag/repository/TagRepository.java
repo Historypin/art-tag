@@ -60,4 +60,5 @@ public interface TagRepository  extends JpaRepository<Tag, Long>{
     )
     Integer countTagsForEnrichment(@Param("fromDate")Date fromDate, @Param("untilDate")Date untilDate, @Param("batchId")Long batchId, @Param("tagThreshold") Float tagThreshold);
 
+    List<Tag> findAllByCulturalObjectId(@Param("culturalObjectId") long culturalObjectId);
 }

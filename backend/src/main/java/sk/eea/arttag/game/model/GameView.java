@@ -16,8 +16,9 @@ public class GameView {
     @JsonIgnore
 	private Date created;
 	private GameStatus status;
-    @JsonIgnore
-    private Date endOfRound;
+//    @JsonIgnore
+//    private Date endOfRound;
+    private long endOfRound;
 	private String tags;
 	private int remainingTime;
 	private List<Player> players = new LinkedList<>();
@@ -58,11 +59,11 @@ public class GameView {
 		this.status = status;
 	}
 
-	public Date getEndOfRound() {
+	public long getEndOfRound() {
 		return endOfRound;
 	}
 
-	public void setEndOfRound(Date endOfRound) {
+	public void setEndOfRound(long endOfRound) {
 		this.endOfRound = endOfRound;
 	}
 

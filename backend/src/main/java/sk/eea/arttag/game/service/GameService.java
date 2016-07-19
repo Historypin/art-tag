@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import sk.eea.arttag.ApplicationProperties;
 import sk.eea.arttag.GameProperties;
+import sk.eea.arttag.controller.WebSocketGameController;
 import sk.eea.arttag.game.model.Card;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameEvent;
@@ -57,6 +59,9 @@ public class GameService {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private WebSocketGameController webSocketController;
+
     @PostConstruct
     public void init()
     {
@@ -70,42 +75,24 @@ public class GameService {
         }
     }
 
-    public List<GamePlayerView> getGameViews() {
-        List<GamePlayerView> views = new ArrayList<>();
-        for (Game game : getGames().values()) {
-            boolean gameTimeout = game.getRemainingTime() < 0;
-            if (gameTimeout) {
-                try {
-                    stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
-                } catch (GameException e) {
-                    LOG.info("Game exception, game: {}, reason: {}", game.getId(), e.getMessage());
-                    //TODO: display the message to a player/players
-                }
-            }
-            views.addAll(game.createGameViews());
+    public void gameUpdated(Game game) {
+        
+        List<GamePlayerView> views = game.createGameViews();
+        webSocketController.trigger(views);
+        if (GameStatus.FINISHED == game.getStatus()) {
+            List<String> userTokens = game.getPlayers().stream().map(p -> p.getToken()).collect(Collectors.toList());
+            webSocketController.triggerClose(userTokens);
+            getGames().remove(game.getId());
         }
+    }
 
-        for (Iterator<Map.Entry<String, Game>> it = getGames().entrySet().iterator(); it.hasNext();) {
-            Map.Entry<String, Game> entry = it.next();
-            Game game = entry.getValue();
-
-            boolean gameTimeout = game.getRemainingTime() < 0;
-            if (gameTimeout) {
-                try {
-                    stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
-                } catch (GameException e) {
-                    LOG.info("Game exception, game: {}, reason: {}", game.getId(), e.getMessage());
-                    //TODO: display the message to a player/players
-                }
-            }
-            views.addAll(game.createGameViews());
-
-            if (GameStatus.FINISHED == game.getStatus()) {
-                it.remove();
-            }
+    public void triggerGameTimeout(Game game) {
+        try {
+            stateMachine.triggerEvent(game, GameEvent.TIMEOUT, null, null, null);
+        } catch (GameException e) {
+            LOG.info("Game exception, game: {}, reason: {}", game.getId(), e.getMessage());
+            //TODO: display the message to a player/players
         }
-
-        return views;
     }
 
     public Game create(String name, String creatorUserId) throws GameException {
@@ -152,15 +139,15 @@ public class GameService {
         stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken, player);
     }
 
-    public void removePlayer(String userToken) {
+    public void removePlayer(String userToken) throws GameException {
         LOG.debug("REMOVE_PLAYER");
         for (Game game : getGames().values()) {
             //			Player player = game.getPlayers().get(token);
             Player player = game.findPlayerByUserToken(userToken);
             if (player != null) {
                 player.setInactive(true);
+                stateMachine.triggerEvent(game, GameEvent.PLAYER_DISCONNECTED, null, userToken, player);
             }
-            //TODO: trigger event
         }
     }
 

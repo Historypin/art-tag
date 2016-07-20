@@ -109,7 +109,7 @@ public class RestServiceIT {
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                     .buildPost(Entity.entity(objectMapper.writeValueAsString(tagDto), MediaType.APPLICATION_JSON))
                     .invoke();
-            if (response.getStatus() != 201) {
+            if (response.getStatus() != HttpStatus.CREATED.value()) {
                 fail("Error: " + response.getEntity());
             }
             ResultMessageDTO result = objectMapper.readValue(response.readEntity(String.class), ResultMessageDTO.class);
@@ -211,7 +211,7 @@ public class RestServiceIT {
         try {
             WebTarget target = client.target("http://localhost:9180").path("/api/batch/publish/" + culturalObject.getBatchId());
             Response response = target.request(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).get();
-            if (response.getStatus() != HttpStatus.OK.value()) {
+            if (response.getStatus() != HttpStatus.ACCEPTED.value()) {
                 fail("Response is: " + response.getStatus());
             }
             ResultMessageDTO result = objectMapper.readValue(response.readEntity(String.class), ResultMessageDTO.class);

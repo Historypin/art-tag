@@ -190,7 +190,7 @@ public class Game {
         view.setRemainingTime(getRemainingTime());
         view.setTags(getTags());
         view.setCreated(getCreated());
-        view.setEndOfRound(getEndOfRound().getTime());
+        view.setEndOfRound(getEndOfRound());
         view.setId(getId());
         view.setName(getName());
         view.setPlayers(getPlayers());

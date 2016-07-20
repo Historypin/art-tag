@@ -257,11 +257,12 @@ function formatTimer(seconds) {
     return sprintf("%02d:%02d", Math.floor(minutes), Math.round(divisor * 60));
 }
 
-function startCountdown(endOfRoundTS, oldCountdownTimerHandle) {
+function startCountdown(seconds, oldCountdownTimerHandle) {
     clearInterval(oldCountdownTimerHandle);
+    var timeout = new Date();
+    timeout.setSeconds(timeout.getSeconds() + seconds);
     var handle = setInterval(function () {
-        var currentTS = new Date().getTime();
-        var diff = (endOfRoundTS - currentTS) / 1000;
+        var diff = (timeout.getTime() - new Date().getTime()) / 1000;
         var fmt = formatTimer(diff);
         console.log(fmt);
         var formattedRemainingTime = document.getElementById('formattedRemainingTime');
@@ -502,7 +503,7 @@ function stopCountdown(oldCountdownTimerHandle) {
             if (!alreadyConnected) {
                 $.loader.close();
             }
-            countdownTimerHandle = startCountdown(data.gameView.endOfRound, countdownTimerHandle);
+            countdownTimerHandle = startCountdown(data.gameView.remainingTime, countdownTimerHandle);
             alreadyConnected = true;
         }
     };

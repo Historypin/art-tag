@@ -24,19 +24,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-rest</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.session</groupId>
-            <artifactId>spring-session</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -56,16 +44,13 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Other dependencies -->
@@ -78,7 +63,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>2.4.6</version>
+            <version>2.4.7</version>
         </dependency>
 
         <dependency>
@@ -119,30 +104,35 @@
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
             <version>2.2.4</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
             <version>3.3.6</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>knockout</artifactId>
             <version>3.4.0</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
             <version>4.6.3</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>sprintf.js</artifactId>
             <version>1.0.0</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Test dependencies -->
@@ -189,6 +179,7 @@
                 <version>2.6</version>
                 <configuration>
                     <warName>arttag</warName>
+                    <packagingExcludes>WEB-INF/lib/tomcat-*.jar</packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>

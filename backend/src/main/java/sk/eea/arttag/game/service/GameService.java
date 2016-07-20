@@ -202,7 +202,7 @@ public class GameService {
 
     public List<Card> getInitialDeck(int numberOfCards) {
         LOG.debug("INITIAL_DECK");
-        return cardService.getCards(numberOfCards);
+        return cardService.getCards(numberOfCards, "en");
     }
 
     public Map<String, Game> getGames() {

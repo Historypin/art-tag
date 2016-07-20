@@ -100,6 +100,7 @@ public class WebSocketGameController extends TextWebSocketHandler {
     @Scheduled(fixedRate = 1000)
     public void triggerGameTimeout() {
         gameService.getGames().values().stream().filter(g -> g.getRemainingTime() <= 0).forEach(g -> gameService.triggerGameTimeout(g));
+        LOG.debug("XXX Games: {}, Clients: {}", gameService.getGames().size(), clients.size());
     }
 
     public void trigger(List<GamePlayerView> views) {

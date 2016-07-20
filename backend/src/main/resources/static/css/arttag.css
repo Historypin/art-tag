@@ -6,18 +6,17 @@
 .join-page, .score-page, .create-page {
     background-size:cover;
     background-image: url(../img/stock-16x9-186903581.jpg);
-/*     background: url('../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg') no-repeat; */
+    /*     background: url('../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg') no-repeat; */
 }
 
 #joinGameScreenUpperHalf
 {
-    height: 15vh;
+    height:15vh;
     text-align: center;
 }
 
 #joinGameScreenUpperHalf .btn{
     padding-top: 4vh;
-    height:25vh;
 }
 
 #joinGameScreenLowerHalf
@@ -105,14 +104,65 @@
 .container-fluid {
     height: 100vh;
     overflow:hidden;
-    background: rgba(100, 100, 60, 0.3);
+    /* background: rgba(100, 100, 60, 0.3); */
 }
 
 .navigation
 {
-    height: 50vh;
-        background: rgba(30, 30, 30, 0.5)
+    padding: 10px;
+    height: 60vh;
+    background: rgba(30, 30, 30, 0.5)
+
 }
+
+.navigation .btn
+{
+    font-size: 30px;
+    padding: 25px;
+    height: 15vh;
+    text-align: center;
+    width: 100%;
+    border:none;
+    color:white;
+    background: rgba(0, 0, 0, 0)
+
+}
+
+.font-black
+{
+    color: black;
+}
+
+.btn-danger, .btn-default, .btn-info, .btn-primary, .btn-success, .btn-warning
+{
+    text-shadow: 0 0px 0 rgba(0,0,0,.0);
+    -webkit-box-shadow: inset 0 0px 0 rgba(255,255,255,.0),0 0px 0px rgba(0,0,0,.0);
+    box-shadow: inset 0 0px 0 rgba(255,255,255,.0),0 0px 0px rgba(0,0,0,.0);
+}
+
+select.input-sm
+{
+    height:20px;
+}
+
+.input-sm
+{
+    height:20px;
+}
+
+.form-control
+{
+    height: 25px;
+    background-color: #d9d9d9;
+    color: #000000;
+    margin: 6px;
+
+}
+
+.navigation .btn:hover
+{
+    background: rgba(0, 0, 0, 0.5)
+
 }
 
 .transparent
@@ -195,9 +245,9 @@
 
 .modal-content
 {
-    -webkit-border-radius: 10px !important;
-    -moz-border-radius: 10px !important;
-    border-radius: 10px !important;
+    -webkit-border-radius: 0px !important;
+    -moz-border-radius: 0px !important;
+    border-radius: 0px !important;
 }
 
 body
@@ -233,7 +283,11 @@ h1 small
     text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 }
 
+thead
+{
+    background-color: #404040;
 
+}
 
 .playfair-font
 {
@@ -262,5 +316,21 @@ h1 small
 {
     box-shadow: 2px 3px 14px #000;
 }
+
+#scoreTable tbody tr:hover
+{
+    background-color: #595959;
+}
+
+#gamesTable tbody tr:hover
+{
+    background-color: #595959;
+}
+
+.gamejoinlink
+{
+    color: white;
+}
+
 .lightslategray-background {background-color:lightslategray;display: table;}
 .orange-background {background-color:orange;}

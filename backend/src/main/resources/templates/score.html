@@ -25,9 +25,17 @@
 </head>
 <body class="score-page">
 <div class="container-fluid">
-    <div id='joinGameScreenUpperHalf' class='row'>
+    <div id='joinGameScreenUpperHalf' class='row-fluid vertical-align'>
+        <!--<div class='col-sm-2'>-->
+        <!--&lt;!&ndash;<a href="#" class="btn"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></a>&ndash;&gt;-->
+        <!--<img th:src="@{/img/eu_food_color.svg}" style="padding: 10px 10px 10px 10px; max-width:200px; max-height:75%;-->
+        <!--"/>-->
+        <!--</div>-->
         <div class='col-sm-2'>
-            <a href="#" class="btn"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></a>
+            <div class="col-sm-offset-2 ">
+                <img th:src="@{/img/eu_food_color.svg}" style="padding: 0px 0px 0px 0px; max-width:200px; max-height:75%;
+"/>
+            </div>
         </div>
         <div class='col-sm-8'>
             <div class='centeredText'>
@@ -38,7 +46,7 @@
             </div>
         </div>
         <div class='col-sm-2'>
-            <a href="#" class="btn"><i class="fa fa-search fa-2x" aria-hidden="true"></i></a>
+            <a href="#" class="btn"><i class="fa fa-user font-black fa-2x" aria-hidden="true"></i></a>
         </div>
     </div>
 
@@ -47,7 +55,7 @@
             <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
 
             <div class="navigation col-sm-9">
-                <table id="scoreTable" class="table table-bordered" cellspacing="0" width="100%">
+                <table id="scoreTable" class="table" cellspacing="0" width="100%">
                     <thead>
                     <tr>
                         <th>Name</th>

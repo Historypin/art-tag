@@ -15,6 +15,10 @@
 
     <name>backend</name>
     <description>Backend part of Tagapp.</description>
+
+    <properties>
+        <logback.version>1.1.7</logback.version>
+    </properties>
 	
     <dependencies>
         <!-- Spring dependencies -->

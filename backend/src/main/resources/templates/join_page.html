@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Index page</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"/>
 
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Playfair+Display" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Playfair+Display"/>
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
@@ -22,14 +22,16 @@
     <link href="../static/css/datatables.min.css" th:href="@{/css/datatables.min.css}" rel="stylesheet"/>
 
     <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
+    <link href="../static/css/tabs.css" th:href="@{/css/tabs.css}" rel="stylesheet"/>
+
 </head>
 <body class="join-page">
 <div class="container-fluid">
     <div id='joinGameScreenUpperHalf' class='row-fluid vertical-align'>
         <!--<div class='col-sm-2'>-->
-            <!--&lt;!&ndash;<a href="#" class="btn"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></a>&ndash;&gt;-->
-            <!--<img th:src="@{/img/eu_food_color.svg}" style="padding: 10px 10px 10px 10px; max-width:200px; max-height:75%;-->
-<!--"/>-->
+        <!--&lt;!&ndash;<a href="#" class="btn"><i class="fa fa-bars fa-2x" aria-hidden="true"></i></a>&ndash;&gt;-->
+        <!--<img th:src="@{/img/eu_food_color.svg}" style="padding: 10px 10px 10px 10px; max-width:200px; max-height:75%;-->
+        <!--"/>-->
         <!--</div>-->
         <div class='col-sm-2'>
             <div class="col-sm-offset-2 ">
@@ -51,10 +53,19 @@
     </div>
 
     <div class="row">
-        <div class="playfair-font col-sm-offset-2 col-sm-8">
-            <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
+        <div class="col-sm-2">
+            <!-- Placeholder -->
+        </div>
+        <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
+        <div class="col-sm-2">
+            <!-- Placeholder -->
+        </div>
 
-            <div class="navigation col-sm-9">
+        <div class="playfair-font col-sm-12">
+            <div class="col-sm-2">
+
+            </div>
+            <div class="navigation  col-sm-8">
                 <table id="gamesTable" class="table" cellspacing="0" width="100%">
                     <thead>
                     <tr>
@@ -64,6 +75,9 @@
                     </tr>
                     </thead>
                 </table>
+            </div>
+            <div class="col-sm-2">
+
             </div>
         </div>
     </div>
@@ -80,14 +94,14 @@
     var table; // datatable
     var joinGameUrl = /*[[@{/join_game}]]*/
 
-    function remapDatatables(data) {
-        for (var i = 0; i < data.columns.length; i++) {
-            column = data.columns[i];
-            column.searchRegex = column.search.regex;
-            column.searchValue = column.search.value;
-            delete(column.search);
-        }
-    };
+        function remapDatatables(data) {
+            for (var i = 0; i < data.columns.length; i++) {
+                column = data.columns[i];
+                column.searchRegex = column.search.regex;
+                column.searchValue = column.search.value;
+                delete(column.search);
+            }
+        };
 
     $(document).ready(function () {
         table = $("#gamesTable").DataTable({
@@ -108,9 +122,9 @@
                 {
                     'data': 'link',
                     'orderable': false,
-                    'render': function ( data, type, row, meta ) {
+                    'render': function (data, type, row, meta) {
                         var output = "";
-                        if((row != null || row != undefined)) {
+                        if ((row != null || row != undefined)) {
                             // join button
                             //row.addClass("clickable-row");
                             output = output.concat(`<a class="gamejoinlink" href="${joinGameUrl}/${row.gameId}"><i class="fa fa-play" aria-hidden="true" /></a>`);

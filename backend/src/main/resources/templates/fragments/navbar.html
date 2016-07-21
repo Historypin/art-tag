@@ -25,12 +25,22 @@
 <body>
 
 <!-- Navbar -->
-<div class="" th:fragment="navbar">
-    <div class="navigation col-sm-3" style="">
-        <a class="btn btn-default" th:href="@{/create_game}" style="align-items: center; width: 100%;">Create Game</a><br />
-        <a class="btn btn-default" th:href="@{/join_page}" style="align-items: center; width: 100%;">Join Game</a><br />
-        <a class="btn btn-default" th:href="@{/score}" style="align-items: center; width: 100%;">Score</a><br />
+<div class="col-sm-8" th:fragment="navbar">
+
+    <div class="tabs tabs-style-linetriangle">
+        <nav>
+            <ul>
+                <li class=""><a href="/create_game" th:href="@{/create_game}"><span>Create Game</span></a></li>
+                <li class="tab-current"><a href="/join_page" th:href="@{/join_page}"><span>Join Game</span></a></li>
+                <li class=""><a href="/score" th:href="@{/score}"><span>Score</span></a></li>
+            </ul>
+        </nav>
     </div>
+    <!--<div class="navigation col-sm-3" style="">-->
+        <!--<a class="btn btn-default" th:href="@{/create_game}" style="align-items: center; width: 100%;">Create Game</a><br />-->
+        <!--<a class="btn btn-default" th:href="@{/join_page}" style="align-items: center; width: 100%;">Join Game</a><br />-->
+        <!--<a class="btn btn-default" th:href="@{/score}" style="align-items: center; width: 100%;">Score</a><br />-->
+    <!--</div>-->
 </div>
 </body>
 </html>

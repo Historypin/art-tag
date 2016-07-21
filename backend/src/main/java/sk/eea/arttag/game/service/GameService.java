@@ -142,7 +142,7 @@ public class GameService {
     //TODO:
     public void addPlayer(String userToken, String userId, String gameId) throws GameException {
         Game game = getGame(gameId);
-        LOG.debug("ADD_PLAYER");
+        LOG.debug("ADD_PLAYER, userId: {}, gameId: {}", userId, gameId);
         Player player = new Player(userToken, userId, userId);
         stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken, player);
     }
@@ -153,6 +153,7 @@ public class GameService {
             //			Player player = game.getPlayers().get(token);
             Player player = game.findPlayerByUserToken(userToken);
             if (player != null) {
+                LOG.debug("REMOVE_PLAYER, setInactive: {}", player.getUserId());
                 player.setInactive(true);
                 stateMachine.triggerEvent(game, GameEvent.PLAYER_DISCONNECTED, null, userToken, player);
             }

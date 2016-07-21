@@ -111,9 +111,9 @@ public class ScoreController {
                 ScoreRow s = new ScoreRow();
                 s.setUserId(r.getLogin());
                 s.setUserName(r.getNickName());
-                s.setGamesPlayed(r.getPersonalScore() == null ? 0L : r.getPersonalScore().getGamesPlayed());
-                s.setGamesWon(r.getPersonalScore() == null ? 0L : r.getPersonalScore().getGamesWon());
-                s.setTotalScore(r.getPersonalScore() == null ? 0 : r.getPersonalScore().getTotalScore());
+                s.setGamesPlayed(r.getPersonalScore() == null ? null : r.getPersonalScore().getGamesPlayed());
+                s.setGamesWon(r.getPersonalScore() == null ? null : r.getPersonalScore().getGamesWon());
+                s.setTotalScore(r.getPersonalScore() == null ? null : r.getPersonalScore().getTotalScore());
                 return s;
             }
         }).collect(Collectors.toList());

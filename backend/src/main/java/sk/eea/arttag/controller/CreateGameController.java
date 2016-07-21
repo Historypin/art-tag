@@ -42,7 +42,7 @@ public class CreateGameController {
 
         Game game;
         try {
-            game = gameService.create(createGameForm.getName(), principal.getName(), createGameForm.isPrivateGame());
+            game = gameService.create(createGameForm.getName(), principal.getName(), createGameForm.isPrivateGame(), true);
         } catch (GameException e) {
             bindingResult.addError(new FieldError("createGameForm", "name", "Game with this name already exists. Please choose different."));
             return "create_game";

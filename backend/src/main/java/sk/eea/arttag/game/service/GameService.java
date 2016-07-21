@@ -69,6 +69,9 @@ public class GameService {
             try {
                 LOG.debug("Creating default game");
                 this.create("lalahopapluha", "admin");
+                for (int i = 0; i < 100; i++) {
+                    create("game"+i, "admin", false, false);
+                }
             } catch (GameException e) {
                 LOG.error("Error at default game creation", e);
             }
@@ -96,10 +99,10 @@ public class GameService {
     }
 
     public Game create(String name, String creatorUserId) throws GameException {
-        return this.create(name, creatorUserId, false);
+        return this.create(name, creatorUserId, false, true);
     }
 
-    public Game create(String name, String creatorUserId, boolean privateGame) throws GameException {
+    public Game create(String name, String creatorUserId, boolean privateGame, boolean uuidGeneratedGameId) throws GameException {
         final GameTimeout gameTimeout = new GameTimeout(gameProperties.getTimeoutGameCreated(), gameProperties.getTimeoutRoundStarted(),
                 gameProperties.getTimeoutTopicSelected(), gameProperties.getTimeoutOwnCardsSelected(), gameProperties.getTimeoutRoundFinished());
 
@@ -111,11 +114,16 @@ public class GameService {
         }
 
         // probability of UUID collision seems implausible, so lets hope for the best
-        final UUID uuid = UUID.randomUUID();
+        String gameId = null;
+        if (uuidGeneratedGameId) {
+            gameId = UUID.randomUUID().toString();
+        } else {
+            gameId = name;
+        }
 
-        Game game = new Game(uuid.toString(), name, gameProperties.getMinimumGamePlayers(), gameProperties.getMaximumGamePlayers(), privateGame, creatorUserId,
+        Game game = new Game(gameId, name, gameProperties.getMinimumGamePlayers(), gameProperties.getMaximumGamePlayers(), privateGame, creatorUserId,
                 gameTimeout);
-        GAMES.put(uuid.toString(), game);
+        GAMES.put(gameId, game);
 
         stateMachine.triggerEvent(game, GameEvent.GAME_CREATED, null, null, null);
 

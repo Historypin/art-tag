@@ -21,19 +21,19 @@ public class ScoreRow {
         this.userName = userName;
     }
     public Long getGamesPlayed() {
-        return gamesPlayed;
+        return gamesPlayed == null ? 0L : gamesPlayed;
     }
     public void setGamesPlayed(Long gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
     }
     public Long getGamesWon() {
-        return gamesWon;
+        return gamesWon == null ? 0L : gamesWon;
     }
     public void setGamesWon(Long gamesWon) {
         this.gamesWon = gamesWon;
     }
     public Long getTotalScore() {
-        return totalScore;
+        return totalScore == null ? 0L : totalScore;
     }
     public void setTotalScore(Long totalScore) {
         this.totalScore = totalScore;

@@ -140,7 +140,9 @@ public class WebSocketGameController extends TextWebSocketHandler {
             final WebSocketSession webSocketSession = clients.get(view.getUserToken());
             if (webSocketSession != null) {
                 LOG.debug("Sending message to client.");
-                webSocketSession.sendMessage(message);
+                synchronized (webSocketSession) {
+                    webSocketSession.sendMessage(message);
+                }
             } else {
                 LOG.debug("No session.");
             }

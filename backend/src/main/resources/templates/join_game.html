@@ -234,7 +234,7 @@
             <span class="o-square ">
                 <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "
                      class="o-square__img c-img-frame__img "/>
-                <div class="carousel-caption" data-bind="if: playerSelections().length > 0">
+                <div class="carousel-caption ignore-pointer-events" data-bind="if: playerSelections().length > 0">
                     <ul data-bind="foreach: playerSelections">
                         <li data-bind="text: $data"></li>
                     </ul>

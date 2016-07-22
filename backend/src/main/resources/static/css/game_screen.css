@@ -64,6 +64,10 @@ figure figcaption {
     text-align: center;
 }
 
+.ignore-pointer-events {
+	pointer-events:none;
+}
+
 
 
 

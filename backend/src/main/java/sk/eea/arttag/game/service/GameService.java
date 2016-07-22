@@ -31,6 +31,8 @@ import sk.eea.arttag.game.model.Player;
 import sk.eea.arttag.game.model.RoundSummary;
 import sk.eea.arttag.game.model.UserInput;
 import sk.eea.arttag.game.model.UserInputType;
+import sk.eea.arttag.model.User;
+import sk.eea.arttag.repository.UserRepository;
 
 @Component
 public class GameService {
@@ -58,6 +60,9 @@ public class GameService {
 
     @Autowired
     private Environment environment;
+    
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private WebSocketGameController webSocketController;
@@ -142,8 +147,9 @@ public class GameService {
     //TODO:
     public void addPlayer(String userToken, String userId, String gameId) throws GameException {
         Game game = getGame(gameId);
+        User user = userRepository.findOne(userId);
         LOG.debug("ADD_PLAYER, userId: {}, gameId: {}", userId, gameId);
-        Player player = new Player(userToken, userId, userId);
+        Player player = new Player(userToken, user.getNickName(), userId);
         stateMachine.triggerEvent(game, GameEvent.PLAYER_JOINED, null, userToken, player);
     }
 

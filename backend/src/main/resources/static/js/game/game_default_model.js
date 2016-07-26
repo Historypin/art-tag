@@ -17,6 +17,8 @@ var defaultModel = {
         "status": "",
         "tags": "",
         "remainingTime": 0,
+        "startGameEnabled": false,
+        "creatorUserId": "",
         "players": [{
             "token": "",
             "userId": "",
@@ -53,6 +55,7 @@ var defaultModel = {
     "selectedCard": {
         "token": "",
         "source": "",
+        "cardSelectedBy": "",
         "metadata": {
             "author": "",
             "externalUrl": "",

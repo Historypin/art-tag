@@ -20,6 +20,8 @@ public class GameView {
 	private int remainingTime;
 	private List<Player> players = new LinkedList<>();
 	private List<Card> table = new ArrayList<>();
+	private boolean startGameEnabled = false;
+	private String creatorUserId;
 
 	public GameView() {
 	}
@@ -95,7 +97,23 @@ public class GameView {
 		this.table = table;
 	}
 
-	@Override
+	public boolean isStartGameEnabled() {
+        return startGameEnabled;
+    }
+
+    public void setStartGameEnabled(boolean startGameEnabled) {
+        this.startGameEnabled = startGameEnabled;
+    }
+
+    public String getCreatorUserId() {
+        return creatorUserId;
+    }
+
+    public void setCreatorUserId(String creatorUserId) {
+        this.creatorUserId = creatorUserId;
+    }
+
+    @Override
 	public String toString() {
 		return "GameView [id=" + id + ", name=" + name + ", created=" + created + ", status=" + status + ", endOfRound="
 				+ endOfRound + ", tags=" + tags + ", remainingTime=" + remainingTime + ", players=" + players

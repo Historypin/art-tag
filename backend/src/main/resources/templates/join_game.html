@@ -120,7 +120,7 @@
                                             </div>
                                         </div>
                                         <!-- TABLE CARD SELECTION -->
-                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED' &amp;&amp; !$root.tableCardAlreadySelected()">
+                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED' &amp;&amp; !$root.tableCardAlreadySelected() &amp;&amp; thisUserId != selectedCard.cardSelectedBy()">
                                             <label class="col-sm-2 control-label"></label>
                                             <div class="col-sm-10">
                                                 <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
@@ -145,6 +145,9 @@
                         </table>
                         <div data-bind="if: gameView.status() === 'ROUND_FINISHED'">
                             <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round</button>
+                        </div>
+                        <div data-bind="if: gameView.startGameEnabled() &amp;&amp; thisUserId === gameView.creatorUserId()">
+                            <button class="btn btn-default" data-bind="click: sendStartGame">Start game now</button>
                         </div>
                     </div>
                 </div>
@@ -217,6 +220,17 @@
             <i class="fa fa-check" data-bind="if: readyForNextRound" aria-hidden="true" data-toggle="tooltip" data-placement="right"
                title="User is ready for next round"></i>
             <!-- /ko -->
+
+            <!-- ko if: $root.gameView.status() === 'ROUND_TOPIC_SELECTED' && ownCardSelected -->
+            <i class="fa fa-check" data-bind="if: ownCardSelected" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+               title="Done"></i>
+            <!-- /ko -->
+
+            <!-- ko if: $root.gameView.status() === 'ROUND_OWN_CARDS_SELECTED' && tableCardSelected -->
+            <i class="fa fa-check" data-bind="if: tableCardSelected" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+               title="Done"></i>
+            <!-- /ko -->
+            
             <!-- ko if: inactive -->
             <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right"
                title="User is inactive"></i>
@@ -251,6 +265,7 @@
 </script>
 
 <script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/
 function formatTimer(seconds) {
     var minutes = seconds / 60.0;
     var divisor = minutes % 1;
@@ -263,6 +278,9 @@ function startCountdown(seconds, oldCountdownTimerHandle) {
     timeout.setSeconds(timeout.getSeconds() + seconds);
     var handle = setInterval(function () {
         var diff = (timeout.getTime() - new Date().getTime()) / 1000;
+        if (diff < 0) {
+            diff = 0;
+        }
         var fmt = formatTimer(diff);
         console.log(fmt);
         var formattedRemainingTime = document.getElementById('formattedRemainingTime');
@@ -275,7 +293,8 @@ function stopCountdown(oldCountdownTimerHandle) {
     clearInterval(oldCountdownTimerHandle);
     var formattedRemainingTime = document.getElementById('formattedRemainingTime');
     formattedRemainingTime.innerHTML = '';
-} 
+}
+/*]]>*/
 </script>
 
 <script type="text/javascript" th:inline="javascript">
@@ -363,6 +382,8 @@ function stopCountdown(oldCountdownTimerHandle) {
         };
 
         self.thumbnailSelected = function (card) {
+            console.log("thisUserId: " + thisUserId);
+            console.log("self.selectedCard.cardSelectedBy: " + self.selectedCard.cardSelectedBy);
             ko.mapping.fromJS(card, {}, self.selectedCard);
         };
 
@@ -430,6 +451,15 @@ function stopCountdown(oldCountdownTimerHandle) {
             webSocket.send(JSON.stringify(message));
         };
 
+        self.sendStartGame = function () {
+            var message = {
+                value: 'OK',
+                type: 'GAME_STARTED',
+                gameId: ko.utils.unwrapObservable(self.gameView.id())
+            };
+            webSocket.send(JSON.stringify(message));
+        };
+
         self.selectHandCard = function () {
             var message = {
                 value: ko.utils.unwrapObservable(self.selectedCard.token()),
@@ -489,6 +519,7 @@ function stopCountdown(oldCountdownTimerHandle) {
     // websocket on message handler
     webSocket.onmessage = function (event) {
         var data = JSON.parse(event.data);
+        console.log(data);
         // chat message
         if (typeof data.type !== 'undefined') {
             var date = new Date();

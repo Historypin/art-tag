@@ -195,7 +195,8 @@ public class BrowserTest {
                 element.submit();
 
                 //driver.get("http://localhost:8080/join_game/1");
-                final WebElement joinelement = driver.findElement(By.linkText("click to join game"));
+                Thread.sleep(2000);
+                final WebElement joinelement = driver.findElement(By.cssSelector("a[href*=/join_game/game0]"));
 
                 Thread.sleep(1000);
                 joinelement.click();

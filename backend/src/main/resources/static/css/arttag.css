@@ -5,8 +5,8 @@
 
 .join-page, .score-page, .create-page {
     background-size:cover;
-    /* background-image: url(../img/stock-16x9-186903581.jpg); */
-    /*     background: url('../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg') no-repeat; */
+    background-image: url(../img/stock-16x9-186903581.jpg);
+    /* background: url('../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg') no-repeat; */
 }
 
 #joinGameScreenUpperHalf

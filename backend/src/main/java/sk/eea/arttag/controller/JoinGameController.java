@@ -1,7 +1,6 @@
 package sk.eea.arttag.controller;
 
 import java.security.Principal;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import sk.eea.arttag.game.model.GameException;
-import sk.eea.arttag.game.model.GameException.GameExceptionType;
+import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.service.GameService;
 
 @Controller
@@ -34,8 +32,9 @@ public class JoinGameController {
                 throw new GameException(GameExceptionType.GAME_NOT_FOUND);
             }
             String gameId = gameIdOptional.get();*/
-            gameService.getGame(gameId);
+            Game game = gameService.getGame(gameId);
             model.addAttribute("gameId", gameId);
+            model.addAttribute("gameName", game.getName());
             model.addAttribute("userId", principal.getName());
             return "join_game";
 

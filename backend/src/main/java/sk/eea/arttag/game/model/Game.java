@@ -121,14 +121,14 @@ public class Game {
         if (GameStatus.ROUND_OWN_CARDS_SELECTED == getStatus()) {
             return table.stream().map(c -> new Card(c, userId)).collect(Collectors.toList());
         } else if (GameStatus.ROUND_FINISHED == getStatus()) {
-            return getTable();
+            return table;
         }
         return new ArrayList<>();
     }
 
     public void generateTable() {
         LOG.debug("Generate table for game {}, status {}", id, status);
-        List<Card> table = new ArrayList<>();
+/*        List<Card> table = new ArrayList<>();
 //        List<Card> tablePublic = new ArrayList<>();
         if (GameStatus.ROUND_OWN_CARDS_SELECTED == getStatus()) {
             table = getPlayers().stream().filter(p -> p.getOwnCardSelection() != null).map(p -> p.getOwnCardSelection())
@@ -140,6 +140,10 @@ public class Game {
         }
         setTable(table);
 //        setTablePublic(tablePublic);
+*/
+        table = getPlayers().stream().filter(p -> p.getOwnCardSelection() != null).map(p -> p.getOwnCardSelection())
+                .collect(Collectors.toList());
+        Collections.shuffle(table);
     }
 
     public void setTable(List<Card> table) {

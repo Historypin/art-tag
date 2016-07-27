@@ -41,7 +41,7 @@ html {
 .o-list-unstyled {
     list-style: none;
     margin: 0;
-    padding: 0
+    /*padding: 0*/
 }
 
 .o-client__block {
@@ -91,7 +91,7 @@ html {
     display: block;
     padding-top: 80%;
     width: 80%;
-    background: #aaaadd;
+    /*background: #aaaadd;*/
     position: relative
 }
 
@@ -207,4 +207,10 @@ html {
 .c-cards__list-link:focus,
 .c-cards__list-link:hover {
     text-decoration: none
+}
+
+
+.game-table
+{
+    background: rgba(255, 255, 255, 0.5);
 }

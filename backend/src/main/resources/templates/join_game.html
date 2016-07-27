@@ -230,7 +230,7 @@
             <i class="fa fa-check" data-bind="if: tableCardSelected" aria-hidden="true" data-toggle="tooltip" data-placement="right"
                title="Done"></i>
             <!-- /ko -->
-            
+
             <!-- ko if: inactive -->
             <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right"
                title="User is inactive"></i>
@@ -253,14 +253,15 @@
                         <li data-bind="text: $data"></li>
                     </ul>
                 </div>
-                <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
-                    <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
-                <!-- /ko -->
-                <!-- ko if: cardSelectedBy() != null && dealersCard() -->
-                    <figcaption>Riddler's card.</figcaption>
-                <!-- /ko -->
+
             </span>
         </a>
+        <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
+        <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
+        <!-- /ko -->
+        <!-- ko if: cardSelectedBy() != null && dealersCard() -->
+        <figcaption>Riddler's card.</figcaption>
+        <!-- /ko -->
     </li>
 </script>
 

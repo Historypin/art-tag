@@ -35,4 +35,5 @@ public interface CulturalObjectRepository extends JpaRepository<CulturalObject, 
     List<CulturalObject> findByBatchId(Long batchId);
 
     CulturalObject findTopByOrderByLastSelectedAsc();
+    CulturalObject findTopByIdNotInOrderByLastSelectedAsc(List<Long> ids);
 }

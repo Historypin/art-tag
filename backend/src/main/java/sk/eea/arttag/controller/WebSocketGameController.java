@@ -70,30 +70,37 @@ public class WebSocketGameController extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        synchronized (clients) {
-            final String payload = message.getPayload();
-            LOG.debug("Input received from client: {}, input: {}", session.getPrincipal().getName(), payload);
-            final UserInput userInput = objectMapper.readValue(message.getPayload(), UserInput.class);
-            switch (userInput.getType()) {
-                case CHAT_MESSAGE:
-                    // Iterate over the connected sessions
-                    // and broadcast the received message
-                    for (WebSocketSession client : clients.values()) {
-                        if (!client.equals(session)) {
-                            userInput.setPlayerName(session.getPrincipal().getName());
-                            client.sendMessage(new TextMessage(objectMapper.writeValueAsString(userInput)));
+        try {
+            synchronized (clients) {
+                final String payload = message.getPayload();
+                LOG.debug("Input received from client: {}, input: {}", session.getPrincipal().getName(), payload);
+                final UserInput userInput = objectMapper.readValue(message.getPayload(), UserInput.class);
+                switch (userInput.getType()) {
+                    case CHAT_MESSAGE:
+                        // Iterate over the connected sessions
+                        // and broadcast the received message
+                        for (WebSocketSession client : clients.values()) {
+                            if (!client.equals(session)) {
+                                userInput.setPlayerName(session.getPrincipal().getName());
+                                client.sendMessage(new TextMessage(objectMapper.writeValueAsString(userInput)));
+                            }
                         }
-                    }
-                    break;
-                case TOPIC_SELECTED:
-                case OWN_CARD_SELECTED:
-                case TABLE_CARD_SELECTED:
-                case PLAYER_READY_FOR_NEXT_ROUND:
-                    gameService.userInput(session.getId(), userInput);
-                    break;
-                default:
-                    LOG.error("UserInput type '{}' is not implemented yet!", userInput.getType());
+                        break;
+                    case TOPIC_SELECTED:
+                    case OWN_CARD_SELECTED:
+                    case TABLE_CARD_SELECTED:
+                    case PLAYER_READY_FOR_NEXT_ROUND:
+                    case GAME_STARTED:
+                        gameService.userInput(session.getId(), userInput);
+                        break;
+                    default:
+                        LOG.error("UserInput type '{}' is not implemented yet!", userInput.getType());
+                }
             }
+            
+        } catch (Exception e) {
+            LOG.error("Invalid incoming message", e);
+            throw e;
         }
     }
 

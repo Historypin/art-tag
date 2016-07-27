@@ -23,13 +23,13 @@ public class Card {
         this.metadata = metadata;
     }
 
-    public Card(Card original) {
+    public Card(Card original, String userId) {
         this.token = original.getToken();
         this.culturalObjectId = original.getCulturalObjectId();
         this.source = original.getSource();
         this.metadata = original.getMetadata();
         this.playerSelections = new ArrayList<>();
-        this.cardSelectedBy = null;
+        this.cardSelectedBy = userId.equalsIgnoreCase(original.getCardSelectedBy()) ? userId : null;
         this.dealersCard = false;
     }
 

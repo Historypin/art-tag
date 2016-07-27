@@ -1,6 +1,7 @@
 package sk.eea.arttag.game.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -112,32 +113,42 @@ public class Game {
         return table;
     }
 
-    public List<Card> getTablePublic() {
+/*    public List<Card> getTablePublic() {
         return tablePublic;
+    }*/
+
+    public List<Card> getTablePublic(String userId) {
+        if (GameStatus.ROUND_OWN_CARDS_SELECTED == getStatus()) {
+            return table.stream().map(c -> new Card(c, userId)).collect(Collectors.toList());
+        } else if (GameStatus.ROUND_FINISHED == getStatus()) {
+            return getTable();
+        }
+        return new ArrayList<>();
     }
 
     public void generateTable() {
         LOG.debug("Generate table for game {}, status {}", id, status);
         List<Card> table = new ArrayList<>();
-        List<Card> tablePublic = new ArrayList<>();
+//        List<Card> tablePublic = new ArrayList<>();
         if (GameStatus.ROUND_OWN_CARDS_SELECTED == getStatus()) {
             table = getPlayers().stream().filter(p -> p.getOwnCardSelection() != null).map(p -> p.getOwnCardSelection())
                     .collect(Collectors.toList());
-            tablePublic = table.stream().map(c -> new Card(c)).collect(Collectors.toList());
+            Collections.shuffle(table);
+//            tablePublic = table.stream().map(c -> new Card(c)).collect(Collectors.toList());
         } else if (GameStatus.ROUND_FINISHED == getStatus()) {
-            tablePublic = getTable();
+//            tablePublic = getTable();
         }
         setTable(table);
-        setTablePublic(tablePublic);
+//        setTablePublic(tablePublic);
     }
 
     public void setTable(List<Card> table) {
         this.table = table;
     }
 
-    public void setTablePublic(List<Card> tablePublic) {
+/*    public void setTablePublic(List<Card> tablePublic) {
         this.tablePublic = tablePublic;
-    }
+    }*/
 
     public int getMinPlayers() {
         return minPlayers;
@@ -186,20 +197,22 @@ public class Game {
 
     public List<GamePlayerView> createGameViews() {
 
-        GameView view = new GameView();
-        view.setRemainingTime(getRemainingTime());
-        view.setTags(getTags());
-        view.setCreated(getCreated());
-        view.setEndOfRound(getEndOfRound());
-        view.setId(getId());
-        view.setName(getName());
-        view.setPlayers(getPlayers());
-        view.setStatus(getStatus());
-        view.setTable(getTablePublic());
-
         List<GamePlayerView> gamePlayerViews = new ArrayList<>();
-        //		for (Player player : players.values()) {
         for (Player player : players) {
+
+            GameView view = new GameView();
+            view.setRemainingTime(getRemainingTime());
+            view.setTags(getTags());
+            view.setCreated(getCreated());
+            view.setEndOfRound(getEndOfRound());
+            view.setId(getId());
+            view.setName(getName());
+            view.setPlayers(getPlayers());
+            view.setStatus(getStatus());
+            view.setStartGameEnabled(GameStatus.CREATED == getStatus() && getMinPlayers() <= getNumberOfActivePlayers());
+            view.setCreatorUserId(getCreatorUserId());
+            view.setTable(getTablePublic(player.getUserId()));
+
             GamePlayerView gamePlayerView = new GamePlayerView();
             gamePlayerView.setGameView(view);
             gamePlayerView.setUserToken(player.getToken());

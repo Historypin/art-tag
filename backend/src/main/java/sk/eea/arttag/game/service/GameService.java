@@ -167,6 +167,7 @@ public class GameService {
     }
 
     public void userInput(String userToken, UserInput input) throws GameException {
+        LOG.debug("UserInput, user: {}, input: {}", userToken, input);
         String gameId = input.getGameId();
         if (gameId == null || input == null || input.getType() == null || input.getValue() == null) {
             //ignore
@@ -195,6 +196,8 @@ public class GameService {
                         : (UserInputType.TABLE_CARD_SELECTED == input.getType() ? GameEvent.PLAYER_TABLE_CARD_SELECTED
                                 : (UserInputType.PLAYER_READY_FOR_NEXT_ROUND == input.getType() ? GameEvent.PLAYER_READY_FOR_NEXT_ROUND
                                         : (UserInputType.GAME_STARTED == input.getType() ? GameEvent.ROUND_STARTED : null))));
+
+        LOG.debug("Triggering processing of user input");
         stateMachine.triggerEvent(game, gameEvent, input, userToken, null);
         //		updateGameAfterUserInput(game, input, userToken);
     }
@@ -215,9 +218,11 @@ public class GameService {
         cardService.updatePlayersAfterRoundFinished(summary.getPlayerSummary());
     }
 
-    public List<Card> getInitialDeck(int numberOfCards) {
+    public List<Card> getInitialDeck(int numberOfCards, Game game) {
         LOG.debug("INITIAL_DECK");
-        return cardService.getCards(numberOfCards, "en");
+        //try to fetch cards, avoid the cards already contained in players hands
+        List<Long> culturalObjectIds = game.getPlayers().stream().flatMap(p -> p.getHand().stream()).map(c -> c.getCulturalObjectId()).collect(Collectors.toList());
+        return cardService.getCards(numberOfCards, "en", culturalObjectIds);
     }
 
     public Map<String, Game> getGames() {

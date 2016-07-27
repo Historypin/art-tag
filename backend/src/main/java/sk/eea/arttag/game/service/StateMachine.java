@@ -23,8 +23,10 @@ public class StateMachine {
     private GameProperties gameProperties;
 
     public void triggerEvent(Game game, GameEvent event, UserInput userInput, String userToken, Player player) throws GameException {
+        LOG.debug("Trigger game event");
 
         if (game == null) {
+            LOG.info("Game null");
             return;
         }
         //verify validity of userInput (if not null)
@@ -45,14 +47,7 @@ public class StateMachine {
 
                 } else */if (GameEvent.ROUND_STARTED == event) {
                     // PLAYER STARTED A GAME (user input)
-                    // verify event sender is game creator
-                    Player p = game.findPlayerByUserId(userInput.getPlayerName());
-                    if (p != null && game.getCreatorUserId().equalsIgnoreCase(userInput.getPlayerName())) {
-                        // try to start a game
-                        if (game.getMinPlayers() <= game.getNumberOfActivePlayers()) {
-                            startGame(game);
-                        }
-                    }
+                    processUserInput(game, userInput, userToken);
 
                 } else if (GameEvent.TIMEOUT == event) {
                     // start the game?
@@ -173,6 +168,7 @@ public class StateMachine {
         } else if (GameEvent.PLAYER_JOINED == event) {
         }
 
+        LOG.debug("All set, notify game updated");
         gameService.gameUpdated(game);
     }
 
@@ -186,7 +182,7 @@ public class StateMachine {
         }
 
         if (isNewGame) {
-            game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize()));
+            game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize(), game));
         }
 
         game.resetRound();
@@ -234,6 +230,7 @@ public class StateMachine {
     }
 
     private void startGame(Game game) throws GameException {
+        LOG.debug("Trying to start the game");
 /*        // evaluate number of players in game, possibly we can start the game
         if (game.getMinPlayers() <= game.getPlayers().size()) {
             //			dealCards(game, GameService.HAND_SIZE);
@@ -325,9 +322,18 @@ public class StateMachine {
         LOG.debug("DEAL_CARDS");
         for (Player player : game.getPlayers()) {
             for (int i = player.getHand().size(); i < numberOfCards; i++) {
-                Card card = game.getDeck().remove(0);
-                player.getHand().add(card);
-                LOG.debug("Adding card {} to player {}", card, player.getUserId());
+                if (game.getDeck().isEmpty()) {
+                    LOG.debug("Deck empty, trying to refill");
+                    //fill deck
+                    game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize(), game));
+                }
+                if (!game.getDeck().isEmpty()) {
+                    Card card = game.getDeck().remove(0);
+                    player.getHand().add(card);
+                    LOG.debug("Adding card {} to player {}", card, player.getUserId());
+                } else {
+                    LOG.warn("Deck empty");
+                }
             }
         }
     }
@@ -336,7 +342,7 @@ public class StateMachine {
         return new Date(new Date().getTime() + (seconds * 1000));
     }
 
-    private void processUserInput(Game game, UserInput input, String userToken) {
+    private void processUserInput(Game game, UserInput input, String userToken) throws GameException {
 
         // check userToken in current game
         //		Player player = game.getPlayers().get(userToken);
@@ -424,6 +430,17 @@ public class StateMachine {
 
             case PLAYER_READY_FOR_NEXT_ROUND: {
                 player.setReadyForNextRound(true);
+                break;
+            }
+
+            case GAME_STARTED: {
+                // verify event sender is game creator
+                if (game.getCreatorUserId().equalsIgnoreCase(player.getUserId())) {
+                    // try to start a game
+                    if (game.getMinPlayers() <= game.getNumberOfActivePlayers()) {
+                        startGame(game);
+                    }
+                }
                 break;
             }
 

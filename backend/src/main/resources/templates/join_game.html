@@ -47,19 +47,19 @@
                 <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12">
                     <div class="o-fullscreen">
                         <div id="content" class="o-fullscreen o-wrap" role="main">
-                                <main class="o-client__body">
-                                    <div class="o-client__block">
-                                        <div class="o-wrap">
-                                            <header class="c-heading">
-                                                <legend align="right">Hand</legend>
-                                            </header>
-                                            <div class="c-cards js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
-                                                <ul class="o-list-unstyled c-cards__list "
-                                                    data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
-                                            </div>
+                            <main class="o-client__body">
+                                <div class="o-client__block">
+                                    <div class="o-wrap">
+                                        <header class="c-heading">
+                                            <legend align="right">Hand</legend>
+                                        </header>
+                                        <div class="c-cards js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                                            <ul class="o-list-unstyled c-cards__list "
+                                                data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
                                         </div>
                                     </div>
-                                </main>
+                                </div>
+                            </main>
                         </div>
                     </div>
                 </div>
@@ -239,14 +239,15 @@
                         <li data-bind="text: $data"></li>
                     </ul>
                 </div>
-                <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
-                    <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
-                <!-- /ko -->
-                <!-- ko if: cardSelectedBy() != null && dealersCard() -->
-                    <figcaption>Riddler's card.</figcaption>
-                <!-- /ko -->
+
             </span>
         </a>
+        <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
+        <figcaption>Selected by <span data-bind="text: cardSelectedBy"></span></figcaption>
+        <!-- /ko -->
+        <!-- ko if: cardSelectedBy() != null && dealersCard() -->
+        <figcaption>Riddler's card.</figcaption>
+        <!-- /ko -->
     </li>
 </script>
 
@@ -275,7 +276,7 @@ function stopCountdown(oldCountdownTimerHandle) {
     clearInterval(oldCountdownTimerHandle);
     var formattedRemainingTime = document.getElementById('formattedRemainingTime');
     formattedRemainingTime.innerHTML = '';
-} 
+}
 </script>
 
 <script type="text/javascript" th:inline="javascript">

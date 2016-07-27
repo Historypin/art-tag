@@ -67,7 +67,7 @@ public class CardServiceTest {
     public void testGetNextCulturalObjectByStreamMethod() {
         Multimap<Long, CulturalObject> multimap = ArrayListMultimap.create();
         IntStream.range(0, NUMBER_OF_EXECUTIONS).parallel().forEach(i -> {{
-            CulturalObject co = cardService.getNextCulturalObject();
+            CulturalObject co = cardService.getNextCulturalObject(null);
             if (co != null) {
                 multimap.put(co.getId(), co);
             }
@@ -94,7 +94,7 @@ public class CardServiceTest {
             new Thread(() -> {
                 try {
                     startSignal.await();
-                    CulturalObject co = cardService.getNextCulturalObject();
+                    CulturalObject co = cardService.getNextCulturalObject(null);
                     if (co != null) {
                         multimap.put(co.getId(), co);
                     }

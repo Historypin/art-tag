@@ -48,11 +48,13 @@ public class CardService {
     public static final String CARD_DESCRIPTION_DEFAULT_LANGUAGE = "en";
     private static final Logger LOG = LoggerFactory.getLogger(CardService.class);
 
-    public List<Card> getCards(int numberOfCards, String language) {
+    public List<Card> getCards(int numberOfCards, String language, List<Long> culturalObjectIds) {
         List<Card> cards = new ArrayList<>();
         for (int i = 0; i < numberOfCards; i++) {
-            CulturalObject co = this.getNextCulturalObject();
-            if (co != null) {
+            CulturalObject co = this.getNextCulturalObject(culturalObjectIds);
+            if (co == null) {
+                break;
+            } else {
                 cards.add(culturalObject2Card(co, language));
             }
         }
@@ -137,8 +139,14 @@ public class CardService {
         });
     }
 
-    protected synchronized CulturalObject getNextCulturalObject() {
-        CulturalObject co = culturalObjectRepository.findTopByOrderByLastSelectedAsc();
+    protected synchronized CulturalObject getNextCulturalObject(List<Long> ids) {
+        //try to select a cultural object, avoid a collection of ids
+        CulturalObject co = null;
+        if (ids == null || ids.isEmpty()) {
+            co = culturalObjectRepository.findTopByOrderByLastSelectedAsc();
+        } else {
+            co = culturalObjectRepository.findTopByIdNotInOrderByLastSelectedAsc(ids);
+        }
         if (co != null) {
             co.setLastSelected(new Date());
             co.setNumberOfSelections(co.getNumberOfSelections() + 1);

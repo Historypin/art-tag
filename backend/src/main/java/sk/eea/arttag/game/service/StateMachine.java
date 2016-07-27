@@ -182,7 +182,7 @@ public class StateMachine {
         }
 
         if (isNewGame) {
-            game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize()));
+            game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize(), game));
         }
 
         game.resetRound();
@@ -322,9 +322,18 @@ public class StateMachine {
         LOG.debug("DEAL_CARDS");
         for (Player player : game.getPlayers()) {
             for (int i = player.getHand().size(); i < numberOfCards; i++) {
-                Card card = game.getDeck().remove(0);
-                player.getHand().add(card);
-                LOG.debug("Adding card {} to player {}", card, player.getUserId());
+                if (game.getDeck().isEmpty()) {
+                    LOG.debug("Deck empty, trying to refill");
+                    //fill deck
+                    game.setDeck(gameService.getInitialDeck(gameProperties.getInitialDeckSize(), game));
+                }
+                if (!game.getDeck().isEmpty()) {
+                    Card card = game.getDeck().remove(0);
+                    player.getHand().add(card);
+                    LOG.debug("Adding card {} to player {}", card, player.getUserId());
+                } else {
+                    LOG.warn("Deck empty");
+                }
             }
         }
     }

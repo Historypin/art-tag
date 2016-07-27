@@ -218,9 +218,11 @@ public class GameService {
         cardService.updatePlayersAfterRoundFinished(summary.getPlayerSummary());
     }
 
-    public List<Card> getInitialDeck(int numberOfCards) {
+    public List<Card> getInitialDeck(int numberOfCards, Game game) {
         LOG.debug("INITIAL_DECK");
-        return cardService.getCards(numberOfCards, "en");
+        //try to fetch cards, avoid the cards already contained in players hands
+        List<Long> culturalObjectIds = game.getPlayers().stream().flatMap(p -> p.getHand().stream()).map(c -> c.getCulturalObjectId()).collect(Collectors.toList());
+        return cardService.getCards(numberOfCards, "en", culturalObjectIds);
     }
 
     public Map<String, Game> getGames() {

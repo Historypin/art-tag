@@ -96,11 +96,13 @@ html {
 }
 
 .o-square__img {
-    margin: 0;
+    margin: 10px;
     width: 100%;
     position: absolute;
     top: 0;
-    left: 0;
+    padding: 5px;
+    background-color: rgba(11, 55, 99, 0.3);
+
 }
 
 .c-img-frame__img {
@@ -209,8 +211,13 @@ html {
     text-decoration: none
 }
 
-
-.game-table
+.gamescreen-halftransparent
 {
     background: rgba(255, 255, 255, 0.5);
+}
+
+.gamescreen-fullopaque
+{
+    background: rgba(175, 195, 175, 0.5);
+    padding: 5px;
 }

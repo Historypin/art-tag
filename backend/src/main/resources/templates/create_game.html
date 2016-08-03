@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Index page</title>
 
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"/>
 
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Playfair+Display" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Playfair+Display"/>
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
@@ -50,11 +50,21 @@
     </div>
 
     <div class="row">
-        <div class="playfair-font col-sm-offset-2 col-sm-8">
-            <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
+        <div class="col-sm-2">
+            <!-- Placeholder -->
+        </div>
+        <div th:replace="fragments/navbar :: navbar-creategame">&nbsp;</div>
+        <div class="col-sm-2">
+            <!-- Placeholder -->
+        </div>
 
-            <div class="navigation col-sm-9" style="display:table">
-                <form class="form-horizontal form-centered" action="#" th:action="@{/create_game}" th:object="${createGameForm}" method="post" accept-charset="UTF-8">
+        <div class="playfair-font col-sm-12">
+            <div class="col-sm-2">
+
+            </div>
+            <div class="navigation col-sm-8 form-centered">
+                <form class="form-horizontal " action="#" th:action="@{/create_game}" th:object="${createGameForm}"
+                      method="post" accept-charset="UTF-8">
                     <fieldset>
                         <!-- Name -->
                         <div class="form-group" th:classappend="${#fields.hasErrors('name')}? 'has-error'">
@@ -63,7 +73,7 @@
                                 <input id="name" name="name" th:field="*{name}"
                                        placeholder="" class="form-control"
                                        th:disabled="${createGameForm.joinGameLink} != null"
-                                       type="text" />
+                                       type="text"/>
                                 <span class="help-block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">name error</span>
                             </div>
                         </div>
@@ -74,13 +84,15 @@
                             <div class="col-md-4">
                                 <div class="radio">
                                     <label for="radios-0">
-                                        <input name="radios" th:field="*{privateGame}" id="radios-0" value="false" type="radio"/>
+                                        <input name="radios" th:field="*{privateGame}" id="radios-0" value="false"
+                                               type="radio"/>
                                         Public game
                                     </label>
                                 </div>
                                 <div class="radio">
                                     <label for="radios-1">
-                                        <input name="radios" th:field="*{privateGame}" id="radios-1" value="true" type="radio"/>
+                                        <input name="radios" th:field="*{privateGame}" id="radios-1" value="true"
+                                               type="radio"/>
                                         Private game
                                     </label>
                                 </div>
@@ -100,11 +112,13 @@
                             <label class="control-label col-md-4" for="joinGameLink">Join link</label>
                             <div class="col-md-4">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="joinGameLink" th:value="${createGameForm.joinGameLink}"/>
+                                    <input type="text" class="form-control" id="joinGameLink"
+                                           th:value="${createGameForm.joinGameLink}"/>
                                     <span class="input-group-btn">
-                                        <button class="btn btn-default btn-copy-clipboard" data-clipboard-target="#joinGameLink" type="button"><i
-                                                class="fa fa-clipboard" aria-hidden="true"></i></button>
-                                    </span>
+                                    <button class="btn btn-default btn-copy-clipboard"
+                                            data-clipboard-target="#joinGameLink" type="button"><i
+                                        class="fa fa-clipboard" aria-hidden="true"></i></button>
+                                </span>
                                 </div>
                             </div>
                         </div>
@@ -113,11 +127,15 @@
                         <div class="form-group" th:if="${createGameForm.joinGameLink} != null">
                             <label class="col-md-4 control-label" for="joinGameButton"></label>
                             <div class="col-md-4">
-                                <a id="joinGameButton" th:href="${createGameForm.joinGameLink}" class="btn btn-success">Join game</a>
+                                <a id="joinGameButton" th:href="${createGameForm.joinGameLink}" class="btn btn-success">Join
+                                    game</a>
                             </div>
                         </div>
                     </fieldset>
                 </form>
+            </div>
+            <div class="col-sm-2">
+
             </div>
         </div>
     </div>
@@ -144,8 +162,8 @@
 
         function setTooltip(btn, message) {
             $(btn).tooltip('hide')
-                    .attr('data-original-title', message)
-                    .tooltip('show');
+                .attr('data-original-title', message)
+                .tooltip('show');
         }
 
         function hideTooltip(btn) {

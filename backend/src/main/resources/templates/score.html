@@ -53,10 +53,19 @@
     </div>
 
     <div class="row">
-        <div class="playfair-font col-sm-offset-2 col-sm-8">
-            <div th:replace="fragments/navbar :: navbar">&nbsp;</div>
+        <div class="col-sm-2">
+            <!-- Placeholder -->
+        </div>
+        <div th:replace="fragments/navbar :: navbar-score">&nbsp;</div>
+        <div class="col-sm-2">
+            <!-- Placeholder -->
+        </div>
 
-            <div class="navigation col-sm-9">
+        <div class="playfair-font col-sm-12">
+            <div class="col-sm-2">
+
+            </div>
+            <div class="navigation  col-sm-8">
                 <table id="scoreTable" class="table" cellspacing="0" width="100%">
                     <thead>
                     <tr>
@@ -67,6 +76,9 @@
                     </tr>
                     </thead>
                 </table>
+            </div>
+            <div class="col-sm-2">
+
             </div>
         </div>
     </div>

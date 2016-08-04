@@ -5,66 +5,58 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title th:text="'Game: ' + ${gameName}"></title>
-
     <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'/>
-
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
-
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet"/>
-
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
           th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
-
-
     <link href="../static/css/normalize.css" th:href="@{/css/normalize.css}" rel="stylesheet"/>
-    <link href="../static/css/game_screen_sizablediv.css" th:href="@{/css/game_screen_sizablediv.css}" rel="stylesheet"/>
+    <link href="../static/css/game_screen_sizablediv.css" th:href="@{/css/game_screen_sizablediv.css}"
+          rel="stylesheet"/>
     <link href="../static/css/loader.css" th:href="@{/css/loader.css}" rel="stylesheet"/>
     <link href="../static/css/animate.css" th:href="@{/css/animate.css}" rel="stylesheet"/>
     <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
     <link href="../static/css/game_screen.css" th:href="@{/css/game_screen.css}" rel="stylesheet"/>
-
-
 </head>
 <body style="background-image: url(/img/stock-16x9-186903581.jpg);background-size: cover;">
 <div class="container-fluid" style="overflow: visible;">
     <div class="row no-float">
-
         <div id="gamescreen" class="col-md-8 col-lg-8">
             <div class="row">
                 <div class="col-md-6 text-left"><h3 data-bind="text: gameView.tags"></h3></div>
                 <div class="col-md-6 text-right"><h3 id="formattedRemainingTime"></h3></div>
             </div>
-
             <div class="row " data-bind="if: gameView.table().length > 0 ">
                 <div class="game-table col-md-12 col-lg-12">
                     <legend>Table</legend>
-                    <ul class="o-list-unstyled" data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></ul>
+                    <ul class="o-list-unstyled"
+                        data-bind="template: { name: 'card-thumbnail', foreach: gameView.table }"></ul>
                 </div>
             </div>
             <div class="row no-float" data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
                 <div class="hand col-md-12 col-lg-12 col-sm-12 col-xs-12">
                     <div class="o-fullscreen">
                         <div id="content" class="gamescreen-halftransparent o-fullscreen o-wrap" role="main">
-                                <main class="o-client__body">
-                                    <div class="o-client__block">
-                                        <div class="o-wrap">
-                                            <header class="c-heading">
-                                                <legend align="right">Hand</legend>
-                                            </header>
-                                            <div class="c-cards js-champion-list " data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
-                                                <ul class="o-list-unstyled c-cards__list "
-                                                    data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
-                                            </div>
+                            <main class="o-client__body">
+                                <div class="o-client__block">
+                                    <div class="o-wrap">
+                                        <header class="c-heading">
+                                            <legend align="right">Hand</legend>
+                                        </header>
+                                        <div class="c-cards js-champion-list "
+                                             data-bind="if: hand().length > 0 &amp;&amp; !(gameView.table().length > 0)">
+                                            <ul class="o-list-unstyled c-cards__list "
+                                                data-bind="template: { name: 'card-thumbnail', foreach: hand }"></ul>
                                         </div>
                                     </div>
-                                </main>
+                                </div>
+                            </main>
                         </div>
                     </div>
                 </div>
             </div>
-
             <!-- Modal window with image preview, and user inputs -->
             <div id="imageModal" class="modal fade" tabindex="-1" role="dialog">
                 <div class="modal-dialog">
@@ -74,7 +66,6 @@
                                 <div class="col-md-12 centeredimage">
                                     <img class="img-responsive" data-bind="attr: {'src': selectedCard.source}"/>
                                     <!--<img class="img-responsive" src="http://dummyimage.com/600x400/000/fff.png"/>-->
-
                                 </div>
                             </div>
                             <div class="row">
@@ -83,47 +74,59 @@
                                         <div class="form-group">
                                             <label class="col-sm-2 control-label">Author</label>
                                             <div class="col-sm-10">
-                                                <p class="form-control-static" data-bind="text: selectedCard.metadata.author"></p>
+                                                <p class="form-control-static"
+                                                   data-bind="text: selectedCard.metadata.author"></p>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-2 control-label">Description</label>
                                             <div class="col-sm-10">
-                                                <p class="form-control-static" data-bind="text: selectedCard.metadata.description"></p>
+                                                <p class="form-control-static"
+                                                   data-bind="text: selectedCard.metadata.description"></p>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-2 control-label">Link</label>
                                             <div class="col-sm-10">
-                                                <a class="form-control-static" data-bind="attr: {'href' : selectedCard.metadata.externalUrl}" target="_blank">link</a>
+                                                <a class="form-control-static"
+                                                   data-bind="attr: {'href' : selectedCard.metadata.externalUrl}"
+                                                   target="_blank">link</a>
                                             </div>
                                         </div>
                                         <!-- TAG INPUT -->
-                                        <div class="form-group" data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
+                                        <div class="form-group"
+                                             data-bind="if: dealer() &amp;&amp; gameView.status() === 'ROUND_STARTED'">
                                             <label class="col-sm-2 control-label">Topic</label>
                                             <div class="col-sm-10">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control input-sm"
                                                            data-bind="textInput: tagsInput, event: {keypress: enterTag}"
                                                            placeholder="Write round topic here..."/>
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-warning btn-sm" data-bind="click: sendTag">Send</button>
+                                                    <span class="input-group-btn">
+                                                <button class="btn btn-warning btn-sm"
+                                                        data-bind="click: sendTag">Send</button>
                                             </span>
                                                 </div>
                                             </div>
                                         </div>
                                         <!-- HAND CARD SELECTION -->
-                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED' &amp;&amp; !$root.handCardAlreadySelected()">
+                                        <div class="form-group"
+                                             data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_TOPIC_SELECTED' &amp;&amp; !$root.handCardAlreadySelected()">
                                             <label class="col-sm-2 control-label"></label>
                                             <div class="col-sm-10">
-                                                <button class="btn btn-success btn-block" data-bind="click: selectHandCard">Select this card</button>
+                                                <button class="btn btn-success btn-block"
+                                                        data-bind="click: selectHandCard">Select this card
+                                                </button>
                                             </div>
                                         </div>
                                         <!-- TABLE CARD SELECTION -->
-                                        <div class="form-group" data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED' &amp;&amp; !$root.tableCardAlreadySelected() &amp;&amp; thisUserId != selectedCard.cardSelectedBy()">
+                                        <div class="form-group"
+                                             data-bind="if: !dealer() &amp;&amp; gameView.status() === 'ROUND_OWN_CARDS_SELECTED' &amp;&amp; !$root.tableCardAlreadySelected() &amp;&amp; thisUserId != selectedCard.cardSelectedBy()">
                                             <label class="col-sm-2 control-label"></label>
                                             <div class="col-sm-10">
-                                                <button class="btn btn-success btn-block" data-bind="click: selectTableCard">Select this card</button>
+                                                <button class="btn btn-success btn-block"
+                                                        data-bind="click: selectTableCard">Select this card
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -144,9 +147,11 @@
                         <table class="table" data-bind="template: { name: 'player-row', foreach: gameView.players }">
                         </table>
                         <div data-bind="if: gameView.status() === 'ROUND_FINISHED'">
-                            <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round</button>
+                            <button class="btn btn-default" data-bind="click: sendPlayerReady">Ready for next round
+                            </button>
                         </div>
-                        <div data-bind="if: gameView.startGameEnabled() &amp;&amp; thisUserId === gameView.creatorUserId()">
+                        <div
+                            data-bind="if: gameView.startGameEnabled() &amp;&amp; thisUserId === gameView.creatorUserId()">
                             <button class="btn btn-default" data-bind="click: sendStartGame">Start game now</button>
                         </div>
                     </div>
@@ -180,7 +185,6 @@
             </div>
         </div>
     </div>
-
     <div th:replace="fragments/footer :: footer">&nbsp;</div>
 </div>
 
@@ -214,30 +218,37 @@
         <td><span class="player" data-bind="text: name, css: { 'text-bold': userId() === thisUserId }"></span></td>
         <td>
             <!-- ko if: dealer -->
-            <i class="fa fa-comment-o" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="User is riddler"></i>
+            <i class="fa fa-comment-o" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+               title="User is riddler"></i>
             <!-- /ko -->
             <!-- ko if: readyForNextRound -->
-            <i class="fa fa-check" data-bind="if: readyForNextRound" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+            <i class="fa fa-check" data-bind="if: readyForNextRound" aria-hidden="true" data-toggle="tooltip"
+               data-placement="right"
                title="User is ready for next round"></i>
             <!-- /ko -->
 
             <!-- ko if: $root.gameView.status() === 'ROUND_TOPIC_SELECTED' && ownCardSelected -->
-            <i class="fa fa-check" data-bind="if: ownCardSelected" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+            <i class="fa fa-check" data-bind="if: ownCardSelected" aria-hidden="true" data-toggle="tooltip"
+               data-placement="right"
                title="Done"></i>
             <!-- /ko -->
 
             <!-- ko if: $root.gameView.status() === 'ROUND_OWN_CARDS_SELECTED' && tableCardSelected -->
-            <i class="fa fa-check" data-bind="if: tableCardSelected" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+            <i class="fa fa-check" data-bind="if: tableCardSelected" aria-hidden="true" data-toggle="tooltip"
+               data-placement="right"
                title="Done"></i>
             <!-- /ko -->
 
             <!-- ko if: inactive -->
-            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip" data-placement="right"
+            <i class="fa fa-frown-o" data-bind="if: inactive" aria-hidden="true" data-toggle="tooltip"
+               data-placement="right"
                title="User is inactive"></i>
             <!-- /ko -->
         </td>
         <td><span class="total-score" data-bind="text: gameScore"></span></td>
-        <td data-bind="if: $root.gameView.status() === 'ROUND_FINISHED'" class="round-score">(+<span data-bind="text: lastRoundScore"></span>)</td>
+        <td data-bind="if: $root.gameView.status() === 'ROUND_FINISHED'" class="round-score">(+<span
+            data-bind="text: lastRoundScore"></span>)
+        </td>
     </tr>
 </script>
 
@@ -246,14 +257,14 @@
     <li class="c-cards__list-item js-champion-hover " style="margin-right: 10px;">
         <a href="#" data-bind="click: $root.thumbnailSelected" class="c-cards__list-link ">
             <span class="o-square ">
-                <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" " width="219 " height="219 "
+                <img data-toggle="modal" data-target="#imageModal" data-bind="attr: {'src': source}" alt=" "
+                     width="219 " height="219 "
                      class="o-square__img c-img-frame__img "/>
                 <div class="carousel-caption ignore-pointer-events" data-bind="if: playerSelections().length > 0">
                     <ul data-bind="foreach: playerSelections">
                         <li data-bind="text: $data"></li>
                     </ul>
                 </div>
-
             </span>
         </a>
         <!-- ko if: cardSelectedBy() != null && !dealersCard() -->
@@ -266,36 +277,36 @@
 </script>
 
 <script type="text/javascript" th:inline="javascript">
-/*<![CDATA[*/
-function formatTimer(seconds) {
-    var minutes = seconds / 60.0;
-    var divisor = minutes % 1;
-    return sprintf("%02d:%02d", Math.floor(minutes), Math.round(divisor * 60));
-}
+    /*<![CDATA[*/
+    function formatTimer(seconds) {
+        var minutes = seconds / 60.0;
+        var divisor = minutes % 1;
+        return sprintf("%02d:%02d", Math.floor(minutes), Math.round(divisor * 60));
+    }
 
-function startCountdown(seconds, oldCountdownTimerHandle) {
-    clearInterval(oldCountdownTimerHandle);
-    var timeout = new Date();
-    timeout.setSeconds(timeout.getSeconds() + seconds);
-    var handle = setInterval(function () {
-        var diff = (timeout.getTime() - new Date().getTime()) / 1000;
-        if (diff < 0) {
-            diff = 0;
-        }
-        var fmt = formatTimer(diff);
-        console.log(fmt);
+    function startCountdown(seconds, oldCountdownTimerHandle) {
+        clearInterval(oldCountdownTimerHandle);
+        var timeout = new Date();
+        timeout.setSeconds(timeout.getSeconds() + seconds);
+        var handle = setInterval(function () {
+            var diff = (timeout.getTime() - new Date().getTime()) / 1000;
+            if (diff < 0) {
+                diff = 0;
+            }
+            var fmt = formatTimer(diff);
+            console.log(fmt);
+            var formattedRemainingTime = document.getElementById('formattedRemainingTime');
+            formattedRemainingTime.innerHTML = fmt;
+        }, 1000);
+        return handle;
+    }
+
+    function stopCountdown(oldCountdownTimerHandle) {
+        clearInterval(oldCountdownTimerHandle);
         var formattedRemainingTime = document.getElementById('formattedRemainingTime');
-        formattedRemainingTime.innerHTML = fmt;
-    }, 1000);
-    return handle;
-}
-
-function stopCountdown(oldCountdownTimerHandle) {
-    clearInterval(oldCountdownTimerHandle);
-    var formattedRemainingTime = document.getElementById('formattedRemainingTime');
-    formattedRemainingTime.innerHTML = '';
-}
-/*]]>*/
+        formattedRemainingTime.innerHTML = '';
+    }
+    /*]]>*/
 </script>
 
 <script type="text/javascript" th:inline="javascript">
@@ -395,10 +406,10 @@ function stopCountdown(oldCountdownTimerHandle) {
         });
 
         self.handCardAlreadySelected = ko.pureComputed(function () {
-            var player = self.gameView.players().find(function(pl) {
+            var player = self.gameView.players().find(function (pl) {
                 return thisUserId === pl.userId()
             });
-            if(player) {
+            if (player) {
                 return player.ownCardSelected();
             } else {
                 return false;
@@ -406,10 +417,10 @@ function stopCountdown(oldCountdownTimerHandle) {
         });
 
         self.tableCardAlreadySelected = ko.pureComputed(function () {
-            var player = self.gameView.players().find(function(pl) {
+            var player = self.gameView.players().find(function (pl) {
                 return thisUserId === pl.userId()
             });
-            if(player) {
+            if (player) {
                 return player.tableCardSelected();
             } else {
                 return false;
@@ -546,7 +557,7 @@ function stopCountdown(oldCountdownTimerHandle) {
         update: function (element, valueAccessor, allBindings) {
             //store a counter with this element
             var count = ko.utils.domData.get(element, "_ko_logger") || 0,
-                    data = ko.toJS(valueAccessor() || allBindings());
+                data = ko.toJS(valueAccessor() || allBindings());
 
             ko.utils.domData.set(element, "_ko_logger", ++count);
 
@@ -569,28 +580,28 @@ function stopCountdown(oldCountdownTimerHandle) {
     });
 
     /*var onLoad = function () {
-        var w = window.outerWidth;
-        if (w < 992) {
-            $("#statusscreen").insertAfter("#gamescreen");
-            $("#footer").hide();
-        }
-        else if (w >= 992) {
-            $("#gamescreen").insertAfter("#statusscreen");
-            $("#footer").show();
-        }
-    };
+     var w = window.outerWidth;
+     if (w < 992) {
+     $("#statusscreen").insertAfter("#gamescreen");
+     $("#footer").hide();
+     }
+     else if (w >= 992) {
+     $("#gamescreen").insertAfter("#statusscreen");
+     $("#footer").show();
+     }
+     };
 
-    var onSizeChange = function () {
-        var w = window.outerWidth;
-        if (w < 992) {
-            $("#statusscreen").insertAfter("#gamescreen");
-            $("#footer").hide();
-        }
-        else if (w >= 992) {
-            $("#gamescreen").insertAfter("#statusscreen");
-            $("#footer").show();
-        }
-    };*/
+     var onSizeChange = function () {
+     var w = window.outerWidth;
+     if (w < 992) {
+     $("#statusscreen").insertAfter("#gamescreen");
+     $("#footer").hide();
+     }
+     else if (w >= 992) {
+     $("#gamescreen").insertAfter("#statusscreen");
+     $("#footer").show();
+     }
+     };*/
 
     /* ]]> */
 </script>

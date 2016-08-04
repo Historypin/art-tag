@@ -5,20 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Index page</title>
-
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"/>
-
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Playfair+Display"/>
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
-
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet"/>
-
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
           th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
-
     <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
     <link href="../static/css/tabs.css" th:href="@{/css/tabs.css}" rel="stylesheet"/>
 </head>
@@ -45,7 +40,7 @@
             </div>
         </div>
         <div class='col-sm-2'>
-            <a href="#" class="btn"><i class="fa fa-user fa-2x font-black" aria-hidden="true"></i></a>
+            <a href="/logout" class="btn"><i class="fa fa-user fa-2x font-black" aria-hidden="true"></i></a>
         </div>
     </div>
 
@@ -57,10 +52,8 @@
         <div class="col-sm-2">
             <!-- Placeholder -->
         </div>
-
         <div class="playfair-font col-sm-12">
             <div class="col-sm-2">
-
             </div>
             <div class="navigation col-sm-8 form-centered">
                 <form class="form-horizontal " action="#" th:action="@{/create_game}" th:object="${createGameForm}"
@@ -77,7 +70,6 @@
                                 <span class="help-block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">name error</span>
                             </div>
                         </div>
-
                         <!-- Public/private game -->
                         <div class="form-group" th:if="${createGameForm.joinGameLink} == null">
                             <label class="col-md-4 control-label" for="radios">Game type</label>
@@ -98,7 +90,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Create Button -->
                         <div class="form-group" th:if="${createGameForm.joinGameLink} == null">
                             <label class="col-md-4 control-label" for="createGameButton"></label>
@@ -106,7 +97,6 @@
                                 <button id="createGameButton" class="btn btn-primary" type="submit">Create game</button>
                             </div>
                         </div>
-
                         <!-- Show game link -->
                         <div class="form-group" th:if="${createGameForm.joinGameLink} != null">
                             <label class="control-label col-md-4" for="joinGameLink">Join link</label>
@@ -122,7 +112,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Join Button -->
                         <div class="form-group" th:if="${createGameForm.joinGameLink} != null">
                             <label class="col-md-4 control-label" for="joinGameButton"></label>
@@ -135,7 +124,6 @@
                 </form>
             </div>
             <div class="col-sm-2">
-
             </div>
         </div>
     </div>

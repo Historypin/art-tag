@@ -5,20 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Index page</title>
-
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" />
-
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Playfair+Display" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Playfair+Display"/>
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
-
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
           th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet"/>
-
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
           th:href="@{/webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
-
     <link href="../static/css/arttag.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
 </head>
 <body>
@@ -78,35 +73,29 @@
                 <div class="modal-body ">
                     <form class="form-horizontal" th:action="@{/login.do}" method="post">
                         <h1 class="centeredText">Sign in</h1>
-
                         <div class="form-group centeredText">
                             <p id='loginError' class="text-danger" style="display: none">
                                 <small>incorrect username / password</small>
                             </p>
                         </div>
-
                         <div class="form-group">
-                            <label class="col-md-6 control-label" >your username or email *</label>
+                            <label class="col-md-6 control-label">your username or email *</label>
                             <div class="col-md-6">
                                 <input class="" type="text" id="username" name="username" placeholder="Username/Email"/>
                             </div>
                         </div>
-
                         <div class="form-group">
-                            <label class="col-md-6 control-label" >Password *</label>
+                            <label class="col-md-6 control-label">Password *</label>
                             <div class="col-md-6">
                                 <input class="" type="password" id="password" name="password" placeholder="Password"/>
                             </div>
                         </div>
-
                         <div class="form-group centeredText">
                             <p><em>Forgot Password or Username?</em></p>
                         </div>
-
                         <div class="form-group centeredText">
-                            <button class="btn btn-lg btn-default" type="submit" >SIGN IN</button>
+                            <button class="btn btn-lg btn-default" type="submit">SIGN IN</button>
                         </div>
-
                         <h5 class="stroke">or</h5>
                         <div class="form-group centeredText">
                             <button type="button" class="btn btn-lg btn-default"
@@ -118,55 +107,63 @@
             </div>
         </div>
     </div>
-
     <div id="registermodal" class="modal fade col-lg-6 col-xs-12 col-centered" role="dialog" tabindex="-1">
         <div class="modal-dialog" style="width:75%;">
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-body ">
-                    <form class="form-horizontal" th:action="@{/}"  th:object="${registerForm}"  method="post" accept-charset="UTF-8">
+                    <form class="form-horizontal" th:action="@{/}" th:object="${registerForm}" method="post"
+                          accept-charset="UTF-8">
                         <fieldset>
                             <h3>Create account</h3>
-
                             <div class="form-group" th:classappend="${#fields.hasErrors('email')}? 'has-error'">
                                 <label class="col-md-4 control-label" for="email">Email</label>
                                 <div class="col-md-4">
-                                    <input id="email" name="email" th:field="*{email}" placeholder="email used in registration" class="form-control input-md" type="email"/>
+                                    <input id="email" name="email" th:field="*{email}"
+                                           placeholder="email used in registration" class="form-control input-md"
+                                           type="email"/>
                                     <span class="help-block" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">email error</span>
                                 </div>
                             </div>
-
                             <div class="form-group" th:classappend="${#fields.hasErrors('nickname')}? 'has-error'">
-                                <label class="col-md-4 control-label" for="nickname" >Nickname</label>
+                                <label class="col-md-4 control-label" for="nickname">Nickname</label>
                                 <div class="col-md-4">
-                                    <input id="nickname" name="nickname" th:field="*{nickname}" placeholder="name displayed in game" class="form-control input-md" type="text"/>
-                                    <span class="help-block" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}">nickname error</span>
+                                    <input id="nickname" name="nickname" th:field="*{nickname}"
+                                           placeholder="name displayed in game" class="form-control input-md"
+                                           type="text"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('nickname')}"
+                                          th:errors="*{nickname}">nickname error</span>
                                 </div>
                             </div>
-
                             <div class="form-group" th:classappend="${#fields.hasErrors('password')}? 'has-error'">
                                 <label class="col-md-4 control-label" for="newPassword">Password</label>
                                 <div class="col-md-4">
-                                    <input id="newPassword" name="password" th:field="*{password}" placeholder="password" class="form-control input-md" type="password"/>
-                                    <span class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">password error</span>
+                                    <input id="newPassword" name="password" th:field="*{password}"
+                                           placeholder="password" class="form-control input-md" type="password"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('password')}"
+                                          th:errors="*{password}">password error</span>
                                 </div>
                             </div>
-
                             <div class="form-group" th:classappend="${#fields.hasErrors('global')}? 'has-error'">
                                 <label class="col-md-4 control-label" for="repeatPassword">Repeat password</label>
                                 <div class="col-md-4">
-                                    <input id="repeatPassword" name="repeatPassword" th:field="*{repeatPassword}" placeholder="repeat your password" class="form-control input-md" type="password"/>
-                                    <span class="help-block" th:if="${#fields.hasErrors('global')}" th:errors="*{global}">Incorrect repeat password</span>
+                                    <input id="repeatPassword" name="repeatPassword" th:field="*{repeatPassword}"
+                                           placeholder="repeat your password" class="form-control input-md"
+                                           type="password"/>
+                                    <span class="help-block" th:if="${#fields.hasErrors('global')}"
+                                          th:errors="*{global}">Incorrect repeat password</span>
                                 </div>
                             </div>
-
-                            <div class="form-group" th:classappend="${#fields.hasErrors('conditionsAccepted')}? 'has-error'">
+                            <div class="form-group"
+                                 th:classappend="${#fields.hasErrors('conditionsAccepted')}? 'has-error'">
                                 <div class="col-sm-offset-2 col-sm-10">
                                     <div class="checkbox">
                                         <label>
-                                            <input type="checkbox" th:field="*{conditionsAccepted}" /> I agree with terms &amp; conditions of the game.
+                                            <input type="checkbox" th:field="*{conditionsAccepted}"/> I agree with terms
+                                            &amp; conditions of the game.
                                         </label>
-                                        <span class="help-block" th:if="${#fields.hasErrors('conditionsAccepted')}" th:errors="*{conditionsAccepted}">repeatPassword error</span>
+                                        <span class="help-block" th:if="${#fields.hasErrors('conditionsAccepted')}"
+                                              th:errors="*{conditionsAccepted}">repeatPassword error</span>
                                     </div>
                                 </div>
                             </div>
@@ -187,7 +184,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
         th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
 <script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
-
 <script type="text/javascript" th:inline="javascript">
     var registerError = /*[[${registerError}]]*/;
 
@@ -201,19 +197,19 @@
         $("#registermodal").modal('toggle');
     }
 
-    $( document ).ready(function() {
+    $(document).ready(function () {
         if (window.location.hash) {
             var hash = window.location.hash;
             $(hash).modal('toggle');
 
-            if(hash === '#signinmodal') {
-                if(window.location.search === '?loginError') {
+            if (hash === '#signinmodal') {
+                if (window.location.search === '?loginError') {
                     $('#loginError').show();
                 }
             }
         }
 
-        if(registerError) {
+        if (registerError) {
             showRegisterModal();
         }
     });

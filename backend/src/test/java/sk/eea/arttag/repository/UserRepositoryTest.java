@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import sk.eea.arttag.TestApp;
+import sk.eea.arttag.model.IdentityProviderType;
 import sk.eea.arttag.model.Score;
 import sk.eea.arttag.model.User;
 
@@ -23,13 +24,18 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    private static final String USER_ID = "user1";
+    private static final String USER_EMAIL = "user1@email.sk";
 
     private static final Logger LOG = LoggerFactory.getLogger(UserRepositoryTest.class);
 
     @Test
     public void test() {
-        User u1 = userRepository.findOne(USER_ID);
+        User user = new User();
+        user.setEmail(USER_EMAIL);
+        user.setIdentityProviderType(IdentityProviderType.LOCAL);
+        user = userRepository.save(user);
+
+        User u1 = userRepository.findOne(user.getId());
         Score s1 = u1.getPersonalScore();
         LOG.debug("Played: {}, Won: {}, Total: {}", (s1 == null ? null : s1.getGamesPlayed()), (s1 == null ? null : s1.getGamesWon()), (s1 == null ? null : s1.getTotalScore()));
 
@@ -40,7 +46,7 @@ public class UserRepositoryTest {
         u1.setPersonalScore(s2);
         userRepository.save(u1);
 
-        User u3 = userRepository.findOne(USER_ID);
+        User u3 = userRepository.findOne(user.getId());
         Score s3 = u3.getPersonalScore();
         LOG.debug("Played: {}, Won: {}, Total: {}", (s3 == null ? null : s3.getGamesPlayed()), (s3 == null ? null : s3.getGamesWon()), (s3 == null ? null : s3.getTotalScore()));
     }

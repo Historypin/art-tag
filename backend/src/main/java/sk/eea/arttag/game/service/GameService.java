@@ -73,9 +73,10 @@ public class GameService {
         if(gameProperties.getCreateDefaultGame()) {
             try {
                 LOG.debug("Creating default game");
-                this.create("lalahopapluha", "admin");
+                User user = userRepository.findByEmail("admin@email.sk");
+                this.create("lalahopapluha", user.getId());
                 for (int i = 0; i < 100; i++) {
-                    create("game"+i, "admin", false, false);
+                    create("game"+i, user.getId(), false, false);
                 }
             } catch (GameException e) {
                 LOG.error("Error at default game creation", e);
@@ -103,11 +104,11 @@ public class GameService {
         }
     }
 
-    public Game create(String name, String creatorUserId) throws GameException {
+    public Game create(String name, Long creatorUserId) throws GameException {
         return this.create(name, creatorUserId, false, true);
     }
 
-    public Game create(String name, String creatorUserId, boolean privateGame, boolean uuidGeneratedGameId) throws GameException {
+    public Game create(String name, Long creatorUserId, boolean privateGame, boolean uuidGeneratedGameId) throws GameException {
         final GameTimeout gameTimeout = new GameTimeout(gameProperties.getTimeoutGameCreated(), gameProperties.getTimeoutRoundStarted(),
                 gameProperties.getTimeoutTopicSelected(), gameProperties.getTimeoutOwnCardsSelected(), gameProperties.getTimeoutRoundFinished());
 
@@ -145,7 +146,7 @@ public class GameService {
     }
 
     //TODO:
-    public void addPlayer(String userToken, String userId, String gameId) throws GameException {
+    public void addPlayer(String userToken, Long userId, String gameId) throws GameException {
         Game game = getGame(gameId);
         User user = userRepository.findOne(userId);
         LOG.debug("ADD_PLAYER, userId: {}, gameId: {}", userId, gameId);

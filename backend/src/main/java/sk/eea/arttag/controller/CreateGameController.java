@@ -13,7 +13,9 @@ import sk.eea.arttag.ApplicationProperties;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameException;
 import sk.eea.arttag.game.service.GameService;
+import sk.eea.arttag.model.User;
 import sk.eea.arttag.model.form.CreateGameForm;
+import sk.eea.arttag.repository.UserRepository;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -25,6 +27,9 @@ public class CreateGameController {
 
     @Autowired
     private GameService gameService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private ApplicationProperties applicationProperties;
@@ -42,7 +47,8 @@ public class CreateGameController {
 
         Game game;
         try {
-            game = gameService.create(createGameForm.getName(), principal.getName(), createGameForm.isPrivateGame(), true);
+            User user = userRepository.findByEmail(principal.getName());
+            game = gameService.create(createGameForm.getName(), user.getId(), createGameForm.isPrivateGame(), true);
         } catch (GameException e) {
             bindingResult.addError(new FieldError("createGameForm", "name", "Game with this name already exists. Please choose different."));
             return "create_game";

@@ -31,9 +31,9 @@ public class Game {
     private List<Card> deck = new ArrayList<>();
     private List<Card> table = new ArrayList<>();
     private List<Card> tablePublic = new ArrayList<>();
-    private String creatorUserId;
+    private Long creatorUserId;
 
-    public Game(String id, String name, int minPlayers, int maxPlayers, boolean privateGame, String creatorUserId, GameTimeout gameTimeout) {
+    public Game(String id, String name, int minPlayers, int maxPlayers, boolean privateGame, Long creatorUserId, GameTimeout gameTimeout) {
         this.id = id;
         this.name = name;
         this.minPlayers = minPlayers;
@@ -117,7 +117,7 @@ public class Game {
         return tablePublic;
     }*/
 
-    public List<Card> getTablePublic(String userId) {
+    public List<Card> getTablePublic(Long userId) {
         if (GameStatus.ROUND_OWN_CARDS_SELECTED == getStatus()) {
             return table.stream().map(c -> new Card(c, userId)).collect(Collectors.toList());
         } else if (GameStatus.ROUND_FINISHED == getStatus()) {
@@ -166,7 +166,7 @@ public class Game {
         return privateGame;
     }
 
-    public String getCreatorUserId() {
+    public Long getCreatorUserId() {
         return creatorUserId;
     }
 
@@ -180,11 +180,11 @@ public class Game {
         tags = null;
     }
 
-    public Player findPlayerByUserId(String userId) {
+    public Player findPlayerByUserId(Long userId) {
         /*		List<Player> players = getPlayers().values().stream()
                         .filter(p -> userId.equalsIgnoreCase(p.getUserId()))
         				.collect(Collectors.toList());*/
-        List<Player> players = getPlayers().stream().filter(p -> userId.equalsIgnoreCase(p.getUserId())).collect(Collectors.toList());
+        List<Player> players = getPlayers().stream().filter(p -> userId.equals(p.getUserId())).collect(Collectors.toList());
         return players.size() > 0 ? players.get(0) : null;
     }
 
@@ -229,7 +229,7 @@ public class Game {
         return gamePlayerViews;
     }
 
-    public void updatePlayerScoreAfterRoundFinished(Map<String, Integer> summary) {
+    public void updatePlayerScoreAfterRoundFinished(Map<Long, Integer> summary) {
         getPlayers().forEach(p -> {
             int score = summary.getOrDefault(p.getUserId(), 0);
             p.setLastRoundScore(score);

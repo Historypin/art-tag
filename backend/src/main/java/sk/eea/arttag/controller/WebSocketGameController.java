@@ -14,6 +14,8 @@ import sk.eea.arttag.game.model.GameException;
 import sk.eea.arttag.game.model.GamePlayerView;
 import sk.eea.arttag.game.model.UserInput;
 import sk.eea.arttag.game.service.GameService;
+import sk.eea.arttag.model.User;
+import sk.eea.arttag.repository.UserRepository;
 
 import javax.websocket.EncodeException;
 import java.io.IOException;
@@ -38,22 +40,30 @@ public class WebSocketGameController extends TextWebSocketHandler {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
         String gameId = findGameIdInURI(session.getUri(), "gameId");
         LOG.debug("OPEN GAME_ID: {}", gameId);
 
-        Principal principal = session.getPrincipal();
-        if (principal == null) {
-            LOG.info("No principal");
-        } else {
-            LOG.info("Principal: {}", principal.getName());
+        final Principal principal = session.getPrincipal();
+        Long userId = null;
+        if (principal != null) {
+            User user = userRepository.findByEmail(principal.getName());
+            if(user != null) {
+                userId = user.getId();
+            }
         }
 
         try {
+            if(userId == null) {
+                throw new GameException("UserId could not be found!");
+            }
             clients.put(session.getId(), session);
-            gameService.addPlayer(session.getId(), principal.getName(), gameId);
+            gameService.addPlayer(session.getId(), userId, gameId);
             LOG.info("Player: {} has connected", session.getPrincipal().getName());
         } catch (GameException e) {
             LOG.info("Failed to add player to game: {}", e.getMessage());
@@ -107,7 +117,7 @@ public class WebSocketGameController extends TextWebSocketHandler {
     @Scheduled(fixedRate = 1000)
     public void triggerGameTimeout() {
         gameService.getGames().values().stream().filter(g -> g.getRemainingTime() <= 0).forEach(g -> gameService.triggerGameTimeout(g));
-        LOG.debug("XXX Games: {}, Clients: {}", gameService.getGames().size(), clients.size());
+        //LOG.debug("XXX Games: {}, Clients: {}", gameService.getGames().size(), clients.size());
     }
 
     public void trigger(List<GamePlayerView> views) {

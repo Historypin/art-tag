@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import sk.eea.arttag.game.service.GameService;
+import sk.eea.arttag.model.IdentityProviderType;
 import sk.eea.arttag.model.User;
 import sk.eea.arttag.model.UserRole;
 import sk.eea.arttag.model.form.RegisterForm;
@@ -44,7 +45,7 @@ public class IndexController {
         LOG.debug("Received registration data: {}", registerForm);
 
         // validate existing account
-        User user = userRepository.findOne(registerForm.getEmail());
+        User user = userRepository.findByEmail(registerForm.getEmail());
         if(user != null) {
             model.addAttribute("registerError", true);
             bindingResult.rejectValue("email", "AlreadyUsed.registerForm.email");
@@ -53,7 +54,8 @@ public class IndexController {
 
         // everything OK, create the user
         user = new User();
-        user.setLogin(registerForm.getEmail());
+        user.setIdentityProviderType(IdentityProviderType.LOCAL);
+        user.setEmail(registerForm.getEmail());
         user.setNickName(registerForm.getNickname());
         user.setPassword(passwordEncoder.encode(registerForm.getPassword()));
         user.setEnabled(true);

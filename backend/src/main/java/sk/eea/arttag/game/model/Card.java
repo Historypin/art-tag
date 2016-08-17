@@ -10,7 +10,7 @@ public class Card {
     private String source;
     private CardMetadata metadata;
     private List<String> playerSelections = new ArrayList<>();
-    private String cardSelectedBy; //userId of the player who selected this card
+    private Long cardSelectedBy; //userId of the player who selected this card
     private boolean dealersCard;
 
     public Card() {
@@ -23,13 +23,13 @@ public class Card {
         this.metadata = metadata;
     }
 
-    public Card(Card original, String userId) {
+    public Card(Card original, Long userId) {
         this.token = original.getToken();
         this.culturalObjectId = original.getCulturalObjectId();
         this.source = original.getSource();
         this.metadata = original.getMetadata();
         this.playerSelections = new ArrayList<>();
-        this.cardSelectedBy = userId.equalsIgnoreCase(original.getCardSelectedBy()) ? userId : null;
+        this.cardSelectedBy = userId.equals(original.getCardSelectedBy()) ? userId : null;
         this.dealersCard = false;
     }
 
@@ -57,10 +57,10 @@ public class Card {
     public void setDealersCard(boolean dealersCard) {
         this.dealersCard = dealersCard;
     }
-    public String getCardSelectedBy() {
+    public Long getCardSelectedBy() {
         return cardSelectedBy;
     }
-    public void setCardSelectedBy(String cardSelectedBy) {
+    public void setCardSelectedBy(Long cardSelectedBy) {
         this.cardSelectedBy = cardSelectedBy;
     }
 

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class RoundSummary {
 
     private Game game;
-    private Map<String, Integer> playerSummary = new HashMap<>();
+    private Map<Long, Integer> playerSummary = new HashMap<>();
     private List<CardRoundSummary> cardSummary = new ArrayList<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(RoundSummary.class);
@@ -32,7 +32,7 @@ public class RoundSummary {
     private static final int PLAYER_SCORE_WHEN_CORRECT_AND_DEALER_NOT_0_OR_ALL = 3;
 
     private void evaluateRound() {
-        Map<String, Integer> playerRoundSummaries = new HashMap<>();
+        Map<Long, Integer> playerRoundSummaries = new HashMap<>();
         Card dealersCard = game.getPlayers().stream().filter(p -> p.isDealer()).findFirst().get().getOwnCardSelection();
         long numberOfPlayersSelectedTableCard = game.getPlayers().stream().filter(p -> p.getTableCardSelection() != null).count();
         if (dealersCard == null || numberOfPlayersSelectedTableCard == 0) {
@@ -91,7 +91,7 @@ public class RoundSummary {
         return game;
     }
 
-    public Map<String, Integer> getPlayerSummary() {
+    public Map<Long, Integer> getPlayerSummary() {
         return playerSummary;
     }
     public List<CardRoundSummary> getCardSummary() {

@@ -86,7 +86,7 @@ public class CardService {
         });
     }
 
-    public void updatePlayersAfterRoundFinished(Map<String, Integer> playerSummary) {
+    public void updatePlayersAfterRoundFinished(Map<Long, Integer> playerSummary) {
         LOG.debug("Updating players after round finished");
         playerSummary.forEach((k, v) -> {
             if (v == null || v == 0) {
@@ -100,7 +100,7 @@ public class CardService {
                     }
                     score.setTotalScore(score.getTotalScore() == null ? v : score.getTotalScore() + v);
                     user.setPersonalScore(score);
-                    LOG.debug("Updating user: {}", user.getLogin());
+                    LOG.debug("Updating user: {}", user.getId());
                     userRepository.save(user);
                 }
             }
@@ -133,7 +133,7 @@ public class CardService {
                     score.setGamesWon(score.getGamesWon() == null ? 1 : score.getGamesWon() + 1);
                 }
                 user.setPersonalScore(score);
-                LOG.debug("Updating user: {}", user.getLogin());
+                LOG.debug("Updating user: {}", user.getId());
                 userRepository.save(user);
             }
         });

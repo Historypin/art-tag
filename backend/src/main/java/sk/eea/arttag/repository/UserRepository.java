@@ -6,7 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import sk.eea.arttag.model.User;
 
-//public interface UserRepository extends CrudRepository<User, String> {
+import java.math.BigInteger;
+
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    User findByEmail(String email);
 }

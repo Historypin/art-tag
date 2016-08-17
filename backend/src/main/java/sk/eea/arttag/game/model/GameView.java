@@ -21,7 +21,7 @@ public class GameView {
 	private List<Player> players = new LinkedList<>();
 	private List<Card> table = new ArrayList<>();
 	private boolean startGameEnabled = false;
-	private String creatorUserId;
+	private Long creatorUserId;
 
 	public GameView() {
 	}
@@ -105,11 +105,11 @@ public class GameView {
         this.startGameEnabled = startGameEnabled;
     }
 
-    public String getCreatorUserId() {
+    public Long getCreatorUserId() {
         return creatorUserId;
     }
 
-    public void setCreatorUserId(String creatorUserId) {
+    public void setCreatorUserId(Long creatorUserId) {
         this.creatorUserId = creatorUserId;
     }
 

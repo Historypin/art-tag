@@ -30,3 +30,9 @@ root.logging.level = INFO
 arttag.logging.level = DEBUG
 LOG_FILE=/opt/td/logs/arttag.log
 
+spring.social.facebook.appId=304292869923480
+spring.social.facebook.appSecret=29903dbd12bffa337f1f3c368b108e61
+
+spring.social.google.appId=909628457305-55io57gcev2j2sv8a99f5aqeti1hranv.apps.googleusercontent.com
+spring.social.google.appSecret=YyzO8LFGbePGSjfXSpBDftz1
+

@@ -18,10 +18,7 @@ import sk.eea.arttag.game.model.CardRoundSummary;
 import sk.eea.arttag.game.model.Game;
 import sk.eea.arttag.game.model.GameTimeout;
 import sk.eea.arttag.game.model.Player;
-import sk.eea.arttag.model.CulturalObject;
-import sk.eea.arttag.model.Score;
-import sk.eea.arttag.model.Tag;
-import sk.eea.arttag.model.User;
+import sk.eea.arttag.model.*;
 import sk.eea.arttag.repository.CulturalObjectRepository;
 import sk.eea.arttag.repository.TagRepository;
 import sk.eea.arttag.repository.UserRepository;
@@ -41,7 +38,8 @@ public class CardServiceSimpleTest {
     @Autowired
     private TagRepository tagRepository;
 
-    private static final String USER_ID = "user1";
+    private static final String USER_EMAIL = "user1@email.sk";
+    private static final String USER_NAME = "Jozko Mrkvicka";
     private static final String TAGS = "tags";
     private static final String LANG = "lang";
 
@@ -72,24 +70,25 @@ public class CardServiceSimpleTest {
 
     @Test
     public void updatePlayersAfterGameFinished() {
+        User user = userRepository.save(createUser());
 
-        User u1 = userRepository.findOne(USER_ID);
+        User u1 = userRepository.findOne(user.getId());
         Score s1 = u1.getPersonalScore();
-        LOG.debug("User: {}, Played: {}, Won: {}, Total: {}", u1.getLogin(), (s1 == null ? null : s1.getGamesPlayed()), (s1 == null ? null : s1.getGamesWon()), (s1 == null ? null : s1.getTotalScore()));
+        LOG.debug("User: {}, Played: {}, Won: {}, Total: {}", u1.getId(), (s1 == null ? null : s1.getGamesPlayed()), (s1 == null ? null : s1.getGamesWon()), (s1 == null ? null : s1.getTotalScore()));
 
-        Game game = createGame();
+        Game game = createGame(user);
         cardService.updatePlayersAfterGameFinished(game);
 
-        User u2 = userRepository.findOne(USER_ID);
+        User u2 = userRepository.findOne(user.getId());
         Score s2 = u2.getPersonalScore();
-        LOG.debug("User: {}, Played: {}, Won: {}, Total: {}", u2.getLogin(), (s2 == null ? null : s2.getGamesPlayed()), (s2 == null ? null : s2.getGamesWon()), (s2 == null ? null : s2.getTotalScore()));
+        LOG.debug("User: {}, Played: {}, Won: {}, Total: {}", u2.getId(), (s2 == null ? null : s2.getGamesPlayed()), (s2 == null ? null : s2.getGamesWon()), (s2 == null ? null : s2.getTotalScore()));
     }
 
-    private static Game createGame() {
+    private static Game createGame(User user) {
         GameTimeout gt = new GameTimeout(1, 1, 1, 1, 1);
-        Game game = new Game("test1", "test1", 1, 2, true, USER_ID, gt);
+        Game game = new Game("test1", "test1", 1, 2, true, user.getId(), gt);
         List<Player> players = new ArrayList<>();
-        Player player = new Player("player1", "player 1", USER_ID);
+        Player player = new Player("player1", "player 1", user.getId());
         player.setGameScore(10);
         players.add(player);
         game.setPlayers(players);
@@ -101,5 +100,13 @@ public class CardServiceSimpleTest {
         co.setAuthor("author");
         co.setBatchId(1L);
         return co;
+    }
+
+    private static User createUser() {
+        User user = new User();
+        user.setEmail(USER_EMAIL);
+        user.setIdentityProviderType(IdentityProviderType.LOCAL);
+        user.setNickName(USER_NAME);
+        return user;
     }
 }

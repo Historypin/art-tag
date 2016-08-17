@@ -12,7 +12,10 @@ public class UserRole {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "login", nullable = false)
+    @JoinColumns({
+            @JoinColumn(name="user_id", referencedColumnName="id"),
+            @JoinColumn(name="identity_provider_type", referencedColumnName="identity_provider_type")
+    })
     private User user;
 
     @Column(name = "authority", nullable = false)
@@ -24,6 +27,14 @@ public class UserRole {
     public UserRole(User user, String role) {
         this.user = user;
         this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public User getUser() {

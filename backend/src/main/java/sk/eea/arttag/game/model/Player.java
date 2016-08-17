@@ -9,7 +9,7 @@ public class Player {
 
 	private String token;
 	private String name;
-	private String userId;
+	private Long userId;
     @JsonIgnore
 	private List<Card> hand = new ArrayList<>();
     @JsonIgnore
@@ -27,7 +27,7 @@ public class Player {
 
 	public Player() {
 	}
-	public Player(String token, String name, String userId) {
+	public Player(String token, String name, Long userId) {
 		this.token = token;
 		this.name = name;
 		this.userId = userId;
@@ -59,10 +59,10 @@ public class Player {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
-	public void setUserId(String userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 	public Card getOwnCardSelection() {

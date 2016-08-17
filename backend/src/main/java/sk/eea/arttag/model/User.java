@@ -1,69 +1,97 @@
 package sk.eea.arttag.model;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
-
 @Entity
-@Table(name="SYSTEM_USER")
-public class User {
+@Table(name = "SYSTEM_USER")
+public class User implements Serializable {
 
-	@Id
-	private String login;
-	private String nickName;
-	private String password;
-	private Score personalScore;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+    @SequenceGenerator(name= "hibernate_sequence")
+    private Long id;
 
-	@ManyToMany
-	@JoinTable(name="USER_FAVOURITE")
-	private List<CulturalObject> favouriteObjects;
+    @Column(name = "identity_provider_type")
+    @Enumerated(EnumType.STRING)
+    private IdentityProviderType identityProviderType;
+
+    private String email;
+
+    private String nickName;
+
+    private String password;
+
+    private Score personalScore;
+
+    @ManyToMany
+    @JoinTable(name = "USER_FAVOURITE")
+    private List<CulturalObject> favouriteObjects;
 
     private Boolean enabled;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     private Set<UserRole> userRole = new HashSet<UserRole>(0);
 
-	public String getLogin() {
-		return login;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setLogin(String login) {
-		this.login = login;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getNickName() {
-		return nickName;
-	}
+    public IdentityProviderType getIdentityProviderType() {
+        return identityProviderType;
+    }
 
-	public void setNickName(String nickName) {
-		this.nickName = nickName;
-	}
+    public void setIdentityProviderType(IdentityProviderType identityProviderType) {
+        this.identityProviderType = identityProviderType;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public Score getPersonalScore() {
-		return personalScore;
-	}
+    public String getNickName() {
+        return nickName;
+    }
 
-	public void setPersonalScore(Score personalScore) {
-		this.personalScore = personalScore;
-	}
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
 
-	public List<CulturalObject> getFavouriteObjects() {
-		return favouriteObjects;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setFavouriteObjects(List<CulturalObject> favouriteObjects) {
-		this.favouriteObjects = favouriteObjects;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Score getPersonalScore() {
+        return personalScore;
+    }
+
+    public void setPersonalScore(Score personalScore) {
+        this.personalScore = personalScore;
+    }
+
+    public List<CulturalObject> getFavouriteObjects() {
+        return favouriteObjects;
+    }
+
+    public void setFavouriteObjects(List<CulturalObject> favouriteObjects) {
+        this.favouriteObjects = favouriteObjects;
+    }
 
     public Boolean getEnabled() {
         return enabled;

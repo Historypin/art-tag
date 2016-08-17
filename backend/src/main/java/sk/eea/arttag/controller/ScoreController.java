@@ -109,7 +109,7 @@ public class ScoreController {
         List<ScoreRow> data = records.stream().map(r -> {
             {
                 ScoreRow s = new ScoreRow();
-                s.setUserId(r.getLogin());
+                s.setUserId(r.getId().toString());
                 s.setUserName(r.getNickName());
                 s.setGamesPlayed(r.getPersonalScore() == null ? null : r.getPersonalScore().getGamesPlayed());
                 s.setGamesWon(r.getPersonalScore() == null ? null : r.getPersonalScore().getGamesWon());

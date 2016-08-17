@@ -270,7 +270,7 @@ public class StateMachine {
         //private/public,
         //join/rejoin (evaluate if userToken is already in joined players)
 
-        String userId = player.getUserId();
+        Long userId = player.getUserId();
         Player playerInGame = game.findPlayerByUserId(userId);
         if (playerInGame != null) {
             //RECONNECT A PLAYER
@@ -435,7 +435,7 @@ public class StateMachine {
 
             case GAME_STARTED: {
                 // verify event sender is game creator
-                if (game.getCreatorUserId().equalsIgnoreCase(player.getUserId())) {
+                if (game.getCreatorUserId().equals(player.getUserId())) {
                     // try to start a game
                     if (game.getMinPlayers() <= game.getNumberOfActivePlayers()) {
                         startGame(game);

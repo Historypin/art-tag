@@ -7,8 +7,11 @@ DROP TABLE IF EXISTS system_user CASCADE;
 DROP TABLE IF EXISTS tag CASCADE;
 DROP TABLE IF EXISTS user_favourite CASCADE;
 DROP TABLE IF EXISTS authorities CASCADE;
-DROP INDEX IF EXISTS ix_auth_login CASCADE;
+DROP INDEX IF EXISTS ix_auth_user CASCADE;
 DROP INDEX IF EXISTS ix_batch_id CASCADE;
+
+DROP TABLE IF EXISTS UserConnection CASCADE;
+DROP INDEX IF EXISTS userconnectionrank CASCADE;
 
 CREATE SEQUENCE hibernate_sequence
 INCREMENT 1
@@ -53,13 +56,16 @@ CREATE TABLE localized_string (
 ALTER TABLE localized_string OWNER TO arttag;
 
 CREATE TABLE system_user (
-    login character varying(255) PRIMARY KEY NOT NULL,
+    id bigint NOT NULL,
+    identity_provider_type character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
     nick_name character varying(255),
     password character varying(255),
     games_played bigint,
     games_won bigint,
     total_score bigint,
-    enabled boolean NOT NULL
+    enabled boolean NOT NULL,
+    PRIMARY KEY (id, identity_provider_type)
 );
 
 
@@ -67,14 +73,15 @@ ALTER TABLE system_user OWNER TO arttag;
 
 CREATE TABLE authorities (
     id bigint PRIMARY KEY NOT NULL,
-    login character varying(255) NOT NULL,
+    user_id  bigint NOT NULL,
+    identity_provider_type character varying(255) NOT NULL,
     authority character varying(255) NOT NULL,
-    CONSTRAINT fk_authorities_users foreign key(login) references system_user(login) ON DELETE CASCADE
+    CONSTRAINT fk_authorities_users foreign key(user_id, identity_provider_type) references system_user(id, identity_provider_type) ON DELETE CASCADE
 );
 
 ALTER TABLE authorities OWNER TO arttag;
 
-CREATE UNIQUE INDEX ix_auth_login on authorities (login,authority);
+CREATE UNIQUE INDEX ix_auth_user on authorities (user_id, identity_provider_type, authority);
 
 CREATE TABLE tag (
     id bigint NOT NULL,
@@ -88,7 +95,8 @@ CREATE TABLE tag (
 ALTER TABLE tag OWNER TO arttag;
 
 CREATE TABLE user_favourite (
-    system_user character varying(255) NOT NULL,
+    system_user bigint NOT NULL,
+    identity_provider_type character varying(255) NOT NULL,
     favourite_objects bigint NOT NULL
 );
 
@@ -112,7 +120,7 @@ ALTER TABLE ONLY tag
     ADD CONSTRAINT fk_1iwtqrxth63w8e7apvb6ixoeb FOREIGN KEY (co_id) REFERENCES cultural_object(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_favourite
-    ADD CONSTRAINT fk_8ljy7tssl4ahp47njfgyl25yr FOREIGN KEY (system_user) REFERENCES system_user(login) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_8ljy7tssl4ahp47njfgyl25yr FOREIGN KEY (system_user, identity_provider_type) REFERENCES system_user(id, identity_provider_type) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_favourite
     ADD CONSTRAINT fk_8xf40q0ykhcn5s9o9cex36viq FOREIGN KEY (favourite_objects) REFERENCES cultural_object(id) ON DELETE CASCADE;
@@ -125,3 +133,22 @@ ALTER TABLE ONLY cultural_object_description
 
 ALTER TABLE ONLY tag
     ADD CONSTRAINT fk_rr0jdrb0km505m2m59c7kjlwa FOREIGN KEY (value) REFERENCES localized_string(id) ON DELETE CASCADE;
+
+/*
+This part creates a schema which is used by JdbcUsersConnectionRepository to persist connection in.
+*/
+CREATE TABLE UserConnection (
+    userId varchar(255) not null,
+    providerId varchar(255) not null,
+    providerUserId varchar(255),
+    rank int not null,
+    displayName varchar(255),
+    profileUrl varchar(512),
+    imageUrl varchar(512),
+    accessToken varchar(512) not null,
+    secret varchar(512),
+    refreshToken varchar(512),
+    expireTime bigint,
+    primary key (userId, providerId, providerUserId));
+
+create unique index UserConnectionRank on UserConnection(userId, providerId, rank);

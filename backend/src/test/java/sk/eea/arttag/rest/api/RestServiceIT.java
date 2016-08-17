@@ -60,7 +60,7 @@ public class RestServiceIT {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("api", "admin");
+        HttpAuthenticationFeature feature = HttpAuthenticationFeature.basic("api@email.sk", "admin");
         client = JerseyClientBuilder.createClient().register(Logger.getLogger(RestServiceIT.class.getName())).register(feature);
         objectMapper = new ObjectMapper();
     }

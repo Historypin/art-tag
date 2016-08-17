@@ -3,6 +3,7 @@ package sk.eea.arttag.repository;
 import java.util.Arrays;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class CulturalObjectRepositoryTest {
     private static final Logger LOG = LoggerFactory.getLogger(CulturalObjectRepositoryTest.class);
 
     @Test
+    @Ignore
     public void test() {
 
         CulturalObject co1 = culturalObjectRepository.findTopByOrderByLastSelectedAsc();

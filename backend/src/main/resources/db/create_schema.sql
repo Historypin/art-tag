@@ -56,7 +56,7 @@ CREATE TABLE localized_string (
 ALTER TABLE localized_string OWNER TO arttag;
 
 CREATE TABLE system_user (
-    id bigint NOT NULL,
+    id bigint PRIMARY KEY NOT NULL,
     identity_provider_type character varying(255) NOT NULL,
     email character varying(255) NOT NULL,
     nick_name character varying(255),
@@ -64,8 +64,7 @@ CREATE TABLE system_user (
     games_played bigint,
     games_won bigint,
     total_score bigint,
-    enabled boolean NOT NULL,
-    PRIMARY KEY (id, identity_provider_type)
+    enabled boolean NOT NULL
 );
 
 
@@ -74,14 +73,13 @@ ALTER TABLE system_user OWNER TO arttag;
 CREATE TABLE authorities (
     id bigint PRIMARY KEY NOT NULL,
     user_id  bigint NOT NULL,
-    identity_provider_type character varying(255) NOT NULL,
     authority character varying(255) NOT NULL,
-    CONSTRAINT fk_authorities_users foreign key(user_id, identity_provider_type) references system_user(id, identity_provider_type) ON DELETE CASCADE
+    CONSTRAINT fk_authorities_users foreign key(user_id) references system_user(id) ON DELETE CASCADE
 );
 
 ALTER TABLE authorities OWNER TO arttag;
 
-CREATE UNIQUE INDEX ix_auth_user on authorities (user_id, identity_provider_type, authority);
+CREATE UNIQUE INDEX ix_auth_user on authorities (user_id, authority);
 
 CREATE TABLE tag (
     id bigint NOT NULL,
@@ -120,7 +118,7 @@ ALTER TABLE ONLY tag
     ADD CONSTRAINT fk_1iwtqrxth63w8e7apvb6ixoeb FOREIGN KEY (co_id) REFERENCES cultural_object(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_favourite
-    ADD CONSTRAINT fk_8ljy7tssl4ahp47njfgyl25yr FOREIGN KEY (system_user, identity_provider_type) REFERENCES system_user(id, identity_provider_type) ON DELETE CASCADE;
+    ADD CONSTRAINT fk_8ljy7tssl4ahp47njfgyl25yr FOREIGN KEY (system_user) REFERENCES system_user(id) ON DELETE CASCADE;
 
 ALTER TABLE ONLY user_favourite
     ADD CONSTRAINT fk_8xf40q0ykhcn5s9o9cex36viq FOREIGN KEY (favourite_objects) REFERENCES cultural_object(id) ON DELETE CASCADE;

@@ -294,7 +294,6 @@
                 diff = 0;
             }
             var fmt = formatTimer(diff);
-            console.log(fmt);
             var formattedRemainingTime = document.getElementById('formattedRemainingTime');
             formattedRemainingTime.innerHTML = fmt;
         }, 1000);
@@ -394,8 +393,6 @@
         };
 
         self.thumbnailSelected = function (card) {
-            console.log("thisUserId: " + thisUserId);
-            console.log("self.selectedCard.cardSelectedBy: " + self.selectedCard.cardSelectedBy);
             ko.mapping.fromJS(card, {}, self.selectedCard);
         };
 
@@ -531,7 +528,6 @@
     // websocket on message handler
     webSocket.onmessage = function (event) {
         var data = JSON.parse(event.data);
-        console.log(data);
         // chat message
         if (typeof data.type !== 'undefined') {
             var date = new Date();

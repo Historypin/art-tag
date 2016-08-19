@@ -3,6 +3,8 @@ package sk.eea.arttag.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.social.security.SocialAuthenticationToken;
+import org.springframework.social.security.SocialUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -47,8 +49,12 @@ public class CreateGameController {
 
         Game game;
         try {
-            User user = userRepository.findByEmail(principal.getName());
-            game = gameService.create(createGameForm.getName(), user.getId(), createGameForm.isPrivateGame(), true);
+            if(principal instanceof SocialAuthenticationToken) { // user logged by social provider
+                game = gameService.create(createGameForm.getName(), Long.parseLong(principal.getName()), createGameForm.isPrivateGame(), true);
+            } else { // user logged by form login
+                User user = userRepository.findByEmail(principal.getName());
+                game = gameService.create(createGameForm.getName(), user.getId(), createGameForm.isPrivateGame(), true);
+            }
         } catch (GameException e) {
             bindingResult.addError(new FieldError("createGameForm", "name", "Game with this name already exists. Please choose different."));
             return "create_game";

@@ -42,6 +42,6 @@ public class CustomSocialUsersDetailService implements SocialUserDetailsService 
                 userRole -> new SimpleGrantedAuthority(userRole.getRole())
         ).collect(Collectors.toList());
 
-        return new SocialUser(user.getEmail(), user.getPassword(), authorities);
+        return new SocialUser(user.getId().toString(), user.getPassword(), authorities);
     }
 }

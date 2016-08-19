@@ -102,7 +102,6 @@ public class SecurityConfig {
 
         private SpringSocialConfigurer springSocialConfigurer() {
             SpringSocialConfigurer config = new SpringSocialConfigurer();
-            config.alwaysUsePostLoginUrl(true);
             config.postLoginUrl("/join_page");
             config.defaultFailureUrl("/failure");
 

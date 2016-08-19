@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.social.security.SocialAuthenticationToken;
+import org.springframework.social.security.SocialUser;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -51,11 +53,11 @@ public class WebSocketGameController extends TextWebSocketHandler {
 
         final Principal principal = session.getPrincipal();
         Long userId = null;
-        if (principal != null) {
+        if(principal instanceof SocialAuthenticationToken) { // user logged by social provider
+            userId = Long.parseLong(principal.getName());
+        } else { // user logged by form login
             User user = userRepository.findByEmail(principal.getName());
-            if(user != null) {
-                userId = user.getId();
-            }
+            userId = user.getId();
         }
 
         try {

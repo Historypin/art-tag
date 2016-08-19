@@ -3,7 +3,7 @@
     width: 100%;
 }
 
-.join-page, .score-page, .create-page {
+.join-page, .score-page, .create-page, .error-page {
     background-size:cover;
     background-image: url(../img/stock-16x9-186903581.jpg);
     /* background: url('../img/stock-photo-artist-supplies-on-the-wooden-table-top-view-381241945.jpg') no-repeat; */
@@ -334,3 +334,7 @@ thead
 
 .lightslategray-background {background-color:lightslategray;display: table;}
 .orange-background {background-color:orange;}
+
+.spacer {
+    height: 100px;
+}

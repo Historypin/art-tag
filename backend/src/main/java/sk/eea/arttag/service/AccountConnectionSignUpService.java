@@ -15,6 +15,8 @@ import sk.eea.arttag.repository.UserRepository;
 
 import java.math.BigInteger;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 @Component
 public class AccountConnectionSignUpService implements ConnectionSignUp {
 
@@ -26,6 +28,11 @@ public class AccountConnectionSignUpService implements ConnectionSignUp {
     public String execute(Connection<?> connection) {
         UserProfile userProfile = connection.fetchUserProfile();
         ConnectionData connectionData = connection.createData();
+
+        // validate required parameters
+        if(isEmpty(userProfile.getEmail())) {
+            throw new EmailNotProvidedException("Email is required during user signup.");
+        }
 
         User user = new User();
         user.setIdentityProviderType(IdentityProviderType.valueOf(connectionData.getProviderId().toUpperCase()));

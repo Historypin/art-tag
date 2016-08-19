@@ -1,0 +1,72 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Blank page</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css' />
+
+
+    <!-- Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" rel="stylesheet"/>
+
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+          th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap-theme.min.css}" rel="stylesheet"/>
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
+          th:href="@{webjars/font-awesome/4.6.3/css/font-awesome.min.css}" rel="stylesheet"/>
+
+    <link href="../static/css/console.css" th:href="@{/css/arttag.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="join-page container-fluid">
+    <div class="row spacer"></div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <h1>Error has occured!</h1>
+
+            <p>
+                Try coming back later or if problems persists,
+                <a th:href="'mailto:' + ${@environment.getProperty('error.contact.email')} + '?Subject=Arttag%20error'" target="_blank">contact the system administrator</a>.
+                In the email, please provide the details of the problem, which are listed below:
+            </p>
+
+            <p th:if="${url}">
+                <b>Page:</b> <span th:text="${url}">Page URL</span>
+            </p>
+
+            <p th:if="${timestamp}" id='created'>
+                <b>Occurred:</b> <span th:text="${timestamp}">Timestamp</span>
+            </p>
+
+            <p th:if="${status}">
+                <b>Response Status:</b> <span th:text="${status}">status-code</span> <span
+                    th:if="${error}" th:text="'('+${error}+')'">error ...</span>
+            </p>
+
+            <div
+                    th:if="${ex} or ${exception} or (${message} and ${message.length() != 0})">
+                <b>Cause:</b> <span th:if="${ex}" th:text="${ex}">exception ...</span>
+                <span th:if="${exception}" th:text="${exception}">exception ...</span>
+                <span th:if="${message} and ${message.length() != 0}"
+                      th:text="${message}">message ...</span>
+            </div>
+
+            <p
+                    th:unless="${ex} or ${exception} or (${message} and ${message.length() != 0})">
+                Cause unknown (no exception details available)</p>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer">&nbsp;</div>
+</div>
+
+<script src="http://code.jquery.com/jquery-2.2.4.min.js" th:src="@{/webjars/jquery/2.2.4/jquery.min.js}"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+<script src="../static/js/arttag.js" th:src="@{/js/arttag.js}"></script>
+</body>
+</html>
